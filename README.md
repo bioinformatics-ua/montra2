@@ -37,35 +37,9 @@ For developers:
 
 #### Documentation
 
-More documentation about the system is available [here](https://github.com/bioinformatics-ua/montra-pvt/blob/dev/docker/README.md).
+More documentation about the system is available [here](https://github.com/bioinformatics-ua/montra2/blob/master/docker/README.md).
 
 
-#### Developers
-
- * João Rafael Almeida - <joao.rafael.almeida@ua.pt>
- * Miguel Araújo
- * Manuel Costa
-
-#### Lead developer
-
- * João Rafael Almeida - <joao.rafael.almeida@ua.pt>
-
-#### Project Leader
-
- * José Luis Oliveira - <jlo@ua.pt>
-
-
-#### Past Developers
-
- * Luís A. Bastião Silva
- * Luis Ferreira 
- * Rui Mendes
- * José Melo
- * Tiago Godinho
- * Ricardo Ribeiro
- * Leonardo Coelho
- * Vitor Pereira
- * Pedro Freire
 
 
  Enjoy!
