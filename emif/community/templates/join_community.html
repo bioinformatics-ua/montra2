@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block headextra %}
+{% endblock %}
+
+{% block breadcrumbs %}
+        {% breadcrumb "Home" "" %}
+        {% breadcrumb "Join Community" "" %}
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <!--h3>Join community "{{comm.name}}"</h3-->
+            <h3>Access to the "{{comm.name}}" community is {%if comm.membership == comm.MEMBERSHIP_PUBLIC %}Public{% else %}Moderated{% endif %}.</h3>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    {% if success %}
+                    <div class="alert alert-success alert-dismissible" role="alert">
+                      {% if comm.membership == comm.MEMBERSHIP_PUBLIC %}
+                      <p>Welcome.</p>
+                      {% else %}
+                      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <strong>Request made</strong> You will be contacted shortly with feedback regarding community access.
+                      {% endif %}
+                    </div>
+                    {% endif %}
+
+                    {% if not comm_user %}
+                        <script>
+                        function checkAccept() {
+                          if (document.getElementById("Iaccept").checked == true)
+                            document.getElementById("community-create-button").disabled = false;
+                          else
+                            document.getElementById("community-create-button").disabled = true;
+                        }
+                        </script>
+
+                        {% if comm.membership == comm.MEMBERSHIP_MODERATED %}
+                          <p>If you are not yet part of this community, you can request access to the community manager. Feedback will follow shortly.</p><hr />
+                        {% endif %}
+
+                        {% if comm.disclaimer != '' %}
+                        <h4>Terms and Conditions</h4>
+                        <textarea class="form-control input-sm" name="disclaimer" rows="12" cols="50" readonly>{{comm.disclaimer}}</textarea>
+                        <input type="checkbox" id="Iaccept" onclick="checkAccept()"> I agree to the terms and conditions.
+                        {% endif %}
+                        <hr />
+
+                        <form id="create_community" class="form-horizontal" method="POST">
+                          {% csrf_token %}
+
+                          {% if join_form|length > 0 %}
+                            <h4>We would appreciate it if you could answer a few questions</h4>
+
+                            {% for question in join_form %}
+                              <label class="qtext question-text" for="jform{{question.id}}">{{question.question_text}}{% if question.required %}*{% endif %}</label>
+                              <input id="jform{{question.id}}" type="text" name="jform{{question.id}}" class="form-control" value="" {% if question.required %}required{% endif %}>
+                              <br>
+                            {% endfor %}
+                            
+                          {% endif %}
+
+                          <button type="submit" id="community-create-button" class="col-md-offset-3 col-sm-offset-3 col-sm-6 col-md-6 btn btn-success" {% if comm.disclaimer != '' %}disabled{% endif %}>Continue</button>
+                        </form>
+
+                    {% else %}
+
+                      {% if comm_user.status == comm_user.BLOCKED %}
+                      <p>You have been blocked from accessing this community by the community manager. For any clarification, please use the feedback form.</p>
+                      {% else %}
+                      {%if comm.membership == comm.MEMBERSHIP_PUBLIC %}
+                      <p>Redirecting...</p><meta http-equiv="refresh" content="1; url=/community/{{ comm.slug }}/questionnaires" />
+                      {% else %}
+                      <p>Currently your access to this community is still disabled. Your request has been sent to the community manager and you have to wait for activation process.</p>
+                      {% endif %}
+                    {% endif %}
+                  {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+

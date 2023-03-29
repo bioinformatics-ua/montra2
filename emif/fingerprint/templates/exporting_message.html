@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+  {% if comm %}
+    {{ block.super }}
+    {% breadcrumb "Personal" "c/"|add:comm.slug|add:"/databases" %}
+    {% breadcrumb "Add" "" %}
+  {% else %}
+    {{ block.super }}
+    {% breadcrumb "Personal" "databases" %}
+    {% breadcrumb "Add" "" %}
+  {% endif %}
+{% endblock %}
+
+{% block toolbar %}
+
+{% include "reusable_blocks/menu_toolbar.html" %}
+
+{% endblock %}
+
+{% block styleinclude %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<h3>Added export to the Job Queue</h3>
+
+{{message}}
+<hr />
+ The progress of this job can be checked on the job queue. The file will be available shortly.
+ <br /> <br />
+
+ The job queue can be checked <a href="jobs/list">here</a>{% if job_queue_menu %} or through the Left Menu Bar by clicking the <i class="fas fa-fw fa-list-alt"></i> Job Queue button{% endif %}.
+
+{% endblock %}
+
+{% block scriptextraincludes %}
+
+{% endblock %}
+
+
+{% block scriptextra %}
+{% endblock %}

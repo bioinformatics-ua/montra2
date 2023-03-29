@@ -1,0 +1,109 @@
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% if publications == None or publications|length == 0 %}
+    <h4 class="pull-center">No publications associated with this database.</h4></div>
+    <p class="pull-center">Publications added to this database will appear here accompanied with annotations.</p>
+{% else %}
+<script src="{% static 'js/emif.literature.js' %}"></script>
+
+        <a id="collapseall_literature" class="btn pull-right" href=""><i class="icon-plus"></i>&nbsp; Expand all</a>
+    <div class="accordion fullwidth pull-left" id="accordion2" style="margin-top: 10px;">
+        {% for publication in publications %}
+        {% if publication.pmid|isnumber %}
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{forloop.counter}}">
+                    {{publication.title}}
+                </a>
+            </div>
+            <div id="collapse{{forloop.counter}}" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div id="becas-widget-{{publication.pmid}}" class="widget-container fullwidth"></div>
+                </div>
+                    <script type="text/javascript">
+                        initializeBecas({{publication.pmid}}, "becas-widget-{{publication.pmid}}");
+                    </script>
+            </div>
+        </div>
+        {% else %}
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapse{{forloop.counter}}">
+                        {{publication.title}}
+                    </a>
+                </div>
+                <div id="collapse{{forloop.counter}}" class="accordion-body collapse">
+                    <div class="accordion-inner">
+                        This article has no pubmed identification, so it can't be annotated.
+                        </div>
+                </div>
+            </div>
+        {% endif %}
+        {% endfor %}
+        <!--div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                Upregulation of chemokines and their receptors in Duchenne muscular dystrophy: potential for attenuation of myofiber necrosis.
+                </a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse in">
+                <div class="accordion-inner">
+                    <div id="becas-widget-text" class="widget-container"></div>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                Upregulation of chemokines and their receptors in Duchenne muscular dystrophy: potential for attenuation of myofiber necrosis.
+                </a>
+            </div>
+            <div id="collapseTwo" class="accordion-body collapse">
+                <div class="accordion-inner">
+                    <div id="becas-widget-pmid" class="widget-container"></div>
+                </div>
+            </div>
+        </div-->
+    <div style="font-size: 80%;" class="pull-left">Showing page {{ publications.number }} of {{ publications.paginator.num_pages }}</div>
+
+    <div style="text-align: center" class="pagination">
+      <ul>
+            {% if publications.has_previous %}
+               <li><button class="btn btn-link" onclick="loadPage({{ publications.previous_page_number }});">« Previous Page</button></li>
+            {% endif %}
+            {% if publications.has_next %}
+                <li><button class="btn btn-link" onclick="loadPage({{ publications.next_page_number }});">Next Page »</button></li>
+            {% endif %}
+      </ul>
+    </div>
+    </div>
+
+    <script type="text/javascript">
+        function loadPage(page_number){
+            console.log("Loading literature, page "+page_number);
+                $.post( "literature/{{fingerprint_id}}/"+page_number, { publickey: global_public_key }, function( data ) {
+                    $( "#literature" ).html( data );
+            });
+        }
+    </script>
+{% endif %}

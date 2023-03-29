@@ -1,0 +1,25 @@
+.not-supported{
+    display: none;
+}
+.supported {
+    display: block;
+}
+
+.ns .not-supported{
+    display: block !important;
+}
+.ns .supported {
+    display: none !important;
+}
+ #supportability{
+    display: none;
+}
+.ns #supportability{
+    display: block !important;
+    background-color: orange;
+    color: white;
+    font-weight: bold;
+}
+p.credit a {
+  color: #9CC6F5 !important;
+}

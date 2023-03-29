@@ -1,0 +1,99 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+
+<div class="row clearfix">
+    <div class="col-md-9 input">
+        {% if question.disposition == question.DROPDOWN %}
+            {% if readonly %}
+                <div class="form-control fake_input fake_input_disabled" id="question_{{ question.number }}" name="question_{{ question.number }}">
+                    {% for sel, choice in qdict.choices %}
+                        {% if sel and readonly %}
+                            {{sel|safe}}
+                        {% endif %}
+                    {% endfor %}
+                    <div class="pull-right caret fake_caret"></div>
+                </div>
+            {% else %}
+            <select id="question_{{ question.number }}" class="form-control" onChange="valchanged('question_{{ question.number }}', this.value, this);" name="question_{{ question.number }}">
+                <option></option>
+                {% for sel, choice in qdict.choices %}
+                    <option value="{{ choice.value }}" {% if sel %} selected="true" {% endif %} id="question_{{ question.number }}_{{ forloop.counter }}">{{ choice.text }}</option>
+                    {% if sel %}
+                        <script type="text/javascript">
+                            markAnswered('{{ question.number|removedots }}');
+
+                            valchanged('question_{{ question.number }}','{{ choice.value|striptags }}', this);
+                        </script>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+                {% if question.extra %}
+                    <span class="help-block">{{ question.extra }}</span>
+                {% endif %}
+            </select>
+        {% else %}
+            {% if not readonly %}
+
+            <div class="pull-right">
+
+            <button onclick="clear_selection('question_nr_{{ question.number }}', '{{ question.number }}. {{ question.text|removehs }}');" class="btn btn-default btn-small" type="button">Clear Selection</button>
+            </div>
+            {% endif %}
+            <ul class="inputs-list list-unstyled {%if question.disposition == question.HORIZONTAL %} inline {% endif %}">
+            {% for sel, choice in qdict.choices %}
+                <li>
+                    <div class="checkbox questionnaire-choice-checkbox" >
+                        <span class="custom-radio">
+                          <input {% if readonly %} disabled {% endif %}  type="radio" id="question_{{ question.number }}_{{ forloop.counter }}" name="question_{{ question.number }}"
+                          {% if readonly %} 
+                            onClick="return false;" 
+                          {% else %} 
+                           onClick="valchanged('question_{{ question.number }}', this.value, this)" 
+                          {% endif %}
+                          value="{{ choice.value }}"{% if sel %} checked {% endif %} /> 
+                          <span class="box"><span class="tick"></span></span>
+                        </span>
+
+                        <span class="radiobox-label">
+                            {% if sel and readonly   %}
+                                {{sel|safe}}
+                            {% else %}
+                                {{ choice.text }}
+                            {% endif %}
+
+                        </span>
+                    </div>
+                </li>
+                {% if sel %}
+                <script type="text/javascript">
+                    markAnswered('{{ question.number|removedots }}');
+                    valchanged('question_{{ question.number }}','{{ choice.value }}', this);
+                </script>
+                {% endif %}
+            {% endfor %}
+            {% if question.extra %}
+                <li>
+                    <span class="help-block">{{ question.extra }}</span>
+                </li>
+            {% endif %}
+            </ul>
+        {% endif %}
+    </div>
+</div>

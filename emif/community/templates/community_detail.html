@@ -1,0 +1,31 @@
+{% load extra_tags %}\
+{% if community.icon %}<center><img src="{{community.icon.url}}" class="community_logo" onerror="changeToHeader(&quot;{{community.name}}&quot;, this)"/></center>{%else%}<h3 class="no-margn"><strong>{{community.name}}</strong></h3>{%endif %}\
+<center><strong>Total databases in this community: {{community.getCount}}</strong></center>\
+<hr />\
+{% autoescape off %}\
+<strong>Short Description:</strong><br />\
+<div style="text-align: justify">\
+{% if community.short_desc and community.short_desc|length > 0 %}{{community.short_desc|esc}}{%else%}There is no short description for this community{%endif%}\
+</div><br />\
+<strong>Description:</strong><br />\
+<div style="text-align: justify">\
+{% if community.description and community.description|length > 0 %}{{community.description|esc}}{%else%}There is no description for this community{%endif%}\
+{% endautoescape %}\
+</div><br />\
+<div style="text-align: justify;">\
+    <input type="checkbox" id="favourite_community_checkbox" name="favourite_community_checkbox" {% if favourited %}checked{%endif%} onchange="favouriteCheckBoxChange(this, &quot;{{community.slug}}&quot;);">\
+    <label for="favourite_community_checkbox">Check this box to add the community to your Workspace</label>\
+</div><br />\
+<strong>Tags:</strong><br />\
+{% if community.tags.all|length > 0 %}\
+    {% for tag in community.tags.all %}<span class="label label-primary">{{tag.slug}}</span> \
+    {% endfor %}\
+{% else %}  \
+No tags are associated with this community.\
+{% endif %}<br /><br /> \
+<strong>Community Managers:</strong><br />\
+{% for cm in community.owners.all %}\
+{% if not cm in community.invisible_owners.all %}\
+<a href="mailto:{{cm.email}}">{% if cm.get_full_name %} {{cm.get_full_name}}{%else %}{{cm.email}}{% endif %}</a><br />\
+{% endif %}\
+{%endfor%}\

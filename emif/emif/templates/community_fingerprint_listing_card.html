@@ -1,0 +1,161 @@
+{% load extra_tags %}
+{% load static %}
+
+{% get_communityfields comm questionnaire view as configured_fields%}
+
+<!-- card -->
+<div class="container-fluid" data-controller="community-fingerprint-listing-card">
+    <div class="container-fluid container-cards-pf">
+        <div class="row row-cards-pf">
+
+            {% for t in page_obj %}
+                <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="card-pf card-pf-view card-pf-view-select card-pf-view-multi-select{% if t.id in selected_databases %} active-line{% endif %}">
+                        <div class="card-pf-body">
+
+                            <!-- Logo -->
+                            <div class="card-pf-top-element">
+                              <div class="card-pf-icon-circle database-logo-container-listings-card">
+                                {% if t.logo == 'None' or t.logo == 'nopic_db.png' %}
+                                    <img src="{% static 'upload_images/' %}/nopic_db.png" class="database-logo-listings-card">
+                                {% else %}
+                                    <img src="{{MEDIA_URL}}{{t.logo}}" class="database-logo-listings-card">
+                                {% endif %}
+                              </div>
+                            </div>
+                            <h2 class="card-pf-title center-content-container">
+                                <a data-acronym="{{ name }}" href="c/{{comm.slug}}/fingerprint/{{ t.id }}/1">{{ t.name }}</a>
+
+                                {%if t.draft %}
+                                    <span class="draft-align-right label label-default">DRAFT</span>
+                                {% endif %}
+                            </h2>
+
+                            <!-- Section 0 -->
+                            <div class="card-pf-items text-center card-section-0">
+                                
+                                {% for field in configured_fields %}
+                                    {% if field.section == 0 %}
+
+                                        <div class="card-pf-item" style="border: 0">
+                                            <span class="{{field.icon}}"></span>
+                                            
+                                            {% find_field_value t field as field_value %}
+                                            
+                                            {% if field.field.type == 'numeric' %}
+                                                <strong>{{field_value}}</strong>
+                                            {% elif field.field.type == 'open-textfield' %}
+                                            <div class="opentext-large expandable-text">
+                                                <p class="js-excerpt large-text">{{ field_value }}</p>
+                                                <a role="button" href="#" class="js-show-more text-right">Show more</a>
+                                            </div>
+                                            {% elif field.field.type == 'choice-multiple' %}
+                                                <ul class="mult-choice-field centered-list">
+                                                    {% with field_value|split:"#" as elems %}
+                                                    {% if elems %}
+                                                    {% for elem in elems %}
+                                                        <li> {{ elem }}</li>
+                                                    {% endfor %}
+                                                    {%endif%}
+                                                    {%endwith%}
+                                                </ul>
+                                            {% elif field.field.type == 'url'%}
+                                                <a href="{{field_value}}" target="_blank">{{field_value}}</a>
+                                            {% else %}
+                                                <strong>{{field_value}}</strong>
+                                            {% endif %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                            </div>
+
+                            <!-- Section 1 -->
+                            <div class="card-pf-items text-center card-section-1">
+
+                                {% for field in configured_fields %}
+                                    {% if field.section == 1 %}
+                                        <span class="{{field.icon}}"></span>
+                                        
+                                        {% find_field_value t field as field_value %}
+                                        
+                                        {% if field.field.type == 'numeric' %}
+                                            {{field_value}}
+                                            {% elif field.field.type == 'open-textfield' %}
+                                            <div class="opentext-large expandable-text">
+                                                <p class="js-excerpt large-text">{{ field_value }}</p>
+                                                <a role="button" href="#" class="js-show-more text-right">Show more</a>
+                                            </div>
+                                            {% elif field.field.type == 'choice-multiple' %}
+                                            <ul class="mult-choice-field centered-list">
+                                                {% with field_value|split:"#" as elems %}
+                                                {% if elems %}
+                                                {% for elem in elems %}
+                                                    <li> {{ elem }}</li>
+                                                {% endfor %}
+                                                {%endif%}
+                                                {%endwith%}
+                                                
+                                            </ul>
+                                        {% elif field.field.type == 'url'%}
+                                            <a href="{{field_value}}" target="_blank">{{field_value}}</a>
+                                        {% else %}
+                                            <strong>{{field_value}}</strong>
+                                        {% endif %}
+                                        <br>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+
+                            <!-- Section 2 -->
+                            {% for field in configured_fields %}
+                                {% if field.section == 2 %}
+                                    <div class="card-pf-items card-section-2">
+                                        
+                                        {% find_field_value t field as field_value %}
+                                        
+                                        {% if field.show_label %}
+                                            <strong>{{field.field.text|removehs}}</strong>
+                                        {% endif %}
+                                        
+                                        {% if field.field.type == 'numeric' %}
+                                            {{field_value}}
+
+                                        {% elif field.field.type == 'open-textfield' %}
+                                        <div class="opentext-large expandable-text">
+                                            <p class="js-excerpt large-text">{{ field_value }}</p>
+                                            <a role="button" href="#" class="js-show-more text-right">Show more</a>
+                                        </div>
+
+                                        {% elif field.field.type == 'choice-multiple' %}
+                                            <ul class="mult-choice-field centered-list">
+                                                {% with field_value|split:"#" as elems %}
+                                                {% if elems %}
+                                                {% for elem in elems %}
+                                                    <li> {{ elem }}</li>
+                                                {% endfor %}
+                                                {%endif%}
+                                                {%endwith%}
+                                                
+                                            </ul>
+                                        {% elif field.field.type == 'url'%}
+                                            <a href="{{field_value}}" target="_blank">{{field_value}}</a>
+                                        {% else %}
+                                            <strong>{{field_value}}</strong>
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="card-pf-view-checkbox">
+                            <input class="chkbox dbtype_{{t.type_name|removespaces}}" type="checkbox" autocomplete="off" 
+                                   typedb="{{ t.type_name }}" name="chk_{{ t.id }}" data-action="click->community-fingerprint-listing#onSelectDatabase click->community-fingerprint-listing-card#onSelect"
+                                   {% if t.id in selected_databases %}checked{% endif %}
+                            >
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div> 
+</div>

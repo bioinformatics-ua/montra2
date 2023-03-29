@@ -1,0 +1,31 @@
+{% load extra_tags %}
+<html>
+<head>
+    <style>
+        h2 {
+            color: red;
+        }
+        #ftitle {
+            font-size: 40px;
+        }
+        .question {
+            color: #428bca;
+        }
+    </style>
+</head>
+<body>
+<div style="font-size: 14px">
+<center><h1 id="ftitle">{{name}}</h1></center>
+{% for qset, questiongroup in qsets %}
+    <h2>{{qset|removehs}}</h2>
+    {% for question in questiongroup.list_ordered_tags|listsort %}
+        {% if question.value|length > 0 %}
+        <span class="question">{{question.number}} {{question.tag.strip|removehs}}</span><br />
+        {{question.value|safe}}<br />
+        <br />
+        {% endif%}
+    {% endfor %}
+{% endfor %}
+</div>
+</body>
+</html>

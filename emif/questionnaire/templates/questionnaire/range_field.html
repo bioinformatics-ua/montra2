@@ -1,0 +1,62 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% comment %}
+ATTENTION: This IS NOT a FIELD QUESTIONNAIRE TYPE, ITS JUST THE range INPUT, to be REUSABLE enough on other questionnaire field types
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+<div class="col-md-9">
+<div style="margin-left: 35px;" class="input-group">
+        <input type="text" class="form-control" size="60" id="question_{{ question.number }}" name="question_{{ question.number }}" value="{{ qdict.value }}" style="text-align:left" />
+        <span class="input-group-btn">
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <small>Range</small>
+            <span class="caret"></span>
+            </button>
+                <ul class="pull-right dropdown-menu dropdown-menu-form">
+                <span style="margin: 10px; text-align: center;">Please, select the range of numbers to be considered</s>
+                    <table style="margin-bottom: 0px;" class="table">
+                        <tr>
+                        <td>From: </td>
+                        <td><input class="form-control" id="from_{{ question.number|removedots }}" type="text"/></td>
+                            <td>
+                                <div class="checkbox">
+                                    <label>
+                                    <input style="margin-top: 5px;" id="anyfrom_{{ question.number|removedots }}" type="checkbox"> Any Value
+                                    </label>
+                                </div>
+                        </td>
+                </tr><tr>
+                <td>To: </td>
+                <td><input class="form-control" id="to_{{ question.number|removedots }}" type="text"/></td>
+                    <td><div  class="checkbox">
+                    <label>
+                        <input style="margin-top: 5px;"id="anyto_{{ question.number|removedots }}" type="checkbox"> Any Value
+                    </label>
+
+                </div></td>
+        </tr>
+    </table>
+    <div><span style="display: none; padding: 5px;" class="text-error" id="error_{{ question.number|removedots }}"></span></div>
+    <button type="button" style="margin: 0 5px 0 0;" id="define_{{ question.number|removedots }}" class="pull-right btn btn-default">Define</button>
+</ul>
+        </span>
+
+</div>
+</div>
+</div>

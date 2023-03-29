@@ -1,0 +1,26 @@
+
+* {
+  overflow: visible !important; 
+  margin: 0;
+  padding: 0;
+  border: 0;
+  line-height: 1;
+  vertical-align: baseline;
+  box-shadow: none;
+  font-size: 100%; 
+  font: inherit;
+}
+
+
+div {
+  width: 100%;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+}
+
+.do_not_print , 
+.top-head, .well, .text-right, .footer, #topnavigator, #fileupload_hook, hr { display:none !important; }
+
+/* HELP Page -> markdown img label center fix */
+h6 {  text-align: center;}

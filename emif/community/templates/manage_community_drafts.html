@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+
+    {% if comm %}
+        {% breadcrumb "Drafts" 'c/'|add:comm.slug|add:"/alldatabases" %}
+    {% else %}
+        {% breadcrumb "Drafts" "alldatabases" %}
+    {% endif%}
+{% endblock %}
+
+
+{% block styleinclude %}
+<link rel="stylesheet" href="{% static 'css/theme.blue.css' %}">
+<link rel="stylesheet" href="{% static 'css/vendor/jquery.boolrelwidget.css' %}">
+{% endblock %}
+
+
+{% block scriptextraincludes %}
+
+<script src="{% static 'js/vendor/jquery.boolrelwidget.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.ba-throttle-debounce.min.js' %}"></script>
+<script src="{% static 'js/vendor/json2.js' %}"></script>
+<script src="{% static 'js/paginator-sorter.js' %}"></script>
+<script src="{% static 'js/emif.results.js' %}"></script>
+<script src="{% static 'js/emif.comparison_populations.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.knob.js' %}"></script>
+
+{% endblock %}
+
+
+{% block styleextra %}
+
+.hoverDiv {background: #fff;}
+.hoverDiv:hover {background: #E8E8E8;}
+
+{% endblock %}
+
+{% load bootstrap_pagination %}
+
+{% block content %}
+
+{% if not page_obj %}
+<div class="well"><center>No pending entries for approval.</center></div>
+{% else %}
+
+  <div id="row_loading" class="row">
+  {% if results %}
+    {% if not isAdvanced %}
+            <form id="s_all" method="POST" action="resultsdiff/1">
+              {% csrf_token %}
+              <input type="hidden" name="query" value="{{search_old}}" />
+              <!-- button type="submit" class="btn btn-link">All</button-->
+            </form>
+            {% for comm in user_comms %}
+            <form id="s_{{comm.slug}}" class="navbar-form" method="POST" action="c/{{comm.slug}}/resultsdiff/1">
+                {% csrf_token %}
+                <input type="hidden" name="query" value="{{search_old}}" />
+                <!--button type="submit" class="btn btn-link pull-left">{{comm.name}}</button-->
+            </form>
+            {% endfor %}
+    {% endif %}
+    <div class="col-md-12 clearboth" style="text-align:center">
+      <div class="navbar navbar-default" id="loading">
+        <div class="navbar-inner">
+          {% if isAdvanced %}
+          <div class="navbar-form navbar-left">
+            <button class="btn btn-success" data-toggle="modal" data-target="#saveQuery"><i class="fas fa-fw fa-save"></i> Save Query</button>
+          </div>
+          {% else %}
+            <ul class="nav navbar-nav">
+              <li class="{% if not comm %}active{% endif %}">
+                <a onClick="searchFacet('all');" href="javascript:void(false);">All</a>
+              </li>
+              {% for u_comm in user_comms %}
+              <li class="{% if u_comm.slug == comm.slug %}active{% endif %}">
+                <a onClick="searchFacet('{{u_comm.slug}}');" href="javascript:void(false);">{{u_comm.name}}</a>
+              </li>
+            {% endfor %}
+            </ul>
+
+          {% endif%}
+          <div style="margin-right: 5px" class="navbar-right navbar-form">
+          <span style="margin-left: 10px; display: none; " class="pull-right" id="type_search">
+            <form style="margin:0;" id="search_type" class="navbar-form" method="POST" action="{% if comm %}c/{{comm.slug}}/{% endif %}resultsdiff/1">
+                {% csrf_token %}
+                <input type="hidden" name="query" value="{{search_old}}" />
+                <!--button type="submit" class="btn btn-link pull-left">{{comm.name}}</button-->
+            <select id="t_search" name="t_search" class="form-control">
+              <option {% if eprofile.search_type == 'answers' %}selected{% endif %} value="answers">Search in Answers</option>
+              <option {% if eprofile.search_type == 'questions' %}selected{% endif %} value="questions">Search in Questions</option>
+              <option {% if eprofile.search_type == 'all' %}selected{% endif %} value="all">Search Questions and Answers</option>
+            </select>
+             </form>
+          </span>
+          <h5 class="pull-right">
+              <span id="results_size"></span>
+            {% if page_obj != None %}
+              {{num_results}} results found
+              {%if not isAdvanced %}
+                for "{{search_old}}"
+              {% endif %}
+          {% else %}
+            No results found
+          {% endif %}
+           {% if comm %} in {{comm.name}}{% endif %}
+
+           &nbsp;&nbsp;<span id="type_search_icon" data-status="0"><i class="fas fa-fw fa-plus"></i></span>
+
+          </h5>
+         </div>
+
+        </div>
+      </div>
+    </div>
+          <center>
+            {% if page_obj == None %}
+              <button id="refine_search_btn" class="btn btn-lg btn-link">Try to refine your search</button>
+            {% endif %}
+          </center>
+    {% endif %}
+    </div>
+    {% if page_obj != None %}
+    
+  {% csrf_token %}
+
+<div class="panel panel-default">
+<table class="table table-bordered table-hover fingerprint_table table-striped" id="table_databases" data-provides="rowlink">
+    <thead>
+        <tr>
+            {% for field in comm.get_communityfields %}
+              {% if field.sortid|add:-1 == comm.dblist_sortid %}
+              <th class="sorter-database_name sorter {%if "icon-minus" not in sort_params.database_name.icon %}selected-sorter{% endif %}"  onclick="a.onClick('database_name', '{{sort_params.database_name.next}}');">
+              {{questionnaire.get_database_field|removehs}}
+                <div class="pull-right"><i class="{{sort_params.database_name.icon}}"></i></div>
+              </th>
+              {% endif %}
+
+              {% find_sort_param sort_params field.field.slug as fslug %}
+              <th data-toggle="tooltip" data-placement="top" title="{{field.field.text|removehs}}"
+              class="tooltippable sorter-{{field.field.slug}} sorter {%if "icon-minus" not in fslug.icon %}selected-sorter{% endif %}"  onclick="a.onClick('{{field.field.slug}}', '{{fslug.next}}');">
+                <div class="pull-right"><i class="{{fslug.icon}}"></i></div>
+              {{field.field.text|removehs}}
+              </th>
+            {% endfor %}
+
+            {% if comm.dblist_sortid|add:-1 == comm.get_communityfields|length or comm.get_communityfields|length == 0 %}
+              <th class="sorter-database_name sorter {%if "icon-minus" not in sort_params.database_name.icon %}selected-sorter{% endif %}"  onclick="a.onClick('database_name', '{{sort_params.database_name.next}}');">
+              {{questionnaire.get_database_field|removehs}}<!--Acronym-->
+              <div class="pull-right"><i class="{{sort_params.database_name.icon}}"></i></div>
+              </th>
+            {% endif %}
+
+            <th class="sorter-lastupdate sorter {%if "icon-minus" not in sort_params.last_update.icon %}selected-sorter{% endif %}" onclick="a.onClick('last_update', '{{sort_params.last_update.next}}');"><div class="pull-right"><i class="{{sort_params.last_update.icon}}"></i></div>
+            Last update
+            </th>
+          
+            <th class="sorter-false filter-false select_line" style="width: 18%;">Validate</th>
+
+        </tr>
+
+        <tr>
+          {% setglobal spent 0 %}
+
+          {% for field in comm.get_communityfields %}
+            {% if field.sortid|add:-1 == comm.dblist_sortid %}
+            <td class="table_filter">
+              <input class="form-control filter_input" id="database_name_filter" type="text" value="{{sort_params.database_name.filter}}" placeholder="Filter">
+            </td>
+            {% endif %}
+
+            {% find_sort_param sort_params field.field.slug as fslug %}
+            <td class="table_filter">
+              <input class="form-control filter_input" id="{{field.field.slug}}_filter" type="text" value="{{ fslug.filter }}" placeholder="Filter">
+            </td>
+          {% endfor %}
+
+          {% if comm.dblist_sortid|add:-1 == comm.get_communityfields|length or comm.get_communityfields|length == 0  %}
+            <td class="table_filter">
+              <input class="form-control filter_input" id="database_name_filter" type="text" value="{{sort_params.database_name.filter}}" placeholder="Filter">
+            </td>
+          {% endif %}
+
+        <td class="table_filter">
+            <input class="form-control filter_input" id="last_update_filter" type="text" value="{{sort_params.last_update.filter}}" placeholder="Filter">
+        </td>
+
+        <td class="table_filter select_line">
+          <div style="text-align: center;">
+            <i data-toggle="tooltip" data-placement="bottom" title="Select databases, in order to confirm validation." class="help_selectresults fa fa-2x fa-question-circle"></i>
+          </div>
+        </td>
+          <!--td class="table_filter">&nbsp;</td-->
+        </tr>
+    </thead>
+    <tbody id="table_content">
+
+  {% for t in page_obj %}
+     <tr id="dbtype_{{t.type_name|removespaces}}_{{t.id|removespaces}}">
+
+        {% for field in comm.get_communityfields %}
+        {% if field.sortid|add:-1 == comm.dblist_sortid %}
+            <td>
+                {% if comm %}
+                <a data-acronym="{{ t.name }}" href="c/{{comm.slug}}/fingerprint/{{ t.id }}/{% if not config.useQuestionSetRBAC %}1{% endif %}">{{ t.name }}
+                    {% if t.draft %}
+                    <span class="pull-right label label-default">PENDING</span>
+                    {% endif %}
+                </a>
+                {% else %}
+                <a data-acronym="{{ t.name }}" href="c/{{f_community.slug}}/fingerprint/{{ t.id }}/{% if not config.useQuestionSetRBAC %}1{% endif %}">{{ t.name }}
+                    {% if t.draft %}
+                    <span class="pull-right label label-default">PENDING</span>
+                    {% endif %}
+                </a>
+                {% endif %}
+            </td>
+        {% endif %}
+        <td>
+        {% if field.field.type == 'numeric' %}
+            <div class="pull-right">
+            {% find_field_value t field %}
+            </div>
+        {% else %}
+            {% if field.field.type == 'datepicker' %}
+            <center>{% find_field_value t field %}</center>
+            {% else %}
+            {% find_field_value t field %}
+            {% endif %}
+        {% endif %}
+        </td>
+        {% endfor %}
+        {% if comm.dblist_sortid|add:-1 == comm.get_communityfields|length or comm.get_communityfields|length == 0 %}
+            <td>
+                {% if comm %}
+                <a data-acronym="{{ t.name }}" href="c/{{comm.slug}}/fingerprint/{{ t.id }}/{% if not config.useQuestionSetRBAC %}1{% endif %}">{{ t.name }}
+                    {% if t.draft %}
+                    <span class="pull-right label label-default">PENDING</span>
+                    {% endif %}
+                </a>
+                {% else %}
+                <a data-acronym="{{ t.name }}" href="c/{{f_community.slug}}/fingerprint/{{ t.id }}/{% if not config.useQuestionSetRBAC %}1{% endif %}">{{ t.name }}
+                    {% if t.draft %}
+                    <span class="pull-right label label-default">PENDING</span>
+                    {% endif %}
+                </a>
+                {% endif %}
+            </td>
+        {% endif %}
+        <td style="text-align: center;" class="date">
+                {% if t.last_activity %}
+                    {{t.last_activity|datehhmm}}
+                {% else %}
+                    {{ t.date }}
+                {% endif %}
+        </td>
+
+        <td class="select_line">
+            <div class="btn-group">
+            <button onclick="submitFingerprint(this,false);" type="submit" class="btn btn-secondary chkbox dbtype_{{t.type_name|removespaces}}_{{t.id|removespaces}}">Ignore</button> 
+            <button onclick="submitFingerprint(this,true);" type="submit" class="btn btn-link chkbox dbtype_{{t.type_name|removespaces}}_{{t.id|removespaces}}">Accept</button>
+            </div>
+        </td>
+
+    </tr>
+    {% endfor %}
+
+    </tbody>
+</table>
+<script type="text/javascript">
+    function submitFingerprint(btn, submit){
+        const gp = GlobalProxy.getInstance();
+        fingerprint = $(btn).attr('class').split('_');
+        fingerprint = fingerprint[fingerprint.length-1];
+        hide = $(btn).attr('class').split(' ')[3];
+
+        gp.validateFingerprint('{{comm.slug}}',fingerprint,submit)
+            .then(function(data) {
+                $('#'+hide).remove();
+            })
+            .catch(function(e){
+                console.error(e);
+            });
+    }
+</script>
+</div>
+
+  </form>
+    {% else %}
+    <div style="margin-top: 60px;"></div>
+  {% endif %}
+
+  {% if page_obj != None %}
+    {% include "reusable_blocks/post_paginator.html" %}
+{% endif %}
+
+<div id="saveQuery" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Save this Advanced Query</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <input id="query_title" type="text" class="form-control" placeholder="Advanced Query Title" value="{{request.session.query_title}}" />
+          <input id="query_id" type="hidden" value="{{request.session.query_id}}" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="query_title_save" type="button" class="btn btn-success"><i class="fas fa-fw fa-save"></i> Save</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+{% endif %}
+{% endblock %}
+
+{% comment %}
+  <script type="text/javascript" >
+{% endcomment %}
+
+{% block scriptextra %}
+
+    $(".dial").knob({
+      width: 50,
+      height: 46,
+      readOnly: 'true'
+    });
+$(function(){
+{% if page_obj != None %}
+  var allFilters = [];
+
+  {% for field in comm.list_fields.all %}
+  allFilters.push('{{field.slug}}');
+  {% endfor %}
+
+  initializePaginatorSorter('{{sort_params.base_filter}}', '{{sort_params.selected_name}}', '{{sort_params.selected_value}}', '{{sort_params.extraObjects|safe}}', allFilters);
+
+{% endif %}
+
+  setRefineEvent({% if isAdvanced %} true, '{{request.session.query_type}}', '{{request.session.query_id}}' {% else %} false, null, null {% endif %});
+
+ {% if isAdvanced %}
+    setBooleanPlugin('{{request.session.serialization_query}}', '{{request.session.query_type}}', '{{request.session.query_id}}');
+ {% endif %}
+
+
+});
+ function searchFacet(comm){
+ console.log($('#s_'+comm));
+  $('#s_'+comm).submit();
+ }
+{% endblock %}
+
+
+
+{% comment %}
+</script>
+  {% endcomment %}

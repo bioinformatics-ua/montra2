@@ -1,0 +1,22 @@
+[
+    {
+        "model": "community.community", 
+        "pk": 1, 
+        "fields": {"name": "test_community", "description": "some description", "disclaimer": null, "short_desc": "short desc.", "public": false, "auto_accept": false, "membership": "moderated", "slug": "testcommunity", "icon": "icons/community/observational_1.jpg", "thumbnail": "", "sortid": 0, "show_popchar": true, "show_docs": true, "popchar_sortid": 1, "docs_sortid": 1, "db_sortid": 1, "dblist_sortid": 1, "owners": [3], "invisible_owners": [], "questionnaires": [], "tags": []}
+    }, 
+    { 
+        "model": "community.communitypermissions", "pk": 1, "fields": {"community": 1, "export_dblist": true, "export_fingerprint": true, "export_datatable": true}
+    }, 
+    {
+        "model": "community.communityuser", "pk": 1, "fields": {"community": 1, "user": 2, "status": 1, "updated_at": "2021-05-20T19:55:30.382Z"}
+    },
+    {
+        "model": "community.communityuser", "pk": 2, "fields": {"community": 1, "user": 3, "status": 1, "updated_at": "2021-05-20T19:55:30.382Z"}
+    },
+    {
+        "model": "community.communityactivation", "pk": 1, "fields": {"community": 1, "user": 2, "commuser": 1, "hash": "60f5b364849e11e590680242ac1100e7", "used": true}
+    }, 
+    {
+        "model": "community.communitygroup", "pk": 1, "fields": {"community": 1, "name": "test", "description": null, "removed": true, "members": [1]}
+    }
+]

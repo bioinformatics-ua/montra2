@@ -1,0 +1,130 @@
+{% load extra_tags %}
+{% load static %}
+
+{% get_communityfields comm questionnaire view as configured_fields%}
+
+<!-- List -->
+<div class="container-fluid" data-controller="community-fingerprint-listing-list">
+    <div id="pf-list-standard" class="list-group list-view-pf">
+        {% for t in page_obj %}
+        <div class="list-group-item{% if t.id in selected_databases %} active-line{% endif %}">
+            <div class="list-view-pf-main-info">
+                <div class="database-logo-container-listings-list">
+                    {% if t.logo == 'None' or t.logo == 'nopic_db.png' %}
+                        <img src="{% static 'upload_images/' %}/nopic_db.png" class="database-logo-listings-list">
+                    {% else %}
+                        <img src="{{MEDIA_URL}}{{t.logo}}" class="database-logo-listings-list">
+                    {% endif %}
+                </div>
+                <div class="list-view-pf-body">
+                    <div class="list-view-pf-description" style="width: 70%">
+                        <div class="list-group-item-heading">
+                            <a data-acronym="{{ name }}" href="c/{{comm.slug}}/fingerprint/{{ t.id }}/1">{{ t.name }}
+                            </a>
+                            {%if t.draft %}
+                            <span class="pull-right label label-default">DRAFT</span>
+                            {% endif %}
+                        </div>
+
+                        <!-- Section 0 -->
+                        <div class="list-group-item-text" >
+                            {% for field in configured_fields %}
+                                {% if field.section == 0 %}
+                                    {% if field.show_label %}
+                                    <span>                                       
+                                        <strong>
+                                            {{field.field.text|removehs}}:
+                                        </strong>                                       
+                                    </span>
+                                    <br>
+                                    {% endif %}
+                                    {% if field.field.type == 'open-textfield' %}
+                                    <div class="opentext-list expandable-text">
+                                        <p class="js-excerpt list-text">{% find_field_value t field%}</p>
+                                        <a role="button" href="#" class="js-show-more">Show more</a>
+                                    </div>
+                                    {% elif field.field.type == 'choice-multiple' %}
+                                    <ul class="mult-choice-field">
+                                        {% find_field_value t field as oplist %}
+                                        {% with oplist|split:"#" as elems %}
+                                        {% if elems %}
+                                        {% for elem in elems %}
+                                            <li> {{ elem }}</li>
+                                        {% endfor %}
+                                        {%endif%}
+                                        {%endwith%}
+                                        
+                                    </ul>
+                                    {% elif field.field.type == 'url'%}
+                                        <a href="{% find_field_value t field%}" target="_blank">{% find_field_value t field%}</a>
+                                    {% else %}
+                                        <span>
+                                            {% find_field_value t field %}
+                                        </span>
+                                    {% endif %}
+                                    <br>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Section 1-->
+                    <div class="list-view-pf-additional-info" style="width: 30%">
+                        {% for field in configured_fields %}
+                            {% if field.section == 1 %}
+                                <div class="list-view-pf-additional-info-item" style="width: 100%;">
+                                    
+                                    {% find_field_value t field as field_value %}
+                                    {% if field_value %}
+                                        <span class="{{field.icon}}" style="margin-right:0.5em"></span>
+                                    {% endif %}                            
+                                    
+                                    {% if field.show_label %}
+                                        <span style="margin-right:0.5em">{{field.field.text|removehs}}</span>
+                                    {% endif %}
+                                    <br>
+
+                                    {% if field.field.type == 'open-textfield' %}
+                                    <div class="opentext-list expandable-text">
+                                        <p class="js-excerpt list-text">{% find_field_value t field%}</p>
+                                        <a role="button" href="#" class="js-show-more">Show more</a>
+                                    </div>
+                                    
+                                    {% elif field.field.type == 'choice-multiple' %}
+                                    <ul class="mult-choice-field">
+                                        {% find_field_value t field as oplist %}
+                                        {% with oplist|split:"#" as elems %}
+                                            {% if elems %}
+                                            {% for elem in elems %}
+                                                <li> {{ elem }}</li>
+                                            {% endfor %}
+                                            {%endif%}
+                                        {%endwith%}
+                                    </ul>
+                                    
+                                    {% elif field.field.type == 'url'%}
+                                        <a href="{% find_field_value t field%}" target="_blank">{% find_field_value t field%}</a>
+                                    
+                                    {% else %}
+                                        <span>
+                                            {% find_field_value t field %}
+                                        </span>
+                                    
+                                        
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            <div>
+                <input class="chkbox dbtype_{{t.type_name|removespaces}}" type="checkbox" autocomplete="off" 
+                       typedb="{{ t.type_name }}" name="chk_{{ t.id }}" data-action="click->community-fingerprint-listing#onSelectDatabase click->community-fingerprint-listing-list#onSelect"
+                       {% if t.id in selected_databases %}checked{% endif %}
+                >
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>

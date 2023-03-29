@@ -1,0 +1,18 @@
+[
+    {
+        "pk": 0,
+        "model": "accounts.Profile",
+        "fields": {
+            "name": "Data Custodian",
+            "description": "Data custodian description"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "accounts.Profile",
+        "fields": {
+            "name": "Researcher",
+            "description": "Researcher description"
+        }
+    }
+]

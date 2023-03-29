@@ -1,0 +1,13 @@
+Dear Community Manager,
+
+User '{{ username }}' requests to join your community ( {{ community_name }} ):
+
+<strong>Name</strong>: {{ username }}
+<strong>Email</strong>: <a href="mailto:'{{ user_email }}'">{{ user_email }}</a>
+<strong>Organization</strong>: {{ user_organization }}
+<strong>Country</strong>: {{ user_country }}
+
+Click <a href="{{ BASE_URL }}community/activate/{{ activation_hash }}">here</a> to proceed to user validation.
+
+Sincerely,
+{{ brand }}

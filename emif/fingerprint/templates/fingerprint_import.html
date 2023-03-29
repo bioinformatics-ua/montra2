@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block styleinclude %}
+{% endblock %}
+
+{% block headextra %}
+{% endblock %}
+{% block breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "Import Fingerprint" "" %}
+
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#import"><i class="fas fa-fw fa-upload"></i> Import fingerprint</a></li>
+        <li><a data-toggle="tab" href="#history"><i class="fas fa-fw fa-history"></i> Import history</a></li>
+      </ul>
+      
+      <div class="tab-content">
+        <div id="import" class="tab-pane fade in active">
+            {% if success_message %}
+            <div class="alert alert-success">
+              {{success_message}}
+            </div>
+            {% endif %}
+            {% if error_message %}
+            <div class="alert alert-danger">
+              {{error_message}}
+            </div>
+            {% endif %}
+
+            <div class="panel panel-default" style="margin-top:2rem">
+                <div class="panel-body">
+                    <center><strong>Attention:</strong> Dependending on file size and schema complexity for the fingerprint this process can take a while. Please be patient.</center>
+                </div>
+            </div>
+    
+            <form action="fingerprint/import" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <!-- Community -->
+                <div class="form-group">
+                  <label for="community">Community</label>
+                  <select class="form-control" id="community" name="community" class="form-control" required>
+                    <option label=" " selected></option>
+                    {% for community in communities %}
+                        <option data-questslugs="{{ community.questionnaireStrSlugs }}" value="{{community.slug}}">{{community.name}}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <!-- Questionnaire -->
+                <div class="form-group">
+                        <label for="questionnaire">Questionnaire</label>
+                        <select class="form-control" id="questionnaire" name="questionnaire" class="form-control" required>
+                          <option label=" " selected></option>
+                          {% for questionnaire in questionnaires %}
+                              <option value="{{ questionnaire.slug }}">{{questionnaire.name}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+
+                <!-- File to upload -->
+                <div class="form-group">
+                  <label for="exampleFormControlTextarea1">File</label>
+                  <input id="uploadFingerprintInput" name="file" class="form-control-file" type="file" accept=".montra, .multimontra" required/>
+                  <small class="form-text text-muted">Select a .montra or .multimontra file</small>
+                </div>
+
+                <!-- Submit -->
+                <button id="uploadFingerprintBtn" type="submit" class="btn btn-success">Import Fingerprint</button>
+              </form>
+        </div>
+        <div id="history" class="tab-pane fade">
+            <h4>Last Upload Status</h4>
+           <table class="table table-bordered table-striped">
+               <tr>
+                <th>File</th>
+                <th>Status</th>
+               </tr>
+               {% for upload in quploads %}
+                <tr>
+                    <td>{{upload.filename}}
+                    </td>
+                    <td>{{upload.get_status}}</td>
+                </tr>
+               {% endfor %}
+           </table>
+        </div>
+      </div>
+
+
+
+{% endblock content %}
+
+{% block scriptextra %}
+
+resetForm();
+
+$('#community').change(function(e){    
+    //values are separated by "|" already
+    var value = $(this).find(':selected').data('questslugs');
+    var regex = new RegExp(value, "gi");
+
+    $("#questionnaire").val("")
+    $("#questionnaire option").each(function()
+    {
+        var option = $(this);
+        if (option.val().match(regex) !== null) {
+            option.show();
+        }else{
+            option.hide()
+        }
+    });
+})
+
+//hide all option of questionnaire select
+function resetForm(){
+    $("#questionnaire").val("")
+    $("#community").val("")
+    $("#questionnaire option").each(function(){
+        $(this).hide()
+    });
+}
+
+
+{% endblock %}

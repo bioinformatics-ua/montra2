@@ -1,0 +1,364 @@
+<!-- # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-->
+{% load flatpages %}
+{% load compress %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+{% get_flatpages for user as flatpages %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js ns lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ns lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ns lt-ie9 gt-ie7"> <![endif]-->
+<!--[if IE 9 ]>    <html class="no-js ie9 gt-ie7"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" class="no-js">
+    <!--<![endif]-->
+    <head>
+        <!-- This is WRONG and just for testing, on deploy it must be changed to static base url -->
+        <base id="base_link" href="{{ BASE_URL }}">
+        <!--<base id="base_link" href="{{ request.get_host }}">-->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>{% block title %}{{config.brand}}{% endblock title %}</title>
+        <meta name="description" content="{{config.brand}}">
+        <meta name="viewport" content="width=device-width">
+        <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+
+        {% compress css %}
+        <link href="{% static 'css/opensans.css' %}" rel='stylesheet' type='text/css'>
+        <link href="{% static 'css/abel.css' %}" rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'css/vendor/jquery-ui-1.10.4.custom.min.css' %}">
+
+
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'css/bootstrap-theme.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.vertical-tabs.css' %}">
+
+        <link href="{% static 'css/vendor/roboto.css' %}" rel='stylesheet' type='text/css'>
+
+        <!--[if IE]>
+        <script src="{% static 'js/ie7_fixes.js' %}"></script>
+        <![endif]-->
+
+        <!--link rel="stylesheet" href="{% static 'css/bootstrap-responsive.min.css' %}"-->
+        <link rel="stylesheet" media="screen" href="{% static 'css/main.css' %}" />
+        <link rel="stylesheet" media="screen" href="{% static 'css/app.v1.css' %}">
+        <link rel="stylesheet" media="print" href="{% static 'css/print.css' %}">
+
+        
+        <style media="screen">
+        {% block styleextra %}
+        {% endblock %}
+        </style>
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-datetimepicker.min.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/jquery.nanoscroller.css' %}" />
+        {% endcompress %}
+
+
+        {% compress js %}
+        <script src="{% static 'js/vendor/jquery-1.9.1.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/inheritance.js' %}"></script>
+        <script src="{% static 'js/vendor/modernizr-2.6.2.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery-1.9.1.min.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.bifrost.min.js' %}"></script>
+
+
+        <script src="{% static 'js/vendor/bootstrap.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery-ui-1.10.4.custom.min.js' %}"></script>
+       
+
+        <script src="{% static 'js/vendor/promise-6.1.0.min.js' %}"></script>
+        <script src="{% static 'js/vendor/promise-done-6.1.0.min.js' %}"></script>
+        <script src="{% static 'js/emif.proxies.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery.cookie.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.canclear.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.highlight.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.history.js' %}"></script>
+
+        <script src="{% static 'js/vendor/bootbox.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/typeahead.jquery.min.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery-scrolltofixed.js' %}"></script>
+
+        <script src="{% static 'js/vendor/moment.min.js' %}"></script>
+        <script src="{% static 'js/vendor/bootstrap-datetimepicker.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.nanoscroller.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery.hotkeys.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.localize.js' %}"></script>
+        <script src="{% static 'js/montra.api.js' %}"></script>
+        <script type="application/javascript">
+            // We need to configure this to be able to send requests by json with the csrftoken
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+        </script>
+        <!--[if lt IE 9]>
+        <script src="{% static 'js/vendor/respond.min.js' %}"></script>
+        <link rel="stylesheet" href="bootstrap_ie_compatibility" />
+        <![endif]-->
+        
+        {% endcompress %}
+    </head>
+    <body>
+
+
+{% block styleinclude %}
+
+<!-- Generic page styles -->
+<link rel="stylesheet" href="{% static 'css/vendor/style.css' %}">
+<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+<link rel="stylesheet" href="{% static 'css/vendor/jquery.fileupload-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/c3.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery.dyndropdown.css' %}">
+<link rel="stylesheet" href="{% static 'css/pc.css' %}">
+
+
+{% endblock %}
+
+
+{% block headextra %}
+
+<script src="{% static 'js/emif.studies.js' %}"></script>
+
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="{% static 'js/vendor/jquery.ui.widget.js' %}"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="{% static 'js/vendor/load-image.min.js' %}"></script>
+<!-- The basic File Upload plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload.js' %}"></script>
+<!-- The File Upload processing plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-process.js' %}"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-image.js' %}"></script>
+<!-- The File Upload validation plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-validate.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.cookie.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.boolrelwidget.js' %}"></script>
+<!--[if gte IE 9]><!-->
+
+{% endblock %}
+
+
+{% block content %}
+<div>
+{% if study_manager or request.user.is_superuser %}
+    <button type="button" class="btn btn-primary" onclick="displayPopupNewStudy(false)" id="createNewStudyButton" style="float:right; margin:10px;" >Create Study</button> <br><br><br>
+    <!--h4 style="color:cornflowerblue;margin:20px;"> Community Studies </h4-->
+{% else %}
+    <button type="button" class="btn btn-primary" onclick="displayPopupNewStudy(false)" id="createNewStudyButton" style="float:right; margin:10px;" >Create Study</button> <br><br><br>
+    <!--h4 style="color:cornflowerblue;margin:20px;"> My Studies </h4-->
+
+{% endif %}
+
+</div>
+<div>
+<div class="panel panel-default">
+<table class= "table table-bordered table-hover fingerprint_table table-striped">
+    {% if study_manager or request.user.is_superuser %}
+    <tr>
+        <th width="3%"> ID </th>
+        <th width="17%"> Name </th>
+        <th width="26%"> Study Request </th>
+        <th width="15%"> Issued date </th>
+        <th width="18%"> Expected deadline </th>
+        <th width="12%"> Status </th>
+        <th width="3%">  </th>
+        <th width="3%">  </th>
+    </tr>
+    {% else %}
+
+    <tr>
+        <th width="3%"> ID </th>
+        <th width="17%"> Name </th>
+        <th width="26%"> Study Request </th>
+        <th width="15%"> Issued date </th>
+        <th width="18%"> Expected deadline </th>
+        <th width="12%"> Status </th>
+        <th width="3%">  </th>
+    </tr>
+
+    {%endif%}
+{% if my_studies%}
+{% for study in my_studies%}
+ <tr><td><h5> {{study.id}} </h5> </td>
+ <td><h5> {{study.name}} </h5> </td> 
+ <td><h5> 
+     <div style="width:350px;white-space:nowrap; overflow: hidden; text-overflow:ellipsis;" title="{{study.question}}" >
+     {{study.question}}
+     </div>
+    </h5> </td>
+ <td><h5> {{study.latest_date}} </h5> </td> 
+ <td><h5> {{study.deadline}} </h5> </td>
+ <td><h5> {{study.status}} </h5> </td>
+ <td>
+
+     <a href="studies/studies_details/{{comm.slug}}/{{study.id}}/">
+        <span class="glyphicon glyphicon-eye-open" title = "View request"></span>
+    </a> </td>
+
+    <div id="{{study.id}}" style="display:none" >
+    <form id="reject_feedback_form" cols="200" method="post" action="studies/reject_study/{{comm.slug}}/{{study.id}}/" enctype="multipart/form-data">
+        {% csrf_token %}
+
+            <div class="form-group">
+            <textarea class="form-control input-block-level" rows="4" name="chat_message" id = "chat_message" required></textarea>            
+            </div>
+                   
+         <input type="submit" class = "btn btn-success" value="Submit feedback" id="submit_feedback" > 
+         </form>
+         <button type="cancel" class = "btn btn-success" onclick="return quitBox('quit');">Cancel</button>
+    </div>
+
+
+      <!--form id="study_detail" action="studies/studies_details/{{comm.slug}}/{{study.id}}/" method="post">
+     {% csrf_token %}
+     <button type="submit" style="background: none;padding: 0px;border: none;"><i class='glyphicon glyphicon-eye-open' title="View/Edit study request"></i></button-->
+     <!--/form-->
+     
+
+{% if study_manager or request.user.is_superuser %}
+
+<td>
+     <a>
+          <span style="cursor: pointer;" class="glyphicon glyphicon-remove"  title ="Delete request" onclick='deleteConfirmationPopup("{{comm.slug}}", "{{study.id}}")'></span>
+    </a>
+</td>
+
+
+
+<!--td> 
+    <a href="studies/accept_study/{{comm.slug}}/{{study.id}}/">
+        <span class="glyphicon glyphicon-ok" title = "Accept request"></span>
+    </a>
+</td>
+
+
+<td>
+     <a>
+          <span class="glyphicon glyphicon-ban-circle"  title ="Reject request" onclick='showConfirmationPopup("{{comm.slug}}", "{{study.id}}")'></span>
+    </a>
+</td-->
+
+
+    
+ </tr>
+{%endif%}
+{% endfor %}
+
+{% else %}
+    {% if study_manager or request.user.is_superuser %}
+      <tr><td colspan=8 style="text-align: center";>  <h4> This Community does not have any study requests. </h4></td></tr> 
+    {% else %}
+        <tr><td colspan=7 style="text-align: center";><h4> You do not have any study requests. </h4></td></tr> 
+    {%endif%}
+
+{%endif%}
+
+ </table>
+</div>
+</div>
+
+<div id="newStudyPopup" style="display:none;width:100%" >
+    {% if databases_names %}
+    <div style="float:left; width:45%;">
+    {% else %}
+    <div style="float:left; width:100%;">
+    {% endif %}
+    <!--form id="studyForm" cols="200" method="post" action="." enctype="multipart/form-data"-->
+    <span id="submitForm">
+        {% csrf_token %}
+
+            <div class="form-group">
+            Requester's Name
+            <input disabled class="form-control" size="255" type="text" cols="100" name="user_name" id = "user_name" value="{{request.user.first_name}} {{request.user.last_name}}">
+            </div>
+            <div class="form-group">
+            Email
+            <input disabled class="form-control"  size="255" type="text" cols="100" name="user_email" id = "user_email" value="{{request.user.email}}">       
+            </div>
+            <div class="form-group">
+            Institution
+            <input disabled class="form-control"  size="255" type="text" cols="100" name="user_institution" id = "user_institution" value = "{{institution}}">          
+            </div> 
+            <div class="form-group">
+            Position
+            <input class="form-control"  size="255" type="text" cols="100" name="user_position" id = "user_position">          
+            </div> 
+            <div class="form-group">
+            Expected Deadline
+            <!--input class="form-control"  size="255" type="date" cols="100" name="deadline" id = "deadline" required--> 
+            <input class="datepicker form-control" name="deadline" id = "deadline" cols="100" required>       
+            </div>  
+            <div class="form-group">
+            Study Title
+            <input class="form-control" size="255" type="text" cols="100" name="title" id = "title" required>
+            </div>
+            Study Request
+            <div class="form-group">
+            <textarea class="form-control input-block-level" rows="4" name="question" id = "question" required></textarea>            
+            </div>
+            </div>
+
+        {% if databases_names %}
+        <div style="float:right; width:45%;">
+         Databases <br>
+         <input type="checkbox" value="all" name="chkname" id = "chkname" onchange="checkAll(this)"> All <br><br>
+         <div style="overflow:auto;height:420px;" >
+         {% for database in databases_names %}       
+            <ul style="list-style:none;padding-left:0;">     
+            <input type="checkbox" value="{{database}}" name="chkname" id="chkname"> {{database}} 
+            </ul>
+         {% endfor %}
+         </div>
+         <div style = "position:absolute; bottom:0; right:0;">
+         <button type="cancel" class = "btn btn-success" onclick="closePopup();">Cancel</button>
+         <input type="submit" class = "btn btn-success" value="Submit study" id="done" onclick='check_checked("{{comm.slug}}","{{request.user.id}}")' > 
+         </span>       
+         </div>
+         </div>
+         
+{% else %}
+                   
+         <input type="submit" class = "btn btn-success" value="Submit study" id="done" onclick='check_checked("{{comm.slug}}","{{request.user.id}}")'> 
+         </span>
+         <button type="cancel" class = "btn btn-success" onclick="closePopup();">Cancel</button>
+{%endif%}
+</div>
+
+{% endblock %}
+
+</body>
+</html>

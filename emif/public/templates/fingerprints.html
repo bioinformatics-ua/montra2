@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-tagsinput.css' %}" />
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/ZeroClipboard.js' %}"></script>
+    <script src="{% static 'js/vendor/bootstrap-tagsinput.js' %}"></script>
+{% endblock %}
+{% block breadcrumbs %}
+        {{ block.super }}
+        {% breadcrumb "My Private Links" "" %}
+
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+
+    {% if added %}
+        <div style="margin-top: 50px;" class="alert alert-success">
+        <a class="close" data-dismiss="alert" href="#">&times;</a>
+          Private link created successfully.
+        </div>
+    {% endif %}
+    {% if deleted %}
+        <div style="margin-top: 50px;" class="alert alert-danger">
+        <a class="close" data-dismiss="alert" href="#">&times;</a>
+          Private link deleted successfully.
+        </div>
+    {% endif %}
+    <div class="panel panel-default">
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Database Acronym</th>
+                    <th style="width: 200px;">Expiration Date</th>
+                    <th style="width: 90px;">Views Left</th>
+                    <th style="width: 250px;">Description</th>
+                    <th style="width: 210px;">Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if links|length > 0 %}
+                {% for link in links %}
+                    <tr>
+                        <td>
+                            {% if comm %}
+                            <a href="c/{{comm.slug}}/fingerprint/{{link.share.fingerprint}}/1/">{{link.name}}</a>
+                            {% else %}
+                            <a href="fingerprint/{{link.share.fingerprint}}/1/">{{link.name}}</a>
+                            {% endif %}
+                        </td>
+                        <td><center>{{link.share.expiration_date|date:"Y-m-d H:i:s"}}</center></td>
+                        <td><center>{{link.share.remaining_views}}</center></td>
+                        <td>{%if link.share.description %}{{link.share.description}}{% endif %}</td>
+
+                        <td>
+                        <div class="btn-group">
+                            <a style="border: 1px solid #dddddd; background-color: white; box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2) inset, 0px 1px 2px rgba(0, 0, 0, 0.05);" class="btn btn-link btn-sm pub_link" href="public/{% if comm %}c/{{comm.slug}}/{% endif %}fingerprint/{{link.share.hash}}">Private Link</a>
+                            <button id="cbtn{{link.share.id}}" class="copy-button btn btn-default btn-sm" data-clipboard-text="public/{% if comm %}c/{{comm.slug}}/{% endif %}fingerprint/{{link.share.hash}}" title="Click to copy to clipboard."><i class="fas fa-fw fa-clipboard"></i></button>
+                            <button title="Send by email" onclick="shareByEmail({{link.share.id}},'{{comm.slug}}')" class="tooltippable btn btn-default btn-sm"><i class="fas fa-fw fa-share"></i></button>
+                        </div>
+
+                        <a class="pull-right" href="public/fingerprint/delete/{{link.share.id}}/{{comm.slug}}">
+                            <img src="static/img/glyphicons_192_circle_remove.png" alt="Delete" />
+
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr><td colspan="5"><center>No database is currently shared, you can share a database by using the "Create Private Link" dropdown on the menu toolbar above.</center></td></tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+{% endblock content %}
+
+{% block scriptextraincludes %}
+    <script type="text/javascript" src="{% static 'js/emif.public.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+
+{% block title %}{% trans "Please Confirm Community Activation" %}{% endblock %}
+
+{% block content %}
+<div class="row">
+    {% if cu %}
+      <div class="row" style="text-align: center; margin-bottom: 30px">
+        <h2><b>{{cu.community.name}} :</b> Confirm Activation</h2>
+      </div>
+      <div class="row">
+
+      <div class="col-md-offset-2 col-md-4">
+
+        <h3><b>User Info</b></h3>
+
+        {% for field, answer in user_info %}
+          <b>{{field}}</b>
+          <br>{{answer}}<br>
+          <br>
+        {% endfor %}
+
+      </div>
+
+      <div class=" col-md-4">
+        <h3>Accept user <i>{{cu.user}}</i> ?</h3>
+
+        <form name="user_activate" id="f1" action="{{ BASE_URL }}c/{{ cu.community.slug }}">
+          <input type="radio" name="option" value="yes" id="yes-choice">
+          <label for="yes-choice">Accept</label>
+          <br>
+          <input type="radio" name="option" value="no" id="no-choice">
+          <label for="no-choice">
+            Reject <span style="font-weight: normal">(The user can try to join the community in the future)</span>
+          </label>
+          <br>
+          <input type="radio" name="option" value="block" id="block-choice">
+          <label for="block-choice">
+            Block <span style="font-weight: normal">(The user can no longer join the community. Normally used to block spam)</span>
+          </label>
+          <br><br>
+          <p><label for="msg2user">Message to user (Optional)</label></p>
+
+          <textarea disabled name="msg2user" id="msg2user" rows="7" class="form-control"></textarea>
+
+          {% if last_messages %}
+            <div class="row" style="margin: 10px 20px 0 20px">
+            <div class="row">
+              <label class="col-md-5" for="message_history">Previous sent messages</label>
+              <p class="col-md-7">Selecting one option will replace the content in the textarea above.</p>
+
+            </div>
+                <select id="message_history" class="form-control" disabled>
+                  <option value="">---</option>
+                  {% for last_message in last_messages %}
+                    <option value="{{ last_message }}">{{ last_message|slice:":75" }}{% if last_message|length > 75 %}...{% endif %}</option>
+                  {% endfor %}
+                </select>
+            </div>
+          {% endif %}
+
+          <hr>
+          <input type="submit" value="Submit">
+        </form>
+
+        <script>
+        const message = document.getElementById("msg2user");
+        const msg_hist = document.getElementById("message_history");
+        const update_disabled_status = (disabled) => {
+            message.disabled = disabled;
+            if (msg_hist) {
+                msg_hist.disabled = disabled;
+            }
+        }
+
+        const form = document.user_activate;
+        const list = document.user_activate.option;
+        for(let i = 0; i < list.length; i++) {
+            list[i].onclick = function() {
+
+                if (this.value==='yes') {
+                    form.action="{{ BASE_URL }}community/activate_confirmed/{{ hash }}";
+                    update_disabled_status(true);
+                }
+                else {
+                    if (this.value==='no') {
+                        form.action="{{ BASE_URL }}community/dontactivate/{{ hash }}";
+                    }
+                    else if (this.value==='block') {
+                        form.action="{{ BASE_URL }}community/block/{{ hash }}";
+                    }
+                    update_disabled_status(false);
+                }
+            }
+        }
+
+        if (msg_hist) {
+            msg_hist.onchange = () => {
+                document.getElementById("msg2user").value =  msg_hist.selectedOptions[0].value
+            };
+        }
+
+        </script>
+
+      </div>
+      </div>
+
+    {% else %}
+      <div class="col-md-6 center">
+        <legend>Activation Key does not exist!</legend>
+        <p>Either the activation key does not exist, or it as already been used.</p>
+      </div>
+    {% endif %}
+
+
+</div>
+{% endblock %}
+

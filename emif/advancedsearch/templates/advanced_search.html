@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+
+{% load markup questionnaire i18n %}
+{% load django_bootstrap_breadcrumbs %}
+
+
+{% block styleextra %}
+
+button {
+    border: 1px #AAA solid;
+    padding: 4px 10px;
+}
+.hide {
+    display: none;
+}
+
+.accordion-inner {
+    padding: 9px 15px;
+    border-top: 0px solid #e5e5e5;
+}
+.accordion-heading .accordion-toggle {
+display: block;
+padding: 5px 15px;
+}
+
+.accordion-heading a {
+color: #333;
+text-decoration: none;
+}
+{% endblock %}
+
+{% block styleinclude %}
+  <link rel="stylesheet" href="{% static 'css/vendor/chosen.css' %}"></script>
+  <link rel="stylesheet" href="{% static 'progressbar.css' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/vendor/jquery.boolrelwidget.css' %}"></script>
+  <link rel="stylesheet" href="{% static 'css/database_info.css' %}" />
+  {% for x in cssinclude %}
+  <link rel="stylesheet" href="{{ x }}" type="text/css" />
+  {% endfor %}
+{% endblock %}
+{% block breadcrumbs %}
+  {{ block.super }}
+  {% breadcrumb "Advanced Search" "advancedSearch/"|add:questionset.questionnaire.pk|add:"/1/" %}
+{% endblock %}
+
+{% block headextra %}
+
+<script src="{% static 'js/vendor/jquery.errornavigator.js' %}"></script>
+<script src="{% static 'js/jquery.simplePagination.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.bootstrap-matrix-input.js' %}"></script>
+
+<script src="{% static 'questionset.js' %}"></script>
+<script src="{% static 'js/vendor/taskqueuer.js' %}"></script>
+<script src="{% static 'js/vendor/bootstrap-tooltip.js' %}"></script>
+<script src="{% static 'js/vendor/bootstrap-popover.js' %}"></script>
+<script src="{% static 'js/fingerprint_validation.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.inputmask.bundle.js' %}" type="text/javascript"></script>
+
+<script src="{% static 'js/fingerprint.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.boolrelwidget.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/vendor/chosen.jquery.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/emif.advanced_search.js' %}"></script>
+
+{% for x in jsinclude %}
+<script type="text/javascript" src="{{ x }}"></script>
+{% endfor %}
+
+{% if async_progress %}
+<script type="text/javascript">var progress_url = "{{ async_url }}";</script>
+<script type="text/javascript" src="{% static 'progress.js' %}"></script>
+{% endif %}
+{% endblock %}
+
+{% block language %}
+    {% for lang in LANGUAGES %}{% if not forloop.first %} |{% endif %}
+<a href="{{request.path}}?lang={{ lang.0 }}">{{ lang.1 }}</a>
+{% endfor %}
+{% endblock %}
+
+{% block content %}
+<div style="display: none;" id="errornavigator"></div>
+<div id="det_view" class="clearfix row">
+    <div class="col-md-9">
+
+
+        <form name="asform" id="asform"
+        {% if comm%}
+          action="c/{{comm.slug}}/resultsdiff/1"
+        {% else %}
+          action="resultsdiff/1"
+        {% endif %}
+        method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="qid" value="{{q_id}}" />
+                    <div id="set_container" style="overflow-y: auto">
+                    </div>
+
+        </form>
+        </div>
+<div class="col-md-3">
+  <div class="well" style="max-width: 340px; padding: 8px 0;">
+
+    <ul class="nav nav-list nav-pills nav-stacked ">
+      {% for qs, ans, ttct, percentage, allow_qset_reading in questionsets %}
+      {% if qs.show_advanced and qs.sortid != 0 and qs.sortid != 99 and qs.text != 'h1. Key Publications' %}
+      <li{% if questionset.text == qs.text %} class="active" {% endif %} id="li_qs_{{qs.sortid}}">
+        <!--<a href="q2/{{runinfo.random}}/{{ qs.sortid }}">-->
+
+            <a href="{%if comm%}c/{{comm.slug}}/{% endif %}advancedSearch/{{qs.questionnaire.pk}}/{{ qs.sortid }}"
+            {% if aqid %}
+                onclick="questionsets_handle('qs_{{ qs.sortid }}', '{{q_id}}', '{{aqid}}', QsType.SEARCH); return false;"
+            {% else %}
+                onclick="questionsets_handle('qs_{{ qs.sortid }}', '{{q_id}}', null, QsType.SEARCH); return false;"
+            {% endif %}
+            {% if not allow_qset_reading and not request.user.is_superuser %}class="not-active"{% endif %}
+            >
+            <table class="fullwidth">
+            <tr>
+              <td style="width: 58%; font-size: 93%;">{{ qs.sortid }}. {{ qs.text|removeh1 }}</td>
+              <td width="10%">
+                <!--<span style="float:right; vertical-align: middle " class="badge badge-warning">2</span>
+              -->
+            </td>
+          </tr>
+        </table>
+      </a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+
+</div>
+</div>
+
+</div>
+  <button class="btn btn-info" id="bool_jumper"><i class="fas fa-fw fa-arrow-down"></i> Advanced Query</button>
+       <div class="panel panel-default"><div class="panel-body"><div id="bool_container"></div></div></div>
+{% endblock %}
+
+{% block scriptextra %}
+var parts_missing = 0;
+{% if comm %}
+var community = "{{comm.slug}}";
+{% else %}
+var community = '';
+{% endif %}
+
+function add_triggers() {
+
+            console.log("adding triggers");
+            {% for trigger in triggers %}
+                addtrigger("{{trigger}}");
+            {% endfor %}
+
+            {% for k,v in qvalues.items %}
+                qvalues['{{ k|escapejs }}'] = '{{ v|escapejs }}';
+            {% endfor %}
+
+            for(key in qvalues) {
+                valchanged(key, qvalues[key], this);
+            }
+    this.complete();
+}
+
+$('#li_advanced_search').addClass("active");
+var bool_container;
+$( document ).ready(function(e) {
+    $('#bool_jumper').click(function(){
+        $('html, body').animate({
+            scrollTop: $("#bool_container").offset().top
+        }, 2000);
+    });
+
+    var help_text = '<div class="row"><div class="col-md-12" style="overflow-y:auto; height: 30em;"><h3>What it does?</h3><p>This toolbar allows you to define a boolean query to the databases that you are interested in. It uses the relationship between the concepts you are using in your search, in a visual and easy way through a drag-and-drop of these concepts.</p>'+
+      '<h3>What is a "Boolean Query"?</h3>'+
+      '<p>A boolean query is a query that has a relation between two or more concepts. </p><p>For example, in a book search, books are described by a myriad of concepts such as year of release, author and genre.</p><p>Thus, if you want to search for all the results from the genre \'medical\' or \'informatics\' and have the author \'John\', the best way to do this is by using a boolean query. The boolean query to answer these kinds of questions are:</p><blockquote><p class="lead">(genre = \'medical\' OR genre = \'informatics\') AND author = \'John\'</p></blockquote><p>It was clearly defined what is required in the results only by using the relations OR and AND, in conjunction with the concepts and using parentesis to separate the order of the relations (nested relation). This is the basic idea of the boolean queries.</p>'+
+      '<h3>Why the toolbar to define the "Boolean Query" ?</h3>'+
+      '<p>Although the definition is clear, due to the large amounts of options that exists in the databases, manually writing this queries was not an option. The objective of the toolbar is to facilitate the process, by automatically detecting the concepts you want to search, and helping you build the query, by dragging the concepts in the Boolean Query.</p>'+
+      '<h3>How can I use it?</h3>'+
+      '<p>To use the toolbar, just fill in the fields you intend to search.</p><p> After complete, go to the toolbar, and it is possible to see that there is already a default query built with the concepts chosen, with a default relationship between them. Each concept is represented by a box like the one below:</p><image src="{% static 'img/help1.png' %}" /><p>It is possible to see three things: a label with the name relation (that if we hover will give us the full text if it is too big and the answer currently written in the search form), a area with a drop icon and a delete button.</p><p>Also, it is possible to see a big query:</p><image class="img-responsive" src="{% static 'img/help2.png' %}" /><p>You can drag blocks by its label to the drop area of other blocks, and this will create a relation between them. It is possible to put the blocks inside each other. This can be seen in the image below:</p><image class="img-responsive" src="{% static 'img/help3.png' %}" /><br /><image class="img-responsive" src="{% static 'img/help4.png' %}" /><p>The concept is now on a nested relation. And there is an option to collapse/expand this relation.</p><p>After define the boolean query, you will be able to search and obtain the results.</p><p>If the results are not the expected, you can refine the query at any time by click on the "refine search" button from the toolbar on the results, or simply go back on the browser.</p><h3>Video Demonstration of use</h3><iframe width="100%" height="315" src="//www.youtube.com/embed/b4IAIbjXX6c" frameborder="0" allowfullscreen></iframe></div></div>';
+
+    {% if not serialized_query %}
+            bool_container = $('#bool_container').boolrelwidget({inplace: true, form_anchor: '#asform', help: help_text});
+    {% else %}
+            bool_container = $('#bool_container').boolrelwidget({inplace: true, form_anchor: '#asform', view_serialized_string:'{{serialized_query}}', help: help_text});
+    {% endif %}
+    /* This must be after, boolrelwidget declaration */
+    if (!(typeof bool_container === 'undefined')) {
+        $('#asform').submit(
+                    function(e) {
+                     if(bool_container.isEmpty()){
+                        e.preventDefault();
+                        bootbox.alert("It's not possible to search without specifying parameters first.");
+                        return false;
+                      }
+
+                          if (!(typeof errornavigator === 'undefined')) {
+                            errornavigator.hideErrorPage();
+                            errornavigator.reset();
+
+                            var previous_id = $('.questionset:not(.hide)').first().attr('id').split('_')[1];
+
+                            var current_form = $('#asform');
+
+                            console.log(current_form);
+
+                            var list_invalid = advValidator.validateFormContext(e, current_form);
+                            console.log(list_invalid);
+
+
+                            console.log(list_invalid);
+
+                            if(list_invalid.length == 0){
+                              // Update hidden inputs (in case they are not updated because we are using the other buttons not in control by the plugin)
+                              bool_container.readyToSubmit();
+
+
+                            } else {
+                              e.preventDefault();
+
+
+        console.log("Jump to errors and show error navigator.");
+
+          for(var i = 0;i<list_invalid.length;i++){
+            errornavigator.addError('qc_'+list_invalid[i]);
+          }
+          errornavigator.showErrorPager();
+
+          // jump to first problem
+          errornavigator.nextError();
+
+
+
+                              return false;
+                            }
+                            }
+                    }
+        );
+    }
+
+    {% if aqid %}
+      initQsEnv("{{q_id}}", "{{questionset.sortid}}", "{{aqid}}", QsType.SEARCH);
+    {% else %}
+      initQsEnv("{{q_id}}", "{{questionset.sortid}}", null, QsType.SEARCH);
+    {% endif %}
+});
+function initialCounterSetup(){
+  // currently we are not showing any counters on search, may change in the future
+}
+var threads = {};
+function load_questionnary(){
+
+        console.log("Creating questionnary set containers (so they are in order)");
+
+        var containers = [];
+
+        // We build the qs containers in memory and just do dom op, on the end, for speed
+        // on ie joins are significantly faster than concatenation
+        {% for qs in questionset.questionnaire.questionsets %}
+            containers.push('<div id="qs_{{ qs.sortid }}" class="{% if qs.sortid == questionset.sortid %} {% else %} hide {% endif %} questionset"><h4 class="pull-center">Loading...</h4></div>\n');
+        {% endfor %}
+
+        $('#set_container').append(containers.join(''));
+
+        console.log( "Loading questionnary by parts, we have {{questionset.questionnaire.questionsets.count}} sets");
+
+        var threadpool = new TaskQueuer(20);
+        parts_missing = {{ questionset.questionnaire.questionsets.count }};
+
+
+        // i dont everything on a single run, because i just add the containers all at once, not by parts
+        // only the constainers content are loaded by parts
+
+        var priority=1;
+        {% for qs in questionset.questionnaire.questionsets %}
+            {% if not aqid %}
+                var thread = new Runnable(loadqspart, priority++, {{qs.questionnaire.pk}},{{ qs.sortid }}, null, QsType.SEARCH);
+            {% else %}
+                var thread = new Runnable(loadqspart, priority++, {{qs.questionnaire.pk}}, {{ qs.sortid }}, {{aqid}}, QsType.SEARCH);
+            {% endif %}
+            threadpool.run(thread);
+            threads['qs_{{ qs.sortid }}'] = thread;
+        {% endfor %}
+
+        //  we add the triggers thread
+        //threadpool.run(new Runnable(add_triggers, priority+2));
+        threadpool.destroy();
+}
+
+function generateStub(){
+          var containers = [];
+
+        // We build the qs containers in memory and just do dom op, on the end, for speed
+        // on ie joins are significantly faster than concatenation
+        {% for qs in questionset.questionnaire.questionsets %}
+            containers.push('<div id="qs_{{ qs.sortid }}" class="{% if qs.sortid == questionset.sortid %} {% else %} hide {% endif %} questionset"><h4 class="loadingindicator pull-center">Loading...</h4></div>\n');
+        {% endfor %}
+
+        var sc = $('#set_container').append('<div class="nano">\
+          <div class="nano-content">'+containers.join('')+'</div></div>');
+
+        sc.find('.nano').height(($(window).height() - sc.offset().top)-10);
+}
+
+$(function(){
+    setTimeout(function(){
+              $(".nano").nanoScroller({
+                iOSNativeScrolling: true,
+                preventPageScrolling: true
+              });
+  }, 2000);
+});
+
+function clearTable(hash){
+  console.log(hash);
+  $(hash).val('');
+  $(hash).prop('checked', false);
+};
+
+{% endblock %}

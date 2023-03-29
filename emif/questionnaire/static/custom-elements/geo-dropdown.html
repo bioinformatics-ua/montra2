@@ -1,0 +1,133 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<dom-module id="geo-dropdown">
+
+	<template>	
+		<!-- gid for the required entry point(s) -->
+		<fieldset style="display:none;">
+			<div id="earth" gid="6295630" class="id_6295630"></div>
+			<div id="mundus" gid="0" class="id_0"></div>
+		</fieldset>
+
+		<div>
+			<div style="float:left;">
+				<select id="{{continent}}" data-live-search="true" name="continent"></select>
+				<select id="{{country}}" data-live-search="true" name="country"></select>
+				<select id="{{adm1}}" data-live-search="true" name="adm1"></select>
+				<select id="{{adm2}}" data-live-search="true" name="adm2"></select>
+				<select id="{{adm3}}" data-live-search="true" name="adm3"></select>
+				<select id="{{adm4}}" data-live-search="true" name="adm4"></select>
+				<select id="{{adm5}}" data-live-search="true" name="adm5"></select>
+			</div>
+			<div title="Click to clean answer">
+				<button id="{{clean}}" class="btn btn-default btn-small" type="button" style="float:right;">Clear Selection</button>
+
+			</div>
+			<div style="clear:both;"></div>
+		</div>
+	</template>
+
+  <script src="https://cdn.jsdelivr.net/gh/bioinformatics-ua/GeoDropdown.js@2.1.1/dist/geo-dropdown.min.js"></script>
+
+	<script>
+		Polymer({
+			is: "geo-dropdown",
+
+			myStaff: function() {
+			},
+
+			//Lifecycle callbacks
+			ready: function() {
+				var geodropdown = this;
+				var continentID = this.continent;
+				var countryID = this.country;
+				var adm1ID = this.adm1;
+				var adm2ID = this.adm2;
+				var adm3ID = this.adm3;
+				var adm4ID = this.adm4;
+				var adm5ID = this.adm5;
+				var reachID = this.reach;
+
+				var answerID = this.answer; 
+				if(answerID=="" || answerID==undefined) answerID="[{}]"; 
+				if(answerID[0]!='[') answerID="["+answerID+"]";
+				
+				var cleanID = this.clean;
+				var urlID = this.url;
+				var webserviceID = this.webservice;
+
+				// Local GeoDropdown object
+				var geoDrop = new geoDropdown(continentID,countryID,adm1ID,adm2ID,adm3ID,adm4ID,adm5ID,reachID,answerID,cleanID,urlID,webserviceID);
+				
+				// start 
+				geoDrop.geoReady(this);
+				var self = this;
+				$('button[id="'+ this.clean +'"]').bind( "click", function() {
+				    geoDrop = new geoDropdown(continentID,countryID,adm1ID,adm2ID,adm3ID,adm4ID,adm5ID,reachID,"[\{\}]",cleanID,urlID,webserviceID);
+				    geoDrop.geoReady(self);
+				    self.fire('changeVal', { continent:'',country:'',adm1:'',adm2:'',adm3:'',adm4:'',adm5:'' });
+			    });
+			},
+
+			properties:{
+				continent:{
+					type: String,
+					value: "default_continent"
+				},
+				country:{
+					type: String,
+					value: "default_country"
+				},
+				adm1:{
+					type: String,
+					value: "default_adm1",	
+
+				},
+				adm2:{
+					type: String,
+					value: "default_adm2"
+				},
+				adm3:{
+					type: String,
+					value: "default_adm3"
+				},
+				adm4:{
+					type: String,
+					value: "default_adm4"
+				},
+				adm5:{
+					type: String,
+					value: "default_adm5"
+				},	
+				reach:{
+					type: String,
+					value: "adm5"
+				},
+				answer:{
+					type:String
+				},
+				answerJson:{
+					type:String,
+					notify: true ,
+					observer: '_adm1Changed'
+				},
+
+				clean:{
+					type:String,
+					value: "default_clean"
+				}, 
+
+				url:{
+					type:String,
+					value: "http://127.0.0.1:8000/geodatabase/"
+				},
+
+				webservice:{
+					type:String,
+					value:"geowebservice"
+				}
+			}
+		});
+	</script>
+
+</dom-module>

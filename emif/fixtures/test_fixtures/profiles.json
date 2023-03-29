@@ -1,0 +1,26 @@
+[
+    {
+        "model": "accounts.EmifProfile",
+        "fields": {
+            "user": 2,
+            "country": "PT",
+            "organization": "UA"
+        }
+    },
+    {
+        "model": "accounts.EmifProfile",
+        "fields": {
+            "user": 3,
+            "country": "PT",
+            "organization": "UA"
+        }
+    },
+    {
+        "model": "accounts.EmifProfile",
+        "fields": {
+            "user": 4,
+            "country": "PT",
+            "organization": "UA"
+        }
+    }
+]

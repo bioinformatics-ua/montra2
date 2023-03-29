@@ -1,0 +1,463 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor/wysihtml5.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-tagsinput.css' %}" />
+
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/bootstrap3-typeahead.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'js/emif.manage_community_users.js' %}"></script>
+    <script src="{% static 'js/vendor/wysihtml5x-toolbar.min.js' %}"></script>
+
+    <script src="{% static 'js/vendor/advanced_and_extended.js' %}"></script>
+    <script src="{% static 'js/vendor/multiselect.min.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.orderablemultiselect.js' %}"></script>
+    <script src="{% static 'js/vendor/bootstrap-tagsinput.js' %}"></script>
+
+{% endblock %}
+
+
+{% block breadcrumbs %}
+        {% breadcrumb "All" "c/"|add:comm.slug %}
+        {% breadcrumb "Manage Community" "" %}
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+
+
+{% if comm.public %}
+
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  <strong>Warning message</strong> In Open Communities users, approvals and restrictions are not allowed.
+</div>
+
+
+
+{% endif%}
+
+<div>
+  <div class="col-lg-12">
+    <h3>Manage {{comm.name}} - Users</h3>
+  </div>
+
+  <ul class="nav nav-tabs">
+    <li
+      {% if comm.membership != comm.MEMBERSHIP_OPEN and comm.membership != comm.MEMBERSHIP_PUBLIC %}
+      class="active"><a data-toggle="tab" href="#waiting-approaval-tab">
+      {% else %}
+      class="disabled"><a>
+      {% endif %}
+      <i class="fas fa-users-cog"></i> Users Waiting Approval</a>
+    </li>
+
+    <li {% spaceless %}
+      {% if comm.membership == comm.MEMBERSHIP_OPEN or comm.membership == comm.MEMBERSHIP_PUBLIC %}
+        class="active"
+      {% endif %}
+    {% endspaceless %}><a data-toggle="tab" href="#community-users-tab"><i class="fas fa-users"></i> Community Users</a></li>
+    <li><a data-toggle="tab" href="#user-admission-rules-tab"><i class="fas fa-user-lock"></i> User Admission Rules</a></li>
+
+    <li
+      {% if comm.membership != comm.MEMBERSHIP_OPEN and comm.membership != comm.MEMBERSHIP_PUBLIC %}
+      ><a data-toggle="tab" href="#send-invite-tab">
+      {% else %}
+      class="disabled"><a>
+      {% endif %}
+      <i class="far fa-envelope"></i> Send Invite</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+  {% if comm.membership != comm.MEMBERSHIP_OPEN and comm.membership != comm.MEMBERSHIP_PUBLIC %}
+    <div id="waiting-approaval-tab" class="tab-pane fade in active">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <table id="new-users" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Organization</th>
+              <th>Country</th>
+              <th>Waiting Approval Since</th>
+              <th>&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody class="comm_users_tbody">
+            {% for comm_user in new_users %}
+              <tr>
+                <td>{{ comm_user.user.email }}</td>
+                <td>{{ comm_user.user.get_full_name }}</td>
+                <td>{{ comm_user.user.emif_profile.organization }}</td>
+                <td>{{ comm_user.user.emif_profile.country.name }}</td>
+                <td data-order="{{ comm_user.updated_at|date:"U" }}">{{ comm_user.updated_at }}</td>
+                <td>
+                  <div style="width: 200px" class="input-group input-group-sm">
+                    <form style="margin-right: 5px" method="POST">
+                      {% csrf_token %}
+                      <input name="comm_user_approval" type="hidden" value="{{comm_user.id}}" />
+                      <select name="status" onchange="this.form.submit()"
+                              {% if comm_user.user.id == user.id %}disabled{% endif %} class="input-sm form-control">
+                        <option {% if comm_user.status == comm_user.DISABLED %}selected{% endif %} value="{{ comm_user.DISABLED }}">Disabled</option>
+                        <option {% if comm_user.status == comm_user.ENABLED %}selected{% endif %} value="{{ comm_user.ENABLED }}">Enabled</option>
+                        <option {% if comm_user.status == comm_user.RESTRICTED %}selected{% endif %} value="{{ comm_user.RESTRICTED }}">Restricted</option>
+                        <option {% if comm_user.status == comm_user.BLOCKED %}selected{% endif %} value="{{ comm_user.BLOCKED }}">Blocked</option>
+                        <option value="4">Rejected</option>
+                      </select>
+                    </form>
+                    <div class="input-group-btn">
+                      <form style="margin-right: 5px" method="POST">
+                        {% if not comm_user.user in owners %}
+                          {% csrf_token %}
+                          <input name="make_comm_user" type="hidden" value="{{comm_user.id}}" />
+                          <button type="submit" class="btn btn-sm btn-default">Make Manager</button>
+                        {% endif %}
+                      </form>
+                    </div>
+                    {% if comm.membership != comm.MEMBERSHIP_OPEN and comm_has_join_form %}
+                    <div class="input-group-btn">
+                      <button type="submit" class="btn btn-sm btn-default btn_join_form"
+                              data-userid="{{comm_user.id}}"
+                              data-username="{%if comm_user.user.first_name%}{{comm_user.user.get_full_name}}{% else %}{{comm_user.user.email}}{% endif %}">
+                        Show Join Form Answers
+                      </button>
+                    </div>
+                    {% endif %}
+                  </div>
+
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+    <div id="community-users-tab" class="tab-pane fade {% spaceless %}
+      {% if comm.membership == comm.MEMBERSHIP_OPEN or comm.membership == comm.MEMBERSHIP_PUBLIC %}
+        in active
+      {% endif %}
+      {% endspaceless %}">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <h4>Managers</h4>
+          <table class="table table-bordered table-striped">
+            <tr>
+              <th>User</th>
+              <th>Email</th>
+              <th></th>
+              <th>&nbsp;</th>
+            </tr>
+            {% for owner in owners %}
+              <tr>
+                <td>{{ owner.get_full_name }}</td>
+                <td>{{ owner.email }}</td>
+                <td style="width: 50px;">
+                  <center>
+                    <form method="POST">
+                      {% csrf_token %}
+                      {% if owner in comm.invisible_owners.all %}
+                        <input name="invisible_user" type="hidden" value="{{owner.id}}_0" />
+                        <button class="btn btn-sm btn-default"><i class="fas fa-fw fa-eye"></i> Make visible&nbsp;&nbsp;</button>
+                      {% else %}
+                        <input name="invisible_user" type="hidden" value="{{owner.id}}_1" />
+                        <button class="btn btn-sm btn-default"><i class="fas fa-fw fa-user-secret"></i> Make invisible</button>
+                      {% endif %}
+                    </form>
+                  </center>
+                </td>
+                <td style="width: 50px;">
+                  {% if owner.id != user.id %}
+                    <form method="POST">
+                      {% csrf_token %}
+                      <input name="rm_user" type="hidden" value="{{owner.id}}" />
+                      <button class="btn btn-sm btn-danger"><i class="fas fa-fw fa-times"></i></button>
+                    </form>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+
+          <br>
+          <hr/>
+          <br>
+
+          <h4>Users</h4>
+          <table id="community-users" class="table table-bordered table-striped">
+            <thead>
+            <tr>
+              <th>Email</th>
+              <th>Name</th>
+              <th>Organization</th>
+              <th>Country</th>
+              {% if comm.membership != comm.MEMBERSHIP_OPEN %}<th>In the Community Since</th>{% endif %}
+              <th>Last Login</th>
+              <th>&nbsp;</th>
+            </tr>
+            </thead>
+            <tbody class="comm_users_tbody">
+            {% for comm_user, user in comm_users %}
+              <tr>
+                <td>{{ user.email }}</td>
+                <td>{{ user.get_full_name }}</td>
+                <td>{{ user.emif_profile.organization }}</td>
+                <td>{{ user.emif_profile.country.name }}</td>
+                {% if comm.membership != comm.MEMBERSHIP_OPEN %}<td data-order="{{ comm_user.updated_at|date:"U" }}">{{ comm_user.updated_at }}</td>{% endif %}
+                <td data-order="{{ comm_user.last_login|date:"U" }}">{{ user.last_login.date }}</td>
+                <td>
+                  <div style="width: 200px" class="input-group input-group-sm">
+                    {% if comm.membership == comm.MEMBERSHIP_OPEN %}
+                      <div style="margin-right: 5px">
+                        <select name="status" class="input-sm form-control" disabled>
+                          <option selected value="1">Enabled</option>
+                        </select>
+                      </div>
+                    {% else %}
+                      <form style="margin-right: 5px" method="POST">
+                        {% csrf_token %}
+                        <input name="comm_user_status" type="hidden" value="{{comm_user.id}}" />
+                        <select name="status" class="input-sm form-control" onchange="community_user_status_changed(this)" onfocus="this.old_value = this.value;">
+                          <option {% if comm_user.status == comm_user.ENABLED %}selected{% endif %} value="{{ comm_user.ENABLED }}">Enabled</option>
+                          <option {% if comm_user.status == comm_user.RESTRICTED %}selected{% endif %} value="{{ comm_user.RESTRICTED }}">Restricted</option>
+                          <option {% if comm_user.status == comm_user.BLOCKED %}selected{% endif %} value="{{ comm_user.BLOCKED }}">Blocked</option>
+                          {% if comm.membership != comm.OPEN %}
+                          <option value="{{ comm_user.REMOVED }}">Removed</option>
+                          {% endif %}
+                        </select>
+                      </form>
+                    {% endif %}
+                    <div class="input-group-btn">
+                      <form style="margin-right: 5px" method="POST">
+                        {% if not user in owners %}
+                          {% csrf_token %}
+                          <input name="make_comm_user" type="hidden" value="{{comm_user.id}}" />
+                          <button type="submit" class="btn btn-sm btn-default">Make Manager</button>
+                        {% endif %}
+                      </form>
+                    </div>
+                    {% if comm.membership != comm.MEMBERSHIP_OPEN and comm_has_join_form %}
+                    <div class="input-group-btn">
+                      <button type="submit" class="btn btn-sm btn-default btn_join_form"
+                              data-userid="{{comm_user.id}}"
+                              data-username="{%if user.first_name%}{{user.get_full_name}}{% else %}{{user.email}}{% endif %}">
+                        Show Join Form Answers
+                      </button>
+                    </div>
+                    {% endif %}
+                  </div>
+
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="user-admission-rules-tab" class="tab-pane fade">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="pct" value="token" />
+            <!--div class="checkbox">
+                    <label>
+                      <input name="public_comm" style="margin-top: 2px;" {% if comm.public %}checked="True"{% endif %} type="checkbox"> Community is open
+                    </label>
+                  </div-->
+            <!-- start lmf-->
+            <input type="radio" name="membership" value="open" {% if comm.membership == "open" %}checked="True"{% endif %}> Open<br/>
+            <input type="radio" name="membership" value="public" {% if comm.membership == "public" %}checked="True"{% endif %}> Public<br/>
+            <input type="radio" name="membership" value="moderated" {% if comm.membership == "moderated" %}checked="True"{% endif %}> Moderated<br/>
+            <input type="radio" name="membership" value="invitation" {% if comm.membership == "invitation" %}checked="True"{% endif %}> By invitation only<br/>
+            <!--input type="radio" name="membership" value="members" {% if comm.membership == "members" %}checked="True"{% endif %}> Project partner only<br/-->
+
+            <br/>
+            <small><strong>Notes: </strong>
+              <ul>
+                <li><strong>Open</strong>: Public. Does not require membership.</li>
+                <li><strong>Public</strong>: Public. Membership through acceptance of terms and conditions.</li>
+                <li><strong>Moderated</strong>: Restricted. Requires membership approval.</li>
+                <li><strong>By Invitation</strong>: Closed. Membership by invitation and subsequent approval. Hidden from non-members</li>
+              </ul>
+            </small>
+
+            <br>
+            <strong>Terms and Conditions: </strong>
+            <br>
+            <textarea class="form-control input-sm" name="disclaimer" rows="12" cols="50">{{comm.disclaimer}}</textarea>
+            <br>
+
+            <button class="btn btn-success btn-block"><i class="fas fa-fw fa-save"></i> Save</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  {% if comm.membership != comm.MEMBERSHIP_OPEN and comm.membership != comm.MEMBERSHIP_PUBLIC %}
+    <div id="send-invite-tab" class="tab-pane fade">
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <form name="send_invite" action="inviteCommunity/{{comm.slug}}" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="base_addr" value="{{BASE_URL}}"/>
+            <input type="hidden" name="comm_name" value="{{comm.slug}}"/>
+            <br><strong>Email Address</strong>
+            <input type="email" class="form-control input-sm" name="email" value="" required>
+            <br><strong>Subject:</strong>
+            <input type="text" class="form-control input-sm" name="subject" value="{{config.brand}} - {{comm.name}} Community Invite">
+            <br><strong>Message:</strong><br>
+            <textarea class="form-control input-sm" name="message" rows="4" cols="50">This is an invitation to join the {{comm.name}} Community at {{config.brand}}.&#13;&#10;</textarea>
+            <br>
+            <button type="submit" id="sendinvite" class="btn btn-default"><i class="fas fa-fw fa-paper-plane"></i> Send</button>
+            &nbsp
+            <button type="reset" value="Reset" class="btn btn-default"><i class="fas fa-fw fa-sync-alt"></i> Reset</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  </div>
+</div>
+{% endblock %}
+
+
+<script type="text/javascript">
+{% block scriptextra %}
+{% if comm.membership != comm.MEMBERSHIP_OPEN  %}
+{# when a community is open, the comm user status dropdown is disabled so we don't need to define this function #}
+
+    function _format_fingerprint_list(fingerprints, results) {
+        for (const fingerprint of fingerprints) {
+            results.push(
+                `<li><a target="_blank" href="/c/{{ comm.slug }}/fingerprint/${fingerprint.hash}">${fingerprint.name}</a></li>`
+            )
+        }
+    }
+
+    function community_user_status_changed(user_affected) {
+        if (user_affected.value === "{{ comm.communityuser_set.model.REMOVED }}") {
+            fetch(`/community/{{ comm.slug }}/api/check_delete/${user_affected.form.comm_user_status.value}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.allowed) {
+                        user_affected.form.submit();
+                        return;
+                    }
+
+                    user_affected.value = user_affected.old_value;
+
+                    const list_of_databases = [];
+                    {% if comm.questionnaires.count > 1 %}
+                        for (const [questionnaire, fingerprints] of Object.entries(data.single_owner_fingerprints)) {
+                            list_of_databases.push(`<li>Questionnaire ${questionnaire}<ul>`);
+                            _format_fingerprint_list(fingerprints, list_of_databases);
+                            list_of_databases.push("</li></ul>");
+                        }
+                    {% else %}
+                        _format_fingerprint_list(Object.values(data.single_owner_fingerprints)[0], list_of_databases);
+                    {% endif %}
+
+                    bootbox.dialog({
+                        title: "We can't remove this user yet.",
+                        message: "The selected user has databases associated where he is the only owner. " +
+                            'You need to either delete these databases, by clicking "Delete" in the "Manage" dropdown' +
+                            ' on the database page, or transfer their ownership to another user, by clicking "Share' +
+                            ' with other user" also in the "Manage" dropdown on the database page.' +
+                            "<br><br>" +
+                            "User's databases with single owner:" +
+                            "<ul>" +
+                            list_of_databases.join("") +
+                            "</ul>",
+                        buttons: {
+                            confirm: {
+                                label: "Ok",
+                                className: "btn-default"
+                            }
+                        }
+                    });
+                })
+        }
+        else {
+            user_affected.form.submit();
+        }
+    }
+
+    {% if comm_has_join_form %}
+
+const join_form_replies = {{ join_form_replies | safe }};
+
+$(function() {
+        $(".comm_users_tbody").delegate('.btn_join_form', 'click', function() {
+            let user_id = parseInt($(this).data('userid'));
+            let message = "";
+
+            if (user_id in join_form_replies) {
+              join_form_replies[user_id].forEach(function(item, index, array) {
+                  if (item[1] === "") {
+                      item[1] = "<i>No Answer</i>"
+                  }
+                  message += "<b>" +  item[0] + "</b><br>" + item[1] + "<br><br>";
+              })
+            }
+            else {
+              message = "There are no replies from this user."
+            }
+
+            bootbox.dialog({
+              title: "Join Form Answers <i>" + $(this).data('username') + "<i>",
+              message: message,
+              buttons: {
+                confirm: {
+                  label: "Close",
+                  className: "btn-default"
+                }
+              }
+            });
+
+        });
+    });
+
+    {% endif %}
+{% endif %}
+{% endblock %}
+</script>

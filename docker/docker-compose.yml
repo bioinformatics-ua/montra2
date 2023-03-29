@@ -1,0 +1,160 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:9.6
+    restart: always
+    volumes:
+      - ${VOLUMES_PATH}/postgres:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DOCKER_POSTGRES_PASS}
+      - POSTGRES_USER=${DOCKER_POSTGRES_USER}
+      - POSTGRES_DB=${DOCKER_POSTGRES_DB}
+
+  mongodb:
+    image: mongo
+    restart: always
+    volumes:
+      - ${VOLUMES_PATH}/mongo:/data/db
+
+  solr_volume_fixer:
+    # When creating a volume to /var/solr on the solr container, the
+    #  docker daemon will create it with root:root permissions
+    #  however that will raise a permission denied since the
+    #  solr image excepts it to have solr:root.
+    # This container is used to automize the process of changing
+    #  the ownership of such volume directory.
+    # The uid of solr is 8983.
+    image: alpine
+    entrypoint: /bin/sh -c "chown 8983:root /solr"
+    volumes:
+      - ${VOLUMES_PATH}/solr:/solr
+
+  solr:
+    build: ../solr
+    restart: always
+    depends_on:
+      - solr_volume_fixer
+    volumes:
+      - ${VOLUMES_PATH}/solr:/var/solr
+
+  rabbitmq:
+    image: rabbitmq:3.6.14-alpine
+    restart: always
+
+  memcached:
+    image: memcached:1.4.39-alpine
+    restart: always
+
+  catalogue:
+    image: bioinformaticsua/catalogue:Test
+    restart: always
+    depends_on:
+      - mongodb
+      - db
+      - solr
+      - rabbitmq
+      - memcached
+    volumes:
+      - ../:/deploy/catalogue/
+      # For production
+      - ${VOLUMES_PATH}/files:/deploy/catalogue/emif/emif/static/files
+      - ${VOLUMES_PATH}/media:/deploy/catalogue/emif/emif/collected-media
+      - ${VOLUMES_PATH}/achilles:/deploy/catalogue/emif/emif/collected-static/achilles/files
+      - ${VOLUMES_PATH}/recover:/opt/recover
+    environment:
+      # ATTENTION: only change these postgres settings if you pretend to use a remote database,
+      # created by yourself instead of the deployed by the orchestrator, it will work fine without messing with it !
+      - DOCKER_POSTGRES_USER=${DOCKER_POSTGRES_USER}
+      - DOCKER_POSTGRES_PASS=${DOCKER_POSTGRES_PASS}
+      - DOCKER_POSTGRES_DB=${DOCKER_POSTGRES_DB}
+      - DOCKER_POSTGRES_HOST=db
+      - DOCKER_POSTGRES_PORT=5432
+      # ATTENTION: only change these mongodb settings if you pretend to use a remote database,
+      # created by youself instead of the deployed by the orchestrator, it will work fine without messing with it !
+      - MONGODBHOST=mongodb
+      - MONGODBPORT=27017
+      # MONGODBUSER and MONGODBPASS can also be set, but are empty by default
+      # ATTENTION: only change these solr settings if you pretend to use a remote database,
+      # created by youself instead of the deployed by the orchestrator, it will work fine without messing with it !
+      - SOLR_HOST=solr
+      - SOLR_PORT=8983
+      # ATTENTION: only change these memcached settings if you pretend to use a remote database,
+      # created by youself instead of the deployed by the orchestrator, it will work fine without messing with it !
+      - MEMCACHED_HOST=memcached
+      - MEMCACHED_PORT=11211
+      # ATTENTION: only change this rabbitmq settings if you pretend to use a remote database,
+      # created by youself instead of the deployed by the orchestrator, it will work fine without messing with it !
+      - RABBITMQ_HOST=rabbitmq
+      # ATTENTION : Below are settings you have to set for you own deploy as they will be different for all deploys
+      - DOCKER_SECRET=${DOCKER_SECRET} # secret salted used on passwords
+      - EMAIL_USE_TLS=${EMAIL_USE_TLS}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - POSTGRES_PASSWORD=${DOCKER_POSTGRES_PASS}
+      - POSTGRES_USER=${DOCKER_POSTGRES_USER}
+      - PUBLIC_IP=${PUBLIC_IP}
+      - BASE_DIR=${BASE_DIR}
+      - GIT_USER=${GIT_USER}
+      - GIT_PASS=${GIT_PASS}
+      - MONTRA_VERSION=${MONTRA_VERSION}
+      - MONTRA_VERSION_DATE=${MONTRA_VERSION_DATE}
+      - WORDPRESS_PREFIX=${WORDPRESS_PREFIX}
+      - TEST_MODE=${TEST_MODE}
+      - LOAD_TEST_DATA=${LOAD_TEST_DATA}
+      - RUN_TESTS=${RUN_TESTS}
+      - DEBUG_RUN=${DEBUG_RUN}
+      - PRODUCTION_MODE_PORT=${PRODUCTION_MODE_PORT}
+      - DEBUG_MODE_PORT=${DEBUG_MODE_PORT}
+      - NEW_INSTALLATION=${NEW_INSTALLATION}
+    ports:
+      - ${DEBUG_MODE_PORT}:${DEBUG_MODE_PORT}
+
+  nginx:
+    build: ./nginx
+    depends_on:
+      - wordpress
+      - catalogue
+    volumes:
+      - ../:/deploy/catalogue/
+      - ${VOLUMES_PATH}/wordpress/wordpress_static_files:/var/www/html/wordpress
+      - ${VOLUMES_PATH}/files:/deploy/catalogue/emif/emif/static/files
+      - ${VOLUMES_PATH}/media:/deploy/catalogue/emif/emif/collected-media
+      - ${VOLUMES_PATH}/achilles:/deploy/catalogue/emif/emif/collected-static/achilles/files
+    environment:
+      - BASE_DIR=${BASE_DIR}
+      - WORDPRESS_PREFIX=${WORDPRESS_PREFIX}
+      - PRODUCTION_MODE_PORT=${PRODUCTION_MODE_PORT}
+    ports:
+      - ${PRODUCTION_MODE_PORT}:${PRODUCTION_MODE_PORT}
+
+  wordpressdb:
+    image: mysql:8.0.21
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - ${VOLUMES_PATH}/wordpress/wordpress_db_data:/var/lib/mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
+  wordpress:
+    image: wordpress:5.5-php7.3-fpm-alpine
+    restart: always
+    volumes:
+      - ${VOLUMES_PATH}/wordpress/wordpress_static_files:/var/www/html
+    depends_on:
+      - wordpressdb
+    environment:
+      WORDPRESS_DB_HOST: wordpressdb:3306
+      WORDPRESS_DB_USER: $WORDPRESS_DB_USER
+      WORDPRESS_DB_PASSWORD: $WORDPRESS_DB_PASSWORD
+      WORDPRESS_DB_NAME: $WORDPRESS_DB_NAME
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_HOME', 'https://' . $$_SERVER['HTTP_HOST'] . '/$WORDPRESS_PREFIX' );
+        define( 'WP_SITEURL', 'https://' . $$_SERVER['HTTP_HOST'] . '/$WORDPRESS_PREFIX' );

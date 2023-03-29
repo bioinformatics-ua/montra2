@@ -1,0 +1,100 @@
+<!-- # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-->
+<style type="text/css">
+</style>
+
+<div id="doc_status">
+
+</div>
+
+{% if owner_fingerprint %}
+    <form id="fileupload" method="post" action="." enctype="multipart/form-data">
+    {% csrf_token %}
+        <!-- Redirect browsers with JavaScript disabled to the origin page -->
+        <!--<noscript><input type="hidden" name="redirect" value="http://blueimp.github.io/jQuery-File-Upload/"></noscript>-->
+        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="col-md-offset-2 col-md-8 fileupload-buttonbar">
+            <fieldset>
+                <div class="form-group">
+                <input placeholder="Name" class="form-control" size="255" type="text" cols="100" name="pc_name" >
+                </div>
+                <div class="form-group">
+                <textarea placeholder="Description" class="form-control input-block-level" rows="4" name="pc_comments" ></textarea>
+                </div>
+
+                <!-- The fileinput-button span is used to style the file input field as button -->
+
+                <span style="margin-left: 0px !important;" class="col-md-12 btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Add files...</span>
+                    <input type="file" name="file" multiple>
+                </span>
+            </fieldset>
+
+                <!-- The loading indicator is shown during file processing -->
+                <span class="fileupload-loading"></span>
+            <!-- The global progress information -->
+            <div class="col-md-5 fileupload-progress fade">
+                <!-- The global progress bar -->
+                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                </div>
+                <!-- The extended global progress information -->
+                <div class="progress-extended">&nbsp;</div>
+            </div>
+        </div>
+        <!-- The table listing the files available for upload/download -->
+        <table role="presentation" class="table table-striped"><tbody class="files"></tbody>
+        </table>
+    </form>
+{% endif %}
+
+    {# The container for the uploaded files #}
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>File Name</th>
+          <th>Description</th>
+          <th>Last Update</th>
+        </tr>
+      </thead>
+    <tbody class="files" id="files">
+    </tbody>
+
+    <div style="display: none;">
+    <form id="downloadfile" action="api/getfile" method="post">
+        {% csrf_token %}
+        <input name="filename" value="" />
+        <input name="revision" value="" />
+        <input name="publickey" value="" />
+        <input name="fingerprint" value="" />
+        <input type="submit"  value="d"/>
+    </form>
+    </div>
+    </table>
+
+    <script type="text/javascript">
+        $(document).ready(
+            function(){
+                {% if request.user.is_superuser or owner_fingerprint %}
+                    fillList(true);
+                {% else %}
+                    fillList(false);
+                {% endif %}
+            }
+        );
+    </script>

@@ -1,0 +1,38 @@
+   table {
+  table-layout: fixed;
+}
+th, td {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+  -ms-text-overflow: ellipsis;
+}
+
+.tooltip.in {
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+}
+.tooltip.in {
+  opacity: 1;
+  filter: alpha(opacity=100);
+}
+
+.resultcell div ul {
+    margin-left: 10px;
+    padding: 0px;
+    white-space: nowrap;
+}
+
+.resultcell div li {
+    white-space: pre-line;
+}
+
+td.resultcell {
+    white-space: pre-line;
+}
+
+.questioncell {
+    white-space: pre-line;
+    vertical-align: top;
+}

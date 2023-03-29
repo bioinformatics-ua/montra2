@@ -1,0 +1,74 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+<div class="row clearfix">
+    <div class="col-md-9 input">
+        <input type="hidden" class="span2" id="question_{{ question.number }}" name="question_{{ question.number }}" size="10" value="{{ qdict.value }}" />
+
+        {% if readonly %}
+                <div class="form-control fake_input fake_input_disabled" id="question_{{ question.number }}_period" size="10">{{ qdict.value|safe }}</div>
+
+                <div class="form-control fake_input fake_input_disabled" id="question_{{ question.number }}_unit">
+                        {% if sel and readonly %}
+                            {{sel|safe}}
+                        {% endif %}
+                        {% for val, desc, sel in qdict.timeperiods %}
+                            {% if sel %}
+                                {{sel|safe}}
+                            {% endif %}
+                        {% endfor %}
+                    <div class="pull-right caret fake_caret"></div>
+                </div>
+
+        {% else %}
+            <input type="text" class="span2" id="question_{{ question.number }}_period" size="10" value="{{ qdict.value }}" />
+            <select class="span2" id="question_{{ question.number }}_unit">
+            {% for val, desc, sel in qdict.timeperiods %}
+                <option value="{{ val }}"{% if sel %} selected="selected"{% endif %}>{{ desc }}</option>
+            {% endfor %}
+            </select>
+        {% endif %}
+        {% if question.extra %}
+            <span class="help-block">{{ question.extra }}</span>
+        {% endif %}
+        {% if qdict.value %}
+            <script type="text/javascript">
+                markAnswered('{{ question.number|removedots }}');
+            </script>
+        {% endif %}
+
+        <script type="text/javascript">
+            $(function(){
+                var out = $('[id="question_{{ question.number }}"]');
+                var period = $('[id="question_{{ question.number }}_period"]');
+                var unit = $('[id="question_{{ question.number }}_unit"]');
+
+                var handleChange = function(){
+                    out.val(period.val()+'#'+unit.val());
+                }
+
+                handleChange();
+
+                period.change(handleChange);
+                unit.change(handleChange);
+
+            });
+        </script>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+
+{{ record.get_status }}
+{% if record.error_message %}
+    <button
+        type="button"
+        class="btn btn-default btn-xs"
+        data-toggle="popover"
+        data-placement="top"
+        title="Import Error"
+        data-content="{{ record.error_message }}"
+    >
+        &#10071;  {% comment %} unicode for a bright red bang {% endcomment %}
+    </button>
+{% elif record.questionnaire and record.questionnaire.preview_fingerprint %}
+    <a
+        href="{% url 'fingerprint-preview' runcode=record.questionnaire.preview_fingerprint.fingerprint_hash qs=0 %}?preview=1"
+        type="button"
+        class="btn btn-default btn-xs"
+    >
+        Preview
+    </a>
+{% endif %}

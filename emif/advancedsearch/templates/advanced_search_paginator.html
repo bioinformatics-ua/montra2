@@ -1,0 +1,38 @@
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+
+<div class="well well-sm clearfix" style="z-index: 1000; position: fixed; bottom: -10px; margin-left: 0px; width: 754px; left: 261px;">
+    <!-- Previous | Next buttons -->
+    <div class="col-md-10 text-center">
+        <!-- If Questionset is not the first (Introduction) or the final (Thank you) -->
+        {% if prevAccessibleQuestionSet %}
+        {% if aqid %}
+        <a href="advancedSearch/{{ questionset.questionnaire.pk }}/{{ prevAccessibleQuestionSet.sortid }}" class="btn btn-default large primary" onclick="questionsets_handle('qs_{{ prevAccessibleQuestionSet.sortid }}', '{{questionset.questionnaire.pk}}', '{{aqid}}', QsType.SEARCH);  return false;"><i class="icon-chevron-left"></i>&nbsp; {% trans "Previous" %}</a>
+        {% else %}
+        <a href="advancedSearch/{{ questionset.questionnaire.pk }}/{{ prevAccessibleQuestionSet.sortid }}" class="btn btn-default large primary" onclick="questionsets_handle('qs_{{ prevAccessibleQuestionSet.sortid }}', '{{questionset.questionnaire.pk}}', null, QsType.SEARCH);  return false;"><i class="icon-chevron-left"></i>&nbsp; {% trans "Previous" %}</a>
+        {% endif %}
+        {% endif %}
+        {% if nextAccessibleQuestionSet %}
+        {% if aqid %}
+        <a href="advancedSearch/{{ questionset.questionnaire.pk }}/{{ nextAccessibleQuestionSet.sortid }}" class="btn btn-default large primary" onclick="questionsets_handle('qs_{{ nextAccessibleQuestionSet.sortid }}', '{{questionset.questionnaire.pk}}', '{{aqid}}', QsType.SEARCH);  return false;">{% trans "Next" %} &nbsp;<i class="icon-chevron-right"></i></a>
+        {% else %}
+        <a href="advancedSearch/{{ questionset.questionnaire.pk }}/{{ nextAccessibleQuestionSet.sortid }}" class="btn btn-default large primary" onclick="questionsets_handle('qs_{{ nextAccessibleQuestionSet.sortid }}', '{{questionset.questionnaire.pk}}', null, QsType.SEARCH);  return false;">{% trans "Next" %} &nbsp;<i class="icon-chevron-right"></i></a>
+        {% endif %}
+        {% endif %}
+        <!-- First Questionset - Introduction -->
+    </div>
+    <div class="col-md-2 pull-right">
+        {% if questions_list.0.0.sortid != 0 %}
+        <!--input type="submit" class="search_button btn btn-inverse" value="Search" -->
+        <button type="submit" class="btn btn-primary" data-original-title="Search using specific fields in a Community Fingerprint" title="Search using specific fields in a Community Fingerprint">
+        <i class="icon-search icon-white"></i> &nbsp;Search
+        </button>
+        {% endif %}
+        {% if questions_list.0.0.sortid == 0 %}
+        {% endif %}
+        <!-- Last Questionset - Thank You -->
+        {% if questions_list.0.0.sortid == 99 %}
+        <!--<input class="btn large btn-primary" name="submit" type="submit" value="{% trans 'Save' %}" />-->
+        {% endif %}
+    </div>
+</div>

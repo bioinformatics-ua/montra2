@@ -1,0 +1,320 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http: //www.gnu.org/licenses />.
+{% endcomment %}
+{% block content %}
+
+{% if single_community %}
+{% for community in user_comms %}
+<script type="text/javascript"> window.location.replace("c/" + "{{community.slug}}/databases");</script>
+{% endfor%}
+{% endif %}
+
+<!--div class="welcome_panel">
+        <h2>Welcome to the {{BRAND}}</h2>
+        <h4>Existing communities</h4>
+    </div-->
+
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+            <div class="row">
+                {% if number_comms == 0%}
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <center><h3>There are no communities yet.</h3></center>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                        {% if user_comms|length == 0 %}
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <center><h3>There are no Communities on your workspace</h3></center>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <div class="col-md-12 col-sm-12 col-lg-12">
+                            <h3>My Workspace</h3>
+                        </div>
+                            {% for community in user_comms %}
+                            <div class="col-sm-6 col-md-{{comlen}}" {% user_in_community community user  %}>
+                                <div class="panel panel-default">
+                                    <div class="panel-body comm_container">
+                                        <div class="comm_header">
+                                        {% if community.icon %}
+                                            <center><img src="{{community.icon.url}}" class="community_logo" onerror="changeToHeader('{{community.name}}', this)"/></center>
+                                        {% else %}
+                                            <h3 class="no-margn"><strong>{{community.name}}</strong></h3>
+                                        {% endif %}
+                                        </div>
+
+                                        {% if not community.public %}
+                                        <div title="This community is closed, and requires membership approval by a community manager." style="position: absolute; right:30px; top: 10px;" class="community-lock">
+                                            <i class="fas fa-lock"></i>
+                                        </div>
+                                        {%endif%}
+
+                                        <h5 class="text-center">{{community.getCount}} entries</h5>
+                                        <h4 class="desc_container">
+                                            <div class="community_description" style="word-break: break-word;">
+                                                {% if community.short_desc and community.short_desc|length > 0%}
+                                                    {{community.short_desc|safe}}
+                                                {% else %}
+                                                    There is no short description for this community.
+                                                {% endif %}
+                                            </div>
+                                            <a class="desc_shower pull-right" href="javascript:void(0)">&nbsp;</a>
+
+                                        </h4>
+                                        <div class="comm_footer">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                            <a data-status="0" onclick="bootbox.dialog({title: '{{community.name}}', message: comm_map['{{community.slug}}'], buttons: { close: { label: 'Close', className: 'btn-default', callback: function(){ this.modal('hide'); } }}})" class=" pull-right" href="javascript:void(0)">More</a>
+                                            </div>
+                                        </div>
+
+                                        {% if community|community_owner:user %}
+                                            <p>You own this community</p>
+                                        {% else %}
+                                            {% if community|community_favorited:user %}
+                                                <button style="position: absolute; left: -5%; bottom: 30px;" onclick="removeFromWS('{{community.slug}}', '{{community.name}}')" class="btn btn-link btn-panel-body">
+                                                    <i class="fa fa-star"></i> Remove
+                                                </button>
+                                            {% elif community|user_belongs:user %}
+                                                <button style="position: absolute; left: -5%; bottom: 30px" onClick="leaveCommunity('{{community.slug}}','{{community.name}}');" class="btn btn-link btn-panel-body">
+                                                    <i class="fas fa-fw fa-sign-out-alt"></i> Leave
+                                                </button>
+                                            {%endif%}
+                                        {% endif %}
+                                        
+                                        <center> {% belong_community community user %} </center>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>                        
+                            {% endfor %}
+                        {% endif %}
+                        {% endif %}
+                    </div>
+                    {% if disabled_comms|length > 0 or other_comms|length > 0 %}
+                    <hr class="comm_hr_separator"/>
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12 col-lg-12">
+                            <h3>Other Communities</h3>
+                        </div>
+                        {% for community in disabled_comms %}
+                            <div class="col-sm-4 col-md-2" {% user_in_community community user  %}>
+                                <div class="panel panel-default small_comm_container">
+                                    <div class="panel-body">
+                                        {% if community.icon %}
+                                            <center><img src="{{community.icon.url}}" class="community_logo" onerror="changeToHeader('{{community.name}}', this)"/></center>
+                                        {% else %}
+                                            <center><h4 class="no-margn"><strong>{{community.name}}</strong></h4></center>
+                                        {% endif %}
+
+                                        <div title="{% if community.public %}This community is open and does not require membership.{% else %}This community is closed, and requires membership approval by a community manager.{% endif %}" style="position: absolute; right:30px; top: 10px;" class="community-lock"><i class="{% if community.public %}{% else %}fa fa-lock{% endif %}"></i></div>
+
+                                        <h5 class="text-center">{{community.getCount}} entries</h5>
+                                        <div class="small_desc_container">
+                                            <div class="community_description" style="word-break: break-word;">
+                                                {% if community.short_desc and community.short_desc|length > 0%}
+                                                    {{community.short_desc|safe}}
+                                                {% else %}
+                                                    There is no short description for this community.
+                                                {% endif %}
+                                            </div>
+                                            <a class="desc_shower pull-right" href="javascript:void(0)">&nbsp;</a>
+
+                                        </div>
+                                        <div class="small_comm_footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                <a data-status="0" onclick="bootbox.dialog({title: '{{community.name}}', message: comm_map['{{community.slug}}'], buttons: { close: { label: 'Close', className: 'btn-default', callback: function(){ this.modal('hide'); } }}})" style="position: absolute; right: 12.5%; bottom: 0px" href="javascript:void(0)">More</a>
+                                                </div>
+                                            </div>
+
+                                            <center><button style="position: absolute; left: -5%; bottom: 30px" onClick="leaveCommunity('{{community.slug}}','{{community.name}}');" class="btn btn-link btn-panel-body"><i class="fas fa-fw fa-sign-out-alt"></i> Leave</button>&nbsp;<a href="c/{{community.slug}}" class="btn btn-grey btn-panel-body"><i class="fas fa-fw fa-clock"></i> &nbsp;PENDING</a></center>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        {% for community in other_comms %}
+                            <div class="col-sm-4 col-md-2" {% user_in_community community user  %}>
+                                <div class="panel panel-default small_comm_container">
+                                    <div class="panel-body">
+                                        {% if community.icon %}
+                                            <center><img src="{{community.icon.url}}" class="community_logo" onerror="changeToHeader('{{community.name}}', this)"/></center>
+                                        {% else %}
+                                            <center><h4 class="no-margn"><strong>{{community.name}}</strong></h4></center>
+                                        {% endif %}
+
+                                        <div title="{% if community.public %}This community is open and does not require membership.{% else %}This community is closed, and requires membership approval by a community manager.{% endif %}" style="position: absolute; right:30px; top: 10px;" class="community-lock"><i class="{% if community.public %}{% else %}fa fa-lock{% endif %}"></i></div>
+
+                                        <h5 class="text-center">{{community.getCount}} entries</h5>
+                                        <div class="small_desc_container">
+                                            <div class="community_description" style="word-break: break-word;">
+                                                {% if community.short_desc and community.short_desc|length > 0%}
+                                                    {{community.short_desc|safe}}
+                                                {% else %}
+                                                    There is no short description for this community.
+                                                {% endif %}
+                                            </div>
+                                            <a class="desc_shower pull-right" href="javascript:void(0)">&nbsp;</a>
+
+                                        </div>
+                                        <div class="small_comm_footer">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                <a data-status="0" onclick="bootbox.dialog({title: '{{community.name}}', message: comm_map['{{community.slug}}'], buttons: { close: { label: 'Close', className: 'btn-default', callback: function(){ this.modal('hide'); } }}})" style="position: absolute; right: 12.5%; bottom: 0px" href="javascript:void(0)">More</a>
+                                                </div>
+                                            </div>
+
+                                            {% if community.public %}
+                                            <button style="position: absolute; left: -5%; bottom: 30px;" onclick="addToWS('{{community.slug}}', '{{community.name}}')" class="btn btn-link btn-panel-body">
+                                                <i class="far fa-star"></i> Add
+                                            </button>
+                                            {% endif %}
+                                            <center>{% belong_community community user %}</center>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+        </div>
+        <div class="col-md-12 col-lg-12">
+                    <!-- External Communities -->
+                    {% if external_comms|length == 0 %}
+                    <div class="col-md-12">
+                    </div>
+                    {% else %}
+                    <hr class="comm_hr_separator"/>
+                    <div class="row">
+                    <div class="col-md-12 col-sm-12 col-lg-12">
+                        <h3>External Communities</h3>
+                        <p><i class="fa fa-fw fa-info-circle fa-1x text-primary"></i><i><small>These communities are hosted externally with additional features and may contain independent policies and user accounts.</small></i></p>
+                    </div>
+                    {% for community in external_comms %}
+                    <div class="col-sm-4 col-md-2">
+                        <div class="panel panel-default small_comm_container">
+                            <div class="panel-body">
+                                {% if community.thumbnail %}
+                                <center><img src="{{community.thumbnail.url}}" class="community_logo" /></center>
+                                {% else %}
+                                <center>
+                                    <h3 class="no-margn"><strong>{{community.name}}</strong></h3>
+                                </center>
+                                {% endif %}
+        
+                                <h4 class="small_desc_container">
+                                    <div class="community_description" style="word-break: break-word;">
+                                        {% if community.description and community.description|length > 0%}
+                                        {{community.description|safe}}
+                                        {% else %}
+                                        There is no description for this community.
+                                        {% endif %}
+                                    </div>
+                                    <a class="desc_shower pull-right" href="javascript:void(0)">&nbsp;</a>
+                                </h4>
+                                <div class="small_comm_footer">                                    
+                                    <center><a href="{{community.outbound_url}}" target="_blank" class="btn btn-blue btn-panel-body"><i class="fas fa-paper-plane"></i> GO TO</a></center>
+                                </div>
+        
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    </div>
+                    {% endif %}
+        
+        </div>
+
+    </div>
+
+    <div class="col-md-12 col-lg-4" hidden>
+
+        <div class="tab-content">
+
+            <div class="panel panel-default tab-pane tabs-up active" id="activities">
+                <div class="panel-body" data-original-title="Recent publications related to your subscribed communities"
+                    title="Recent publications related to your subscribed communities">
+                    <h4>Recent publications</h4>
+                    <ul class="activities-list list-unstyled nicescroll">
+                        {% if publications.count == 0 %}
+                        <center><span class="lead">There are no publications yet. </span><br />
+                            Either the feed has not been generated yet, or the communities don't have any tags
+                            associated.</center>
+                        {% else %}
+                        {% for publication in publications %}
+                        <li class="default-activity">
+                            <span class="time">{{publication.pub_date}}</span>
+                            <p>
+                                <a target="_blank" href="http://www.ncbi.nlm.nih.gov/pubmed/{{publication.pmid}}">
+                                    {{publication.title}}
+                                </a> has been published on {{publication.journal}} {{publication.volume}}
+                                {% if publication.page %}
+                                ({{publication.page}})
+                                {% endif %}
+                                <span class="label label-default">{{publication.db_hash}}</span>
+                            </p>
+                        </li>
+                        {% endfor %}
+                        {% endif %}
+
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <a href="community/create" title="Communities can be created upon request and subsequent aproval by the platform administrators." class="requestbutton btn pull-right btn-blue community-lock" style="margin-top: 0;"><i class="fas fa-fw fa-hand-point-up"></i> &nbsp; REQUEST A NEW COMMUNITY</a>
+</div>
+
+
+{% endblock %}
+{% block scriptextraincludes %}
+<script src="{% static 'js/vendor/jquery.expander.min.js' %}"></script>
+<script src="{% static 'js/emif.splash_community.js' %}"></script>
+{% endblock %}
+
+{% block scriptextra %}
+    var comm_map={};
+    {% for community in user_comms %}
+        comm_map['{{community.slug}}'] = '{% include 'community_detail.html' with favourited=True%}';
+    {% endfor %}
+    {% for community in disabled_comms %}
+        comm_map['{{community.slug}}'] = '{% include 'community_detail.html'%}';
+    {% endfor %}
+    {% for community in other_comms %}
+        comm_map['{{community.slug}}'] = '{% include 'community_detail.html'%}';
+    {% endfor %}
+{% endblock %}
+
+
+

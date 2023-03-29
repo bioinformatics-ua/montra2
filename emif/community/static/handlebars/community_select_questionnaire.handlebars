@@ -1,0 +1,64 @@
+<div class="row">
+    {{#each questionnaires}}
+    <div class="col-xs-12 col-sm-6 col-md-4">
+        <div class="card">
+
+            <!-- Left column with logo and description-->
+            <div class="col-xs-7 col-sm-7 col-md-7 " style="padding-right: 0px; padding-left: 0px;">
+                <div class="description-box">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <img src="{{logo}}" alt="..." style="height:9em;padding:1em;">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div style="padding-left:1em;">
+                                <h4 class="title-overflow">{{name}}</h4>
+                                <p class="text-overflow">
+                                    {{#if short_description.length}}
+                                        {{short_description}}
+                                    {{else}}
+                                        There is no short description for this questionnaire.
+                                    {{/if}}                        
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right column with statistics -->
+            <div class="col-xs-5 col-sm-5 col-md-5" style="padding-right: 0px; padding-left: 0px;">
+                <div class="statistics-box">
+                    <div class="row">
+                        <div class="col-xs-6 col-sm-6">
+                            <div class="text-center" style="padding-top: 1em">
+                                <h4><i class="fas fa-fw fa-list" style="font-size:1.5em;"></i></h4>
+                                <h4>{{fingerprints_count}}</h4>
+                            </div>                                             
+                        </div>
+                        <div class="col-xs-6 col-sm-6">
+                            <div class="text-center" style="padding-top: 1em">
+                                <h4><i class="fas fa-fw fa-question" style="font-size:1.5em;"></i></h4>
+                                <h4>{{questions_count}}</h4>
+                            </div>                   
+                        </div>
+                    </div>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div style="padding-left:1em;">
+                                <i class="fas fa-fw fa-globe"></i><span> {{location}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-12" style="padding-right: 0px; padding-left: 0px;">
+                <a href="/c/{{../comm_slug}}/q/{{slug}}" class="btn btn-primary card-button" role="button">OPEN</a>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>

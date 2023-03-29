@@ -1,0 +1,507 @@
+[
+{
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+        "name": "api",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "importers",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+        "name": "developers",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+        "name": "exporters",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "!kadoQy5KXoTir0SuX1gxDdrIx0iiTwTJCrPDXPJu",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "AnonymousUser",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-25T12:36:09.573Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+        "last_login": "2020-09-25T12:36:35.746Z",
+        "is_superuser": false,
+        "username": "user1",
+        "first_name": "user1Fname",
+        "last_name": "user1Lname",
+        "email": "user1@emiftest.pt",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-25T12:36:12.145Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "user2",
+        "first_name": "user2Fname",
+        "last_name": "user2Lname",
+        "email": "user2@emiftest.pt",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2020-09-25T12:36:12.148Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "user3",
+        "first_name": "user3Fname",
+        "last_name": "user3Lname",
+        "email": "user3@emiftest.pt",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-25T12:36:12.149Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "87dq0a7co5rmq256aj77kbsxikx71rpi",
+    "fields": {
+        "session_data": "N2FiZmZmYWFiMzQxNGY5NmVhN2JjNWNiZTg1MGZmMTM2M2RjYTQ5Mjp7Il9zZXNzaW9uX2V4cGlyeSI6MCwiX2F1dGhfdXNlcl9oYXNoIjoiMzNlZmVhMTRjY2NkOWVhMTRiNzZkYWUwY2NkZTdjNGZjZDNlM2ZlMCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6InVzZXJlbmEuYmFja2VuZHMuVXNlcmVuYUF1dGhlbnRpY2F0aW9uQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIyIn0=",
+        "expire_date": "2020-10-09T12:36:30.738Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "9e3railgrw91rsrphyvx6yn8ts8crvct",
+    "fields": {
+        "session_data": "N2FiZmZmYWFiMzQxNGY5NmVhN2JjNWNiZTg1MGZmMTM2M2RjYTQ5Mjp7Il9zZXNzaW9uX2V4cGlyeSI6MCwiX2F1dGhfdXNlcl9oYXNoIjoiMzNlZmVhMTRjY2NkOWVhMTRiNzZkYWUwY2NkZTdjNGZjZDNlM2ZlMCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6InVzZXJlbmEuYmFja2VuZHMuVXNlcmVuYUF1dGhlbnRpY2F0aW9uQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIyIn0=",
+        "expire_date": "2020-10-09T12:36:36.785Z"
+    }
+},
+{
+    "model": "sites.site",
+    "pk": 1,
+    "fields": {
+        "domain": "localhost",
+        "name": "localhost"
+    }
+},
+{
+    "model": "flatpages.flatpage",
+    "pk": 1,
+    "fields": {
+        "url": "/about/",
+        "title": "<i class='fa fa-bookmark-o'></i> About",
+        "content": "<h2>&nbsp;Disclaimer</h2>\r\n<p>The EMIF Catalogue is an on-going work of the IMI-funded research project EMIF (European Medical Information Framework). This system is continuously under development and we welcome your ideas and suggestions for improving this catalogue.&nbsp;<br />All provided data are still provisional. We make no warranty and cannot be held responsible for any information retrieved and displayed in this catalogue.&nbsp;<br /><br />Jos&eacute; Luis Oliveira (jlo@ua.pt)<br />University of Aveiro, Dept. Electronics, Telecommunications and Informatics (DETI / IEETA)</p>\r\n<hr />\r\n<h2>Available features:</h2>\r\n<h3>Regular user</h3>\r\n<ul>\r\n<li>Accounting management (users, databases, workspaces)</li>\r\n<li>Database management</li>\r\n<li>Submission and edition (with the former questionary)</li>\r\n<li>Inclusion of two distinct templates</li>\r\n<li>Observational data (Unfinished template)</li>\r\n<li>Cohorts (Dummy template)</li>\r\n<li>Simple search</li>\r\n<li>Advanced search</li>\r\n<li>Results comparison</li>\r\n</ul>\r\n<h3>Admin</h3>\r\n<ul>\r\n<li>Questions/fingerprints</li>\r\n<li>User</li>\r\n<li>Templates</li>\r\n</ul>\r\n<h2>Near term planned features:</h2>\r\n<ul>\r\n<li>Templates definition</li>\r\n<li>Enhance searching</li>\r\n</ul>\r\n<h2>Tutorial video:</h2>\r\n<p><iframe src='http://www.youtube.com/embed/gN0j3aP5vSk' width='560' height='315' allowfullscreen='' frameborder='0'></iframe></p>",
+        "enable_comments": false,
+        "template_name": "",
+        "registration_required": false,
+        "sites": [
+            [
+                "localhost"
+            ]
+        ]
+    }
+},
+{
+    "model": "flatpages.flatpage",
+    "pk": 2,
+    "fields": {
+        "url": "/test/",
+        "title": "Test",
+        "content": "Teste",
+        "enable_comments": false,
+        "template_name": "",
+        "registration_required": false,
+        "sites": [
+            [
+                "localhost"
+            ]
+        ]
+    }
+},
+{
+    "model": "accounts.emifprofile",
+    "pk": 1,
+    "fields": {
+        "mugshot": "",
+        "privacy": "registered",
+        "user": [
+            "user1"
+        ],
+        "country": "PT",
+        "organization": "UA",
+        "paginator": 10,
+        "search_type": "all",
+        "mail_news": true,
+        "mail_not": false,
+        "restricted": false
+    }
+},
+{
+    "model": "accounts.emifprofile",
+    "pk": 2,
+    "fields": {
+        "mugshot": "",
+        "privacy": "registered",
+        "user": [
+            "user2"
+        ],
+        "country": "PT",
+        "organization": "UA",
+        "paginator": 10,
+        "search_type": "all",
+        "mail_news": true,
+        "mail_not": false,
+        "restricted": false
+    }
+},
+{
+    "model": "accounts.emifprofile",
+    "pk": 3,
+    "fields": {
+        "mugshot": "",
+        "privacy": "registered",
+        "user": [
+            "user3"
+        ],
+        "country": "PT",
+        "organization": "UA",
+        "paginator": 10,
+        "search_type": "all",
+        "mail_news": true,
+        "mail_not": false,
+        "restricted": false
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 1,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "index",
+        "date": "2020-09-25T12:36:30.382Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 2,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:30.656Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 3,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "index",
+        "date": "2020-09-25T12:36:35.899Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 4,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:36.194Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 5,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:36.718Z"
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 1,
+    "fields": {
+        "key": "brand",
+        "value": "gAJVDkVNSUYgQ2F0YWxvZ3VlcQEu"
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 2,
+    "fields": {
+        "key": "copyrightsplash",
+        "value": "gAJVTjxhIHRhcmdldD0iX2JsYW5rIiBocmVmPSJodHRwOi8vYmlvaW5mb3JtYXRpY3MudWEucHQvIj5CaW9pbmZvcm1hdGljcywgVUEuPC9hPnEBLg=="
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 3,
+    "fields": {
+        "key": "aboutMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 4,
+    "fields": {
+        "key": "historyMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 5,
+    "fields": {
+        "key": "faqMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 6,
+    "fields": {
+        "key": "docMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 7,
+    "fields": {
+        "key": "contactMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 8,
+    "fields": {
+        "key": "notificationsMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 9,
+    "fields": {
+        "key": "jobQueueMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 10,
+    "fields": {
+        "key": "useCommunityList",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 11,
+    "fields": {
+        "key": "useFingerprintList",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 12,
+    "fields": {
+        "key": "project_name",
+        "value": "gAJVBEVNSUZxAS4="
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 13,
+    "fields": {
+        "key": "copyright",
+        "value": "gAJVGMKpIEJpb2luZm9ybWF0aWNzLlVBLCBVQXEBLg=="
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 14,
+    "fields": {
+        "key": "footer_extra",
+        "value": "gAJULgEAAAogICAgICAgICAgICAgICAgICAgIDwhLS0gRVhUUkEgSFRNTCBGT09URVIgQ09ERSBIRVJFIC0tPgogICAgICAgICAgICAgICAgICAgIDxzbWFsbCBpZD0ic3VwcG9ydGFiaWxpdHkiPlRoaXMgd2Vic2l0ZSBpcyBvcHRpbWlzZWQgdG8gU2FmYXJpLCBDaHJvbWUsIEZpcmVmb3gsIE9wZXJhIGFuZCBJRTkrLgogICAgICAgICAgICAgICAgICAgIDwhLS1JdCBydW5zIGluIElFNy1JRTgsIGJ1dCBpdCBoYXMgbG93IHBlcmZvcm1hbmNlIGFuZCBubyBlbmhhbmNlZCBmZWF0dXJlcy4tLT48L3NtYWxsPgogICAgICAgICAgICAgICAgICAgcQEu"
+    }
+},
+{
+    "model": "community.community",
+    "pk": 1,
+    "fields": {
+        "name": "test_community",
+        "description": "some description",
+        "disclaimer": null,
+        "short_desc": "short desc.",
+        "public": false,
+        "auto_accept": false,
+        "membership": "moderated",
+        "slug": "testcommunity",
+        "icon": "icons/community/observational_1.jpg",
+        "thumbnail": "",
+        "sortid": 1,
+        "show_popchar": true,
+        "show_docs": true,
+        "popchar_sortid": 1,
+        "docs_sortid": 1,
+        "db_sortid": 1,
+        "dblist_sortid": 1,
+        "owners": [
+            [
+                "user2"
+            ]
+        ],
+        "invisible_owners": [],
+        "questionnaires": [],
+        "tags": []
+    }
+},
+{
+    "model": "community.communitypermissions",
+    "pk": 1,
+    "fields": {
+        "community": 1,
+        "export_dblist": true,
+        "export_fingerprint": true,
+        "export_datatable": true
+    }
+},
+{
+    "model": "community.communityuser",
+    "pk": 1,
+    "fields": {
+        "community": 1,
+        "user": [
+            "user1"
+        ],
+        "status": 1,
+        "updated_at": "2022-01-21T15:47:30.382Z"
+    }
+},
+{
+    "model": "community.communityuser",
+    "pk": 2,
+    "fields": {
+        "community": 1,
+        "user": [
+            "user2"
+        ],
+        "status": 1,
+        "updated_at": "2022-01-21T15:47:30.382Z"
+    }
+},
+{
+    "model": "community.communityactivation",
+    "pk": 1,
+    "fields": {
+        "community": 1,
+        "user": 2,
+        "commuser": 1,
+        "hash": "60f5b364849e11e590680242ac1100e7",
+        "used": true
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 1,
+    "fields": {
+        "community": 1,
+        "name": "test",
+        "description": null,
+        "removed": true,
+        "members": [
+            1
+        ]
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 2,
+    "fields": {
+        "community": 1,
+        "name": "editors",
+        "description": "editors",
+        "removed": false,
+        "members": []
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 3,
+    "fields": {
+        "community": 1,
+        "name": "study managers",
+        "description": "study managers",
+        "removed": false,
+        "members": []
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 4,
+    "fields": {
+        "community": 1,
+        "name": "API",
+        "description": "api group",
+        "removed": false,
+        "members": []
+    }
+}
+]

@@ -1,0 +1,765 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+
+{% if advanced_search %}
+<div class="clearfix">
+  <div class="row">
+    <div class="input col-md-9">
+      <input type="text" class="form-control" id="question_{{ question.number }}" name="question_{{ question.number }}" />
+    </div>
+  </div>
+</div>
+{% else %}
+<div class="row" style="margin-top: 20px;">
+
+<div class="publications-form form-horizontal" {% if readonly %} style="display: none;" {% endif %}>
+        <div class="form-group">
+            <label class="control-label col-md-3">Pubmed id: </label>
+            <div class="col-md-9">
+                <div class="input-group">
+                <input class="form-control" type="text" id="question_{{ question.number|removedots }}_pubmedid" />
+                <span class="input-group-btn">
+                    <button {% if readonly %} style="display: none;" {% endif %} id="loadpubbtn" style="margin-bottom:10px;" type="button" class="btn btn-primary disabled" ><i style="color:white;" class="icon-large fa fa-search icon-white"></i></button>
+                </span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-3 ">Publication title *:</label>
+            <div class="col-md-9">
+                <input class="form-control" type="text" id="question_{{ question.number|removedots }}_pubtitle" cols="80" />
+            </div>
+        </div>
+
+         <div class="form-group">
+            <label class="control-label col-md-3">Authors:</label>
+            <div class="col-md-9">
+            <input class="form-control" type="text" id="question_{{ question.number|removedots }}_pubauthors" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-3">Journal:</label>
+            <div class="col-md-9">
+            <input class="form-control" type="text" id="question_{{ question.number|removedots }}_pubjournal" />
+            </div>
+        </div>
+        <div class="form-group" >
+            <label class="control-label col-md-3">Year:</label>
+            <div class="col-md-9">
+            <input class="form-control" type="text" id="question_{{ question.number|removedots }}_pubyear" />
+            </div>
+        </div>
+        <!--div class="form-group">
+            <label class="control-label col-md-3">Volume:</label>
+            <div class="col-md-9">
+            <input class="form-control" type="text" id="question_{{ question.number|removedots }}_pubvolume" />
+            </div>
+        </div >
+        <div class="form-group">
+            <label class="control-label col-md-3">Pages:</label>
+            <div class="col-md-9">
+            <input class="form-control" type="text" id="question_{{ question.number|removedots }}_pubpages" />
+            </div>
+        </div>
+
+        <div class="form-group url_validator" id='url_validator_{{question.number}}'>
+            <label class="control-label col-md-3">Url:</label>
+            <div class="col-md-9">
+                <input class="form-control" type="text" name="question_{{ question.number }}_publink" id="question_{{ question.number }}_publink" />
+            </div>
+            <label class="control-label col-md-3"> </label>
+            <span class="help-inline"></span>
+        </div-->
+    <div class="col-md-12" >
+        <span class="help-inline">* required fields, and the authors should be with last name initials</span>
+    </div>
+    <div class="form-group col-md-12" style="padding-top:10px;">
+    <button id="addpub" type="button" class="btn btn-primary"><i class="icon-large icon-white fa fa-plus"></i> &nbsp; Add / Update Publication</button>
+    <button id="addbatch" type="button" class="btn btn-primary"><i class="fas fa-fw fa-list-ol"></i> &nbsp; Add List of Publications</button>
+    <button id="cleanpub" type="button" class="btn btn-primary"><i class="fas fa-fw fa-trash"></i> Clean </button>
+    <input type="hidden"  id="question_{{ question.number }}" name="question_{{ question.number }}" value='{{qdict.value}}' />
+    </div>
+
+    {% if qdict.value %}
+        <script type="text/javascript">
+            markAnswered('{{ question.number|removedots }}');
+        </script>
+    {% endif %}
+    </div>
+    <div class="row">
+    <div class="form-group col-md-12">
+    <table style="font-size: 85%;" id="question_{{ question.number|removedots }}_table" class="table table-striped table-hover">
+        <thead>
+            <tr>
+
+              <th {% if readonly %} style="display: none;" {% endif %}>Select</th>
+              <th>PubmedId</th>
+              <th>Title</th>
+              <th>Authors</th>
+              <th>Journal</th>
+              <th>Year</th>
+              <!--th>Volume</th-->
+              <!--th>Pages</th-->             
+              <!--th>Link</th-->
+            </tr>
+        </thead>
+
+        <tbody>
+
+        </tbody>
+
+    </table>
+    </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-6 pull-left">
+        <small>
+            <span class="showing_publications_info"></span>
+        </small>
+    </div>
+    <div style="margin-top: -30px; text-align:right;" class="edit_paginator pagination col-md-6 pull-right"></div>
+</div>
+{% include 'questionnaire/listpublications.html' %}
+
+<script type="text/javascript">
+var publications_counter = 0;
+var publication_ids = [];
+var unique_counter = 0;
+var selected_row = null;
+
+function pubcounterupdate(){
+    publications_counter--;
+
+    if(publications_counter == 0){
+        if (!(typeof questionSetsCounters === 'undefined')) {
+            var qId = parseInt("{{ question.number }}");
+
+                        //console.log(qId);
+            questionSetsCounters[qId]['filledQuestions'] = 0;
+
+            var ui = new CounterUI();
+            ui.updateCountersClean(qId);
+        }
+    }
+}
+function removePublication(id){
+    $('#'+id).remove();
+}
+
+function PublicationWidget ()
+{
+
+    this.publications = [];
+
+    this.clear = function()
+    {
+        $('#question_{{ question.number|removedots }}_pubtitle').val("");
+        $('#question_{{ question.number|removedots }}_pubjournal').val("");
+        $('#question_{{ question.number|removedots }}_pubyear').val("");
+        //$('#question_{{ question.number|removedots }}_pubvolume').val("");
+        //$('#question_{{ question.number|removedots }}_pubpages').val("");
+        $('#question_{{ question.number|removedots }}_pubauthors').val("");
+        $('[id="question_{{ question.number }}_publink"]').val("");
+    }
+
+    this.updateInformationFromPubMed = function()
+    {
+        var _pubmedid = $("#question_{{ question.number|removedots }}_pubmedid").val();
+
+        if (_pubmedid==null)
+            return;
+        information = pw{{ question.number|removedots }}.getPubmedInformation(_pubmedid);
+        if (information==null)
+        {
+            //console.log("timeout");
+            return;
+        }
+        $('#question_{{ question.number|removedots }}_pubtitle').val(information['title']);
+        $('#question_{{ question.number|removedots }}_pubjournal').val(information['journal']);
+        $('#question_{{ question.number|removedots }}_pubyear').val(information['pub_year']);
+        //$('#question_{{ question.number|removedots }}_pubvolume').val(information['volume']);
+        //$('#question_{{ question.number|removedots }}_pubpages').val(information['pages']);
+        $('#question_{{ question.number|removedots }}_pubauthors').val(information['authors']);
+        $('[id="question_{{ question.number }}_publink"]').val(information['pubmed_url']);
+    };
+
+    this.bindElements = function()
+    {
+
+        $("#addpub" ).bind( "click", function() {
+
+            pw{{ question.number|removedots }}.addPublication();
+            $('[id="answered_'+{{ question.number|removedots }}+'"]').show();
+
+            if (!(typeof questionSetsCounters === 'undefined')) {
+                var qId = parseInt("{{ question.number }}");
+
+                //console.log(qId);
+                questionSetsCounters[qId]['filledQuestions'] = 1;
+
+                var ui = new CounterUI();
+                ui.updateCountersClean(qId);
+            }
+
+        });
+
+        $('#addbatch').click(function(){
+            $('#modal-batch').modal('show');
+        });
+
+        $("#cleanpub" ).bind( "click", function() {
+
+            $('#question_{{ question.number|removedots }}_pubmedid').val('');
+            $('#question_{{ question.number|removedots }}_pubtitle').val('');
+                $('#question_{{ question.number|removedots }}_pubjournal').val('');
+                $('#question_{{ question.number|removedots }}_pubyear').val('');
+                //$('#question_{{ question.number|removedots }}_pubvolume').val('');
+                //$('#question_{{ question.number|removedots }}_pubpages').val('');
+                $('#question_{{ question.number|removedots }}_pubauthors').val('');
+                $('[id="question_{{ question.number }}_publink"]').val('');
+                $('[id*="pub_"]').removeClass('success');
+                selected_row = null;
+        });
+
+        $("#loadpubbtn" ).bind( "click", function() {
+            if (!$(this).hasClass("disabled"))
+                pw{{ question.number|removedots }}.updateInformationFromPubMed();
+        });
+
+        $( "#removepub" ).bind( "click", function() {
+            pw{{ question.number|removedots }}.removeSelectedPublication();
+
+
+        });
+
+        $( "#question_{{ question.number|removedots }}_pubmedid").bind( "paste", function() {
+
+            setTimeout(function () { 
+                pw{{ question.number|removedots }}.updateInformationFromPubMed();
+                    }, 100);    
+        });
+
+        $( "#question_{{ question.number|removedots }}_pubmedid").bind( "change", function() {
+            if( $(this).val().length > 0){
+                $("#loadpubbtn").removeClass("disabled");
+            }else{
+                $("#loadpubbtn").addClass("disabled");
+            }
+        });
+    };
+    this.isUpdate = function(pubmedid, pubtitle, pubjournal, pubyear, pubauthors, publink) {
+        var _aux = document.getElementById("question_{{ question.number }}").value;
+        //console.log(_aux);
+
+        if (!(_aux===undefined || _aux=="")){
+            if (_aux[0] != "[")
+            {
+                var _objs = JSON.parse("["+_aux+"]");
+            }
+            else
+            {
+                var _objs = JSON.parse(_aux);
+            }
+
+            for (var i = 0 ; i<_objs.length; i++)
+            {
+                if(_objs[i]['pmid'] != "" && _objs[i]['pmid'] == pubmedid)
+                    return true;
+
+                //console.log(_objs[i]['title'].toLowerCase());
+
+                if( _objs[i]['title'].toLowerCase() === pubtitle.toLowerCase()
+                    && _objs[i]['journal'].toLowerCase() === pubjournal.toLowerCase()
+                    && _objs[i]['year'] === pubyear ){
+                    //console.log('FOUND ONE EXACTLY THE SAME');
+                    return true;
+                }
+           }
+        }
+        return false;
+    }
+    this.validate_form = function(pubmedid, pubtitle, pubjournal, pubyear, pubauthors, publink) {
+        pw{{ question.number|removedots }}.saveInformation();
+        // The pubmed id is not really necessary. It is because might be publications
+        // without pubmed id, right? That's the reason I'm uncommenting.
+        // Bastiao, 2014Feb08
+        /*if(pubmedid.length == 0)
+            return false;*/
+
+        if(pubtitle.length == 0)
+            return false;
+
+        //if(pubjournal.length == 0)
+        //    return false;
+
+        //if(pubyear.length == 0)
+        //    return false;
+
+        //if(pubauthors.length == 0)
+        //    return false;
+
+       // var url_validator = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!10(?:\.\d{1,3}){3})(?!127(?:\.\d{1,3}){3})(?!169\.254(?:\.\d{1,3}){2})(?!192\.168(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]+-?)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})))(?::\d{2,5})?(?:\/[^\s]*)?$/i;
+
+        // if(!(publink.trim() == '' || url_validator.test(publink))){
+        //    return false
+       // }
+
+        return true;
+    }
+
+    this.addPublication = function()
+    {
+        var _pubmedid;
+        var _pubtitle;
+        var _pubjournal;
+        var _pubyear;
+        //var _pubvolume;
+        //var _pubpages;
+        var _pubauthors;
+        var _publink;
+
+        if(arguments.length == 1){
+            var pubmed = arguments[0];
+
+            _pubmedid = cleanUp(pubmed['id']);
+            _pubtitle = cleanUp(pubmed['title']);
+            _pubjournal = cleanUp(pubmed['journal']);
+            _pubyear = cleanUp(pubmed['pub_year'])
+            //_pubvolume = cleanUp(pubmed['volume']);
+            //_pubpages = cleanUp(pubmed['pages']);
+            _pubauthors = cleanUp(pubmed['authors'].join(","));
+            _publink = cleanUp(pubmed['pubmed_url']);
+
+        } else {
+            _pubmedid = cleanUp($('#question_{{ question.number|removedots }}_pubmedid').val());
+            _pubtitle = cleanUp($('#question_{{ question.number|removedots }}_pubtitle').val());
+            _pubjournal = cleanUp($('#question_{{ question.number|removedots }}_pubjournal').val());
+            _pubyear = cleanUp($('#question_{{ question.number|removedots }}_pubyear').val());
+            //_pubvolume = cleanUp($('#question_{{ question.number|removedots }}_pubvolume').val());
+            //_pubpages = cleanUp($('#question_{{ question.number|removedots }}_pubpages').val());
+            _pubauthors = cleanUp($('#question_{{ question.number|removedots }}_pubauthors').val());
+            _publink = cleanUp($('[id="question_{{ question.number }}_publink"]').val());
+        }
+
+
+        if( !pw{{ question.number|removedots }}.validate_form(_pubmedid, _pubtitle, _pubjournal, _pubyear, _pubauthors, _publink) ){
+            bootbox.alert('Error validating publication. You must fill the mandatory fields.');
+            return;
+        }
+        //selected_row != null && $('#'+selected_row).length !== 0
+        if(pw{{ question.number|removedots }}.isUpdate(_pubmedid, _pubtitle, _pubjournal, _pubyear, _pubauthors, _publink)){
+            console.log('updating');
+            var children = $('#'+selected_row).children();
+
+            $(children[2]).text(_pubtitle);
+            $(children[3]).text(_pubjournal);
+            $(children[4]).text(_pubyear);
+            //$(children[5]).text(_pubvolume);
+            //$(children[6]).text(_pubpages);
+            $(children[7]).text(_pubauthors);
+           // $(children[8]).html('<a target="_blank" href="'+_publink+'">Link</a>');
+
+        } else {
+
+            publications_counter++;
+            unique_counter++;
+
+            publication_ids.push('pub_'+unique_counter);
+
+                if (!(typeof formHasChanged === 'undefined')) {
+                formHasChanged = true;
+                }
+                var returnable = '<tr id="pub_'+unique_counter+'"><td {% if readonly %} style="display: none;" {% endif %}><a class="deleteLink" target="_blank" href="#" ><img src="static/img/glyphicons_192_circle_remove.png"/></a></td><td class="link_pubmed"><a target="_blank" href="https://www.ncbi.nlm.nih.gov/pubmed/'+_pubmedid+'">'+_pubmedid+'</a></td><td class="selectable">'+_pubtitle+'</td><td class="selectable">'+_pubauthors+'</td><td class="selectable">'+_pubjournal+'</td><td class="selectable">'+_pubyear+'</td></td>';
+                //if(_publink){
+                //    returnable+='<td class="link_pubmed"><a target="_blank" href="'+_publink+'">Link</a></td>';
+                //} else {
+                //    returnable+='<td class="selectable"></td>';
+                //}
+                returnable += '</tr>';
+            $('#question_{{ question.number|removedots }}_table > tbody:last').append(returnable);
+
+            // Add to boolean container if possible
+            if (!(typeof bool_container === 'undefined')) {
+                bool_container.pushWithDelegate('pub_'+_pubmedid, 'pub #'+_pubmedid+': '+_pubtitle,_pubtitle, 'removePublication("pub_'+_pubmedid+'");');
+            }
+
+
+            $(".deleteLink").click(function(e) {
+                    e.preventDefault();
+
+                    pubcounterupdate();
+
+                    // Add to boolean container if possible
+                    if (!(typeof bool_container === 'undefined')) {
+                        bool_container.splice('pub_'+_pubmedid, 'pub #'+_pubmedid+': '+_pubtitle,_pubtitle);
+                    }
+                    var selected_tr = $(this).closest('tr');
+
+                    removePublicationId(selected_tr.attr('id'));
+
+                    selected_tr.remove();
+
+                    if(pw{{ question.number|removedots }}.stringfy().length == 0) {
+                        $('[id="answered_'+{{ question.number|removedots }}+'"]').hide();
+                    }
+
+                    if (!(typeof formHasChanged === 'undefined')) {
+                        formHasChanged = true;
+                    }
+
+                    pw{{ question.number|removedots }}.saveInformation();
+                    $('[id*="pub_"]').removeClass('success');
+                    selected_row = null;
+
+                    handleDelete();
+
+                    return false;
+
+
+            });
+
+            handleAdd();
+        }
+        setEvents();
+
+        pw{{ question.number|removedots }}.saveInformation();
+        refreshSelection('pub_'+unique_counter);
+    };
+    function setEvents(){
+          $('.selectable').click(function(e){
+            e.preventDefault();
+
+            var parent = $(this).parent();
+            console.log('Select to edit' + parent.attr('id') );
+
+            refreshSelection(parent.attr('id'));
+
+            var children = parent.children();
+
+            $('[id="question_{{ question.number|removedots }}_pubmedid"]').val(children[1].textContent);
+            $('[id="question_{{ question.number|removedots }}_pubtitle"]').val(children[2].textContent);
+            $('[id="question_{{ question.number|removedots }}_pubjournal"]').val(children[3].textContent);
+            $('[id="question_{{ question.number|removedots }}_pubyear"]').val(children[4].textContent);
+            //$('[id="question_{{ question.number|removedots }}_pubvolume"]').val(children[5].textContent);
+            //$('[id="question_{{ question.number|removedots }}_pubpages"]').val(children[6].textContent);
+            $('[id="question_{{ question.number|removedots }}_pubauthors"]').val(children[7].textContent);
+
+            try{
+                $('[id="question_{{ question.number }}_publink"]').val($(children[8]).find('a').get(0).href);
+            } catch(except){
+                $('[id="question_{{ question.number }}_publink"]').val('');
+            }
+        });
+    }
+    function refreshSelection(selected){
+            $('[id*="pub_"').removeClass('success');
+            $('#'+selected).addClass('success');
+            selected_row = selected;
+    }
+    function cleanUp(stuff){
+        if(stuff){
+            // lets remove this if readonly
+            {% if readonly %}
+                return  stuff;
+            {% else %}
+                return  stuff.replace(/<(?:.|\n)*?>/gm, '');
+            {% endif %}
+        }
+
+        return stuff;
+    }
+    this.removeSelectedPublication = function()
+    {
+        $("#question_{{ question.number|removedots }}_table").deleteRow(0);
+        pw{{ question.number|removedots }}.saveInformation();
+
+
+    };
+
+    this.saveInformation = function()
+    {
+        var _value = pw{{ question.number|removedots }}.stringfy();
+        //$("#question_{{ question.number }}").val(JSON.stringify(_value));
+        document.getElementById("question_{{ question.number }}").value = JSON.stringify(_value).replace(/(<([^>]+)>)/ig,"");
+
+    };
+    this.loadInformation = function()
+    {
+        //var _aux = $("question_{{ question.number }}").val();
+        var _aux = document.getElementById("question_{{ question.number }}").value ;
+        if (_aux===undefined || _aux=="")
+            return;
+
+        if (_aux[0] != "[")
+        {
+            var _objs = JSON.parse("["+_aux+"]");
+        }
+        else
+        {
+            var _objs = JSON.parse(_aux);
+        }
+
+        for (var i = 0 ; i<_objs.length; i++)
+        {
+            var _pubmedid = cleanUp(_objs[i]['pmid']);
+            var _pubtitle = cleanUp(_objs[i]['title']);
+            var _pubjournal = cleanUp(_objs[i]['journal']);
+            var _pubyear = cleanUp(_objs[i]['year']);
+            //var _pubvolume = cleanUp(_objs[i]['volume']);
+            //var _pubpages = cleanUp(_objs[i]['pages']);
+            var _pubauthors = cleanUp(_objs[i]['authors']);
+
+            var _publink = cleanUp(_objs[i]['link']);
+
+            if(_pubtitle != undefined){
+                publications_counter++;
+                unique_counter++;
+
+                publication_ids.push('pub_'+unique_counter);
+
+                var returnable = '<tr id="pub_'+unique_counter+'"><td {% if readonly %} style="display: none;" {% endif %}><a class="deleteLink" href="#" ><img src="static/img/glyphicons_192_circle_remove.png"/></a></td><td class="link_pubmed"><a target="_blank" href="https://www.ncbi.nlm.nih.gov/pubmed/'+_pubmedid+'">'+_pubmedid+'</a></td><td class="selectable">'+_pubtitle+'</td><td class="selectable">'+_pubauthors+'</td><td class="selectable">'+_pubjournal+'</td><td class="selectable">'+_pubyear+'</td>';
+                //if(_publink){
+                //    returnable+='<td class="link_pubmed"><a target="_blank" href="'+_publink+'">Link</a></td>';
+                //} else {
+                //    returnable+='<td class="selectable"></td>';
+                //}
+                returnable += '</tr>';
+                 $('#question_{{ question.number|removedots }}_table > tbody:last').append(returnable);
+            }
+
+        }
+        $(".deleteLink").click(function(e) {
+                e.preventDefault();
+
+                pubcounterupdate();
+
+
+                var selected_tr = $(this).closest('tr');
+
+                removePublicationId(selected_tr.attr('id'));
+
+                selected_tr.remove();
+
+                if(pw{{ question.number|removedots }}.stringfy().length == 0) {
+                    $('[id="answered_'+{{ question.number|removedots }}+'"]').hide();
+                }
+
+                if (!(typeof formHasChanged === 'undefined')) {
+                    formHasChanged = true;
+                }
+                pw{{ question.number|removedots }}.saveInformation();
+                $('[id*="pub_"]').removeClass('success');
+                selected_row = null;
+
+                handleDelete()
+
+                return false;
+        });
+        setEvents();
+    };
+
+    this.getPubmedInformation = function(pubmedid)
+    {
+
+        var result = "";
+        $.ajax({
+            type: "GET",
+            url: "api/pubmed?pmid="+pubmedid,
+            async: false,
+            data: {
+                csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').prop('value'),
+                pmid: pubmedid
+
+            },
+            success: function (data) {
+                result = data;
+                information = data;
+                $('#question_{{ question.number|removedots }}_pubtitle').val(information['title']);
+                $('#question_{{ question.number|removedots }}_pubjournal').val(information['journal']);
+                $('#question_{{ question.number|removedots }}_pubyear').val(information['pub_year']);
+                //$('#question_{{ question.number|removedots }}_pubvolume').val(information['volume']);
+                //$('#question_{{ question.number|removedots }}_pubpages').val(information['pages']);
+                $('#question_{{ question.number|removedots }}_pubauthors').val(information['authors']);
+                $('[id="question_{{ question.number }}_publink"]').val(information['pubmed_url']);
+            }
+
+        });
+        return result;
+
+    };
+
+    this.stringfy = function()
+    {
+        var result = [];
+        $('#question_{{ question.number|removedots }}_table > tbody  > tr').each(function()
+         {
+
+            var _aux = $(this).html();
+            _aux = _aux.replace('<td class="selectable">', '');
+            _aux = _aux.replace('<td>', '');
+
+            _aux2 = _aux.split("</td>");
+            console.log(_aux);
+            _pub = {}
+            for (var i = 1 ; i<_aux2.length; i++)
+            {
+                _aux2[i] = _aux2[i].replace('<td class="selectable">', '');
+                 _aux2[i] = _aux2[i].replace('<td>', '');
+
+                if (i==1)
+                {
+                    _pub['pmid'] = _aux2[i];
+                }
+                else if (i==2)
+                {
+                    _pub['title'] = _aux2[i];
+                }
+                 else if (i==3)
+                {
+                    _pub['authors'] = _aux2[i];
+                }
+                else if (i==4)
+                {
+                    _pub['journal'] = _aux2[i];
+                }
+                else if (i==5)
+                {
+                    _pub['year'] = _aux2[i];
+                }
+               // else if (i==5)
+               // {
+               //     _pub['pages'] = _aux2[i];
+               // }
+               // else if (i==6)
+               // {
+               //     _pub['volume'] = _aux2[i];
+               // }
+               
+                else if (i==6)
+                {
+                    var publi;
+                    try {
+                        console.log(_aux2[i]);
+                        publi = $(_aux2[i]).find('a').get(0).href;
+                    } catch(except){
+                        publi="";
+                    }
+                    console.log(publi);
+
+                    _pub['link'] = publi;
+                }
+            }
+            result.push(_pub);
+        });
+
+        return result;
+    }
+
+}
+
+pw{{ question.number|removedots }} = new PublicationWidget();
+pw{{ question.number|removedots }}.bindElements();
+
+pw{{ question.number|removedots }}.loadInformation();
+
+var per_page = 10;
+
+$(function(){
+    $('.edit_paginator').pagination({
+                items: publications_counter,
+                itemsOnPage: per_page,
+                onPageClick: handlePagination
+    });
+
+    showPublicationPage(1);
+});
+function handlePagination(pageNumber, event){
+    showPublicationPage(pageNumber)
+}
+function showPublicationPage(pageNumber){
+    $('[id^="pub_"]').attr("style", "position: absolute; top: -2000px;");
+    var start = (pageNumber-1)*per_page;
+    var end = ((pageNumber-1)*per_page)+per_page;
+
+    // If last page and end is bigger than results
+    if (end > publications_counter){
+        end = publications_counter;
+    }
+
+    for(var i=start;i<end;i++){
+        $('#'+publication_ids[i]).removeAttr("style");
+    }
+
+    disableLinks();
+    redrawIndicator(start, end);
+}
+        // The plugin uses hrefs, and since we are using base url, hashtags work differently (not as anchors) so i have to stop the redirect
+        function disableLinks(){
+            $('.edit_paginator .page-link').click(function(event){
+                 event.preventDefault();
+                 return false;
+            });
+        }
+
+    function handleDelete(){
+        var paginator = $('.edit_paginator');
+
+        paginator.pagination('updateItems', publications_counter);
+
+        var current = paginator.pagination('getCurrentPage');
+        var last = paginator.pagination('getPagesCount');
+
+        if (current > last){
+            paginator.pagination('selectPage', last);
+        } else {
+            paginator.pagination('selectPage', current);
+        }
+        disableLinks();
+
+    }
+    function handleAdd(){
+        var paginator = $('.edit_paginator');
+
+        paginator.pagination('updateItems', publications_counter);
+
+        var last = paginator.pagination('getPagesCount');
+
+        paginator.pagination('selectPage', last);
+
+        disableLinks();
+    }
+    function removePublicationId(pub_id){
+        console.log('REMOVE: '+pub_id)
+        for(var i=0;i<publication_ids.length;i++){
+            console.log(publication_ids[i]+" == "+pub_id+"==?"+(publication_ids[i] === pub_id));
+            if(publication_ids[i] === pub_id){
+                publication_ids.splice(i, 1);
+                break;
+            }
+        }
+    }
+    function redrawIndicator(start, end){
+            $('.showing_publications_info').html("Showing "+(start+1)+" - "+end+" of "+publications_counter+" Publications");
+    }
+</script>
+{% endif %}

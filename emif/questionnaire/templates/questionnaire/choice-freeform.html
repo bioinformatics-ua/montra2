@@ -1,0 +1,66 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+<div class="clearfix">
+
+    <div class="input">
+        <ul class="inputs-list list-unstyled">
+        {% for sel, choice in qdict.choices %}
+            <li>
+                <div>
+                    <span class="custom-radio">
+                      <input onClick="valchanged('question_{{ question.number }}', this.value, this)" type="radio" id="question_{{ question.number }}_{{ forloop.counter }}" name="question_{{ question.number }}" value="{{ choice.value|trim|striptags }}" {% if sel %} checked {% endif %} />
+                      <span class="box"><span class="tick"></span></span>
+                    </span>
+
+                    <span class="radiobox-label">
+                        {% if readonly and sel %}
+                            {{ sel|safe }}
+                        {% else %}
+                            {{ choice.text|trim }}
+                        {% endif %}
+                    </span>
+                </div>
+            </li>
+            {% if sel %}
+            <script type="text/javascript">
+                markAnswered('{{ question.number|removedots }}');
+            </script>
+            {% endif %}
+        {% endfor %}
+        </ul>
+    </div>
+    <div class="input">
+        <span class="custom-radio">
+            <input onClick="valchanged('question_{{ question.number }}', '_entry_', this);" type="radio" id="question_{{ question.number }}_entry" name="question_{{ question.number }}" value="_entry_" {% if qdict.sel_entry %} checked {% endif %} />
+            <span class="box"><span class="tick"></span></span>
+        </span>
+
+        {% if readonly %}
+            <div style="display: inline-block !important;" class="col-md-3 fake_input fake_input_disabled" id="question_{{ question.number }}_opt" checks="dep_check('question_{{ question.number }},_entry_')" type="text" name="question_{{ question.number }}_opt">{{ qdict.opt|safe }}</div>
+        {% else %}
+            <input id="question_{{ question.number }}_opt" checks="dep_check('question_{{ question.number }},_entry_')" type="text" name="question_{{ question.number }}_opt" value="{{ qdict.opt|striptags }}" />
+        {% endif %}
+
+        {% if question.extra %}
+            <span class="help-block">{{ question.extra }}</span>
+        {% endif %}
+    </div>
+</div>
+

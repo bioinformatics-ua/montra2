@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% trans "Profile " %}{% endblock %}
+
+{% block content %}
+<div>
+  <div class="col-md-6 center">
+
+<form action="" id="edit_profile_form" enctype="multipart/form-data" method="post">
+  {% csrf_token %}
+  <fieldset>
+    <legend>{% trans "Profile " %}</legend>
+    <div id="div_associated_email" class="form-group"> <label for="associated_email" class="control-label " style="display: none;">
+        Ãssociated email
+      </label> <div class="controls "> <input value="{{user.email}}" disabled readonly class="textinput textInput form-control" maxlength="30" type="text" id="associated_email" placeholder="Associated email"> </div>
+    </div>
+    {{ form|crispy }}
+  </fieldset>
+        <div style="text-align: center;">
+            <button class="btn btn-primary" type="submit">{% trans "Save changes"%}</button>
+        </div>
+        <br />
+  {% if not profile_required_middleware %}
+  <div style="text-align: center;">
+    <a class="btn btn-secondary" href="{% url 'userena_password_change' profile.user.username %}">{% trans "Change password" %}</a>
+  </div>
+  {% endif %}
+</form>
+</div>
+</div>
+{% endblock %}
+{% block scriptextra %}
+  var focusFirstField = function () {
+      $('#edit_profile_form input:nth(1)').focus();
+  };
+
+
+  //$('#edit_profile_form input[type="text"], #edit_profile_form input[type="password"], #edit_profile_form select').addClass('col-md-6');
+  $('#edit_profile_form button[type="reset"]').on('click', focusFirstField);
+  focusFirstField();
+  /* I swear, i can't seem to be able to edit the damn forms from django_userena other way
+   * It's like they think people don't want to change the layout easily...
+   */
+  $('#edit_profile_form .control-label').each(function(e){
+    var fore = '#'+$(this).attr('for');
+    var destiny = $(fore);
+
+    if(destiny.get(0)){
+
+        var content = $(this).text().trim();
+
+        $(destiny).prop('placeholder', content);
+
+        $(this).hide();
+    }
+  });
+  $('label[for="id_paginator"]').show();
+  {% endblock %}

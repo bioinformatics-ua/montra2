@@ -1,0 +1,48 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% if choices %}
+            <input type="text" class="form-control" id="qsum_{{ question.number }}" name="qsum_{{ question.number }}" value="" />
+            <script type="text/javascript">
+            $(function(){
+                {% if question.metadata %}
+                var configuration;
+                try{
+                configuration = {{question.metadata|safe}};
+                } catch(err){
+                    console.error('INVALID METADATA DESCRIPTION FOR DATATABLE');
+                };
+
+                try{
+                configuration.data.answers = {{choices|safe}};
+                } catch(err){
+                    configuration.data.answers = [];
+                };
+                configuration.data.blocked = true;
+
+                var matrixt = $('[id="qsum_{{ question.number }}"]').matrixinput(configuration);
+            {% else %}
+                $('[id="qsum_{{ question.number }}"]').val('ERROR: MUST DEFINE A TABLE SCHEMA ON METADATA FIELD');
+            {% endif %}
+            });
+
+            </script>
+
+{% else %}
+    There's no answers in this table.
+{% endif %}

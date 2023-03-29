@@ -1,0 +1,41 @@
+{% extends 'common_email.html' %}
+
+<!-- # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-->
+
+{% load i18n %}{% autoescape off %}
+
+{% load extra_tags %}
+
+{% block BRAND_LOGO %}
+    <a title="{{site.name}} logo" href="" class="TitleIndex"><span>{{site.name|splitfirst}}</span> {{site.name|ignorefirst}}</a>
+{% endblock %}
+
+{% block email_content %}
+
+{% blocktrans with user.email as email %}Dear {{ email }},{% endblocktrans %}<br /><br />
+
+Thank you for interest in {{config.brand}}. Unfortunately, the system is currently restricted to partners.
+
+{% trans "Sincerely" %},<br />
+{{ site.name }}<br />
+
+{% endblock %}
+{% block FOOTER_BRAND %}
+    © {{site.name}} - {% now "d/m/Y H:i:s" %}
+{% endblock FOOTER_BRAND %}
+{% endautoescape %}

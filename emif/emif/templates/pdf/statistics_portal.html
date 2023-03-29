@@ -1,0 +1,116 @@
+{% load extra_tags %}
+<html>
+<head>
+    <style>
+        .title {
+          color: mediumseagreen;
+          font-size: 14px;
+        }
+        h1 {
+          
+        }
+        h2 {
+            color: darkblue;
+        }
+        h3 {
+            color: darkblue;
+        }
+        #ftitle {
+            font-size: 20px;
+        }
+        .text-desc {
+            color: #428bca;
+            font-size: 11px;
+            margin-left: 120px;
+            padding-left: 120px;
+        }
+    </style>
+</head>
+<body>
+<div >
+<h1 style="font-size: 20px" class="title">{{config.brand}} - analytics</h1>
+<hr>
+</div>
+<div style="font-size: 11px">
+
+<h1 id="ftitle">Users on the system</h1>
+
+
+<div style="font-size: 11px">
+    <h2 id="">Summary</h2>
+    <span class="question">Total users on the system: <b>{{data.totalNumberOfRegisterUsers}}</b></span><br />
+    <span class="question">Users join in EMIF Portal from {{data.dateStart}} to {{data.dateEnd}}: <b>{{data.numberOfRegisterUsers}}</b></span><br />
+</div>
+<div style="font-size: 11px">
+    
+    
+    <div>
+    <h2 id="">Joins By Community</h2>
+    
+    <span>Users join to communities from {{data.dateStart}} to {{data.dateEnd}}</span>
+    <br/>
+    <br/>
+    
+    {%for k,v in data.joinsByCommunity.items %}
+       <span class="text-desc">{{k}}: {{v}}</span><br />
+    {%endfor%}
+    </div>
+
+
+    <div>
+    <h2 id="">Users By Community and By Country</h2>
+    
+    {% for a,b in data.usersByCountry.items %}
+        <span class="text-desc">{{a}}: </span> <br>
+        <blockquote>
+        {% for user_country in b %}
+            {% for y in user_country %}
+         <span class="text-desc">{{y}}</span>
+        {%endfor%}
+        <br>
+    {%endfor%}
+    <br />
+    </blockquote>
+    {%endfor%}
+    </div>
+
+
+
+    <div>
+    <h2 id="">Total users by Community (calculated at {{data.today}})</h2>
+    
+    {%for k,v in data.usersByCommunity.items %}
+       <span class="text-desc">{{k}}: {{v}}</span><br />
+    {%endfor%}
+    </div>
+    
+
+</div>
+
+
+</div>
+
+
+<div style="font-size: 14px">
+
+<h1 id="ftitle">Access in web site</h1>
+
+ <span class="question">Total users accessing home page {{data.dateStart}} to {{data.dateEnd}}: {{data.homePageHits}}</span><br />
+
+<h1 id="ftitle">Access by community</h1>
+
+<span class="question">Total users accessing <b>community </b> page {{data.dateStart}} to {{data.dateEnd}}: {{data.homePageHits}}</span><br />
+<br/>
+    
+    {%for k,v in data.homePageHitsByCommunity.items %}
+        <span class="text-desc">{{k}}: {{v}}</span><br />
+
+    
+    {%endfor%}
+
+
+</div>
+
+
+</body>
+</html>

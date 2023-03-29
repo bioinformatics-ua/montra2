@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor/wysihtml5.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-tagsinput.css' %}" />
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/bootstrap3-typeahead.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'js/emif.manage_community_groups.js' %}"></script>
+    <script src="{% static 'js/vendor/wysihtml5x-toolbar.min.js' %}"></script>
+
+    <script src="{% static 'js/vendor/advanced_and_extended.js' %}"></script>
+    <script src="{% static 'js/vendor/multiselect.min.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.orderablemultiselect.js' %}"></script>
+    <script src="{% static 'js/vendor/bootstrap-tagsinput.js' %}"></script>  
+{% endblock %}
+
+
+{% block breadcrumbs %}
+        {% breadcrumb "All" "c/"|add:comm.slug %}
+        {% breadcrumb "Manage Community - Groups" "" %}
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+
+
+{% if comm.public %}
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  <strong>Warning message</strong> Groups and Restrictions by groups are not allowed in open communities.
+</div>
+{% endif%}
+
+    <div class="row">
+    <div class="col-lg-12">
+
+    <h3>Manage {{comm.name}} - Groups</h3>
+    </div>
+
+
+    <div class="col-lg-12 groups-plugins-container" module="manage-groups">
+      <div class="panel panel-default" controller="GroupsPluginComponent">
+        <div class="panel-heading">Groups</div>
+        <div class="panel-body">
+          {% if ugroup|length > 0 %}
+            <form method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="medit" value="." />
+              <table id="groups_plugins" class="table table-bordered table-stripped" >
+                <thead>
+                  <tr>
+                    {% for elem in groupmatrix.0 %}
+                    <th><center>{{elem}}</center></th>
+                    {% endfor %}
+                  </tr>
+                </thead>
+
+                <tbody>
+                {% for line in groupmatrix %}
+                  {% if forloop.counter > 1 %}{# skip the header line #}
+                    <tr>
+                    {% for elem in line %}
+                      {% if forloop.counter == 1 %}
+                        <td style="width: 200px;"><b>{{elem.name}}</b>
+                        {% if elem.name not in elem.PRE_EXISTING_GROUPS %}
+                        <!--<button type="submit" name="gdel" value="{{elem.id}}"  class="btn btn-xs btn-danger pull-right"><i class="fas fa-fw fa-times"></i></button>-->
+                        <button class="delete_group_x btn btn-xs btn-danger pull-right" type="button" name="gdel" value="{{elem.id}}" data-id="{{ elem.id }}" data-name="{{ elem.name }}"><i class="fas fa-fw fa-times"></i></button>
+                        {% endif %}
+                        </td>
+                      {% else %}
+                        <td>
+                          <center>
+                            <input class="g_{{forloop.counter}}" m-click="update" m-args="{{elem.id}}" name="elem_{{elem.id}}" type="checkbox" {% if elem.allow %}checked{% endif %} />
+                          </center>
+                        </td>
+                      {% endif %}
+                    {% endfor %}
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="btn-toolbar pull-right manage-save-groups" role="group" >
+              <button type="button" m-submit="save()" class="pull-right btn btn-success"><i class="fas fa-fw fa-save"></i> Save</button> 
+              <button type="reset" m-submit="reset()" class="btn btn-default pull-right">Revert Changes</button> 
+            </div>
+          </form>
+
+          <form method="POST" id="gname_add">{% csrf_token %}<input type="hidden" id="gadd" name="gadd" value="" /></form>
+          <button onClick="addGroup();" style="margin-bottom: 10px;" class="pull-left btn btn-success"><i class="fas fa-fw fa-plus"></i> Add Group</button>
+          
+
+        </div>
+        {% else %}
+        There are no community groups yet.
+        <br>
+        <form method="POST" id="gname_add">{% csrf_token %}<input type="hidden" id="gadd" name="gadd" value="" /></form>
+        <button onClick="addGroup();" style="margin-bottom: 10px;" class="pull-left btn btn-success"><i class="fas fa-fw fa-plus"></i> Add Group</button>
+        {% endif %}
+      </div>
+    </div>
+
+
+    <div class="col-lg-12">
+      <div class="alert alert-warning " role="alert">
+        <strong>Note: </strong>
+        <br/><strong>Database Owners:</strong> group which enables plugins to be displayed only to database owners. Only applicable/used in a database context.
+        <br/><strong>Default:</strong> group with read-only access to the community entries. Users in this group can view all entries and the data associated to the assigned plugins in the default groups.
+        <br/><strong>Editors:</strong> group with read and write access to the community entries. The users that are in this group can add new entries and edit his/her own entries. 
+        <br/><strong>Study Managers:</strong> group that is in charge for managing study requests.
+        <br/><strong>API:</strong> group that can utilize the API and access related information.
+
+      </div>
+
+      <div class="panel panel-default user-groups-plugins-container">
+        <div class="panel-heading">Users and Groups</div>
+        <div class="panel-body">
+        {% if ugroup|length > 0 %}
+          <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="ugpedit" id="ugpedit" value="." />
+            <table id="groups_and_users" class="table table-bordered table-stripped" >
+                <thead>
+                  <tr>
+                  {% for elem in usermatrix.0 %}
+                    <th>
+                      <center>
+                        {{elem}}&nbsp&nbsp
+                        {% if forloop.counter > 3 %}
+                          <input
+                            type="checkbox"
+                            title="Select All / Clear All"
+                            onClick="check_c(this,'c_{{forloop.counter}}');"
+                            {% if forloop.last and comm.membership == comm.MEMBERSHIP_OPEN %} disabled checked {% endif %}
+                          />
+                        {% endif %}
+                      </center>
+                    </th>
+                  {% endfor %}
+                  </tr>
+                </thead>
+
+                <tbody>
+                {% for line in usermatrix %}
+                  {% if forloop.counter > 1 %}
+                  <tr>
+                    {% for elem in line %}
+                      {% if forloop.counter < 4 %}
+                        <td>{{elem}}</td>
+                      {% else %}
+                        <td>
+                          <center>
+                            {# <input name="usermail" value="{% if elem.1 %}{{elem.1}}{% endif %}" type="hidden" /> #}
+                            <input class="c_{{forloop.counter}}"
+                                   {% if forloop.last and comm.membership == comm.MEMBERSHIP_OPEN %}
+                                   disabled
+                                   {% else %}
+                                   m-click="update('elem_{{elem.0}}', '{{elem.1}}')"
+                                   name="elem_{{elem.0}} {{elem.1}}"
+                                   {% endif %}
+                                   type="checkbox" {% if elem.2 %}checked{% endif %} />
+                          </center>
+                        </td>
+                      {% endif %}
+                    {% endfor %}
+                  </tr>  
+                  {% endif %}
+                {% endfor %}
+              </tbody>
+
+            </table>
+            <div class="btn-toolbar pull-right manage-save-groups" role="group" >
+              <button m-submit="save()" class="pull-right btn btn-success"><i class="fas fa-fw fa-save"></i> Save</button>
+              <button m-submit="reset()" type="reset" class="btn btn-default pull-right">Revert Changes</button>
+            </div>
+          </form>
+
+        </div>
+        {% else %}
+        There are no community groups yet.
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+
+
+{% endblock %}

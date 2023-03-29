@@ -1,0 +1,139 @@
+{% load extra_tags %}
+
+{% get_communityfields comm questionnaire view as configured_fields%}
+{% get_excluded_extra_community_fields comm questionnaire view as excluded_extra_fields %}
+
+<table class="table table-bordered fingerprint_table" id="table_databases"
+    data-provides="rowlink"
+    data-controller="community-fingerprint-listing-table">
+    <thead>
+        <tr>
+
+            {% find_sort_param sort_params "database_name" as fslug %}
+            <th class="sorter-database_name sorter {%if "icon-minus" not in sort_params.database_name.icon %}selected-sorter{% endif %}"
+                         data-action="click->community-fingerprint-listing#onSwitchOrder"
+                         data-sortSlug="database_name"
+                         data-sortOrder="{{ fslug.next }}"
+            >
+                {{questionnaire.get_database_field|removehs}}
+                <div class="pull-right"><i class="{{sort_params.database_name.icon}}"></i></div>
+            </th>
+
+            <!-- Section 0 -->
+            {% for field in configured_fields %}
+                {% if field.section == 0 %}
+
+                    {% find_sort_param sort_params field.field.slug as fslug %}
+                    <th data-toggle="tooltip" data-placement="top" title="{{field.field.text|removehs}}"
+                        class="tooltippable sorter-{{field.field.slug}} sorter {%if "icon-minus" not in fslug.icon %}selected-sorter{% endif %}"
+                         data-action="click->community-fingerprint-listing#onSwitchOrder"
+                         data-sortSlug="{{ field.field.slug }}"
+                         data-sortOrder="{{ fslug.next }}"
+                         >
+                        <div class="pull-right"><i class="{{fslug.icon}}"></i></div>
+                        {{field.field.text|removehs}}
+                    </th>
+
+                {% endif %}
+            {% endfor %}
+
+            {% if "Last Update" not in excluded_extra_fields %}
+            <th class="sorter-lastupdate sorter {%if "icon-minus" not in sort_params.last_update.icon %}selected-sorter{% endif %}"
+                 data-action="click->community-fingerprint-listing#onSwitchOrder"
+                 data-sortSlug="last_update"
+                 data-sortOrder="{{ sort_params.last_update.next }}"
+            >
+                <div class="pull-right"><i class="{{sort_params.last_update.icon}}"></i></div>
+                Last update
+            </th>
+            {% endif %}
+
+            <th class="sorter-false filter-false select_line">Select</th>
+            <!--th class="sorter-false filter-false">Filled</th-->
+        </tr>
+    </thead>
+    <tbody id="table_content">
+
+        {% for t in page_obj %}
+        <tr class="table-row{% if t.id in selected_databases %} active-line{% endif %}">
+
+            <!-- Database Acronym -->
+            <td>
+                {% if comm %}
+                    <a data-acronym="{{ t.name }}"
+                        href="c/{{comm.slug}}/fingerprint/{{ t.id }}/{% if not config.useQuestionSetRBAC %}1{% endif %}">{{ t.name }}
+                        {% if t.draft %}
+                            <span class="pull-right label label-default">DRAFT</span>
+                        {% endif %}
+                    </a>
+                {% else %}
+                    <a data-acronym="{{ t.name }}"
+                        href="c/{{f_community.slug}}/fingerprint/{{ t.id }}/{% if not config.useQuestionSetRBAC %}1{% endif %}">{{ t.name }}
+                        {% if t.draft %}
+                            <span class="pull-right label label-default">DRAFT</span>
+                        {% endif %}
+                    </a>
+                {% endif %}
+            </td>
+
+            <!-- Configured fields -->
+            {% for field in  configured_fields %}
+                {% if field.section == 0 %}
+                    <td>
+                        {% if field.field.type == 'numeric' %}
+                        <div class="pull-right">
+                            {% find_field_value t field %}
+                        </div>
+                        {% elif field.field.type == 'open-textfield' %}
+                        <div class="opentext-mid">
+                            <p class="js-excerpt mid-text">{% find_field_value t field%}</p>
+                            <a role="button" href="#" class="js-show-more">Show more</a>
+                        </div>
+                        {% elif field.field.type == 'choice-multiple' %}
+                        <ul class="mult-choice-field">
+                            {% find_field_value t field as oplist %}
+                            {% with oplist|split:"#" as elems %}
+                            {% if elems %}
+                            {% for elem in elems %}
+                                <li> {{ elem }}</li>
+                            {% endfor %}
+                            {%endif%}
+                            {%endwith%}
+                            
+                        </ul>
+                        {% else %}
+                            {% if field.field.type == 'datepicker' %}
+                                <center>{% find_field_value t field %}</center>
+                            {% elif field.field.type == 'url'%}
+                                <a href="{% find_field_value t field%}" target="_blank">{% find_field_value t field%}</a>
+                            {% else %}
+                                {% find_field_value t field %}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% endif %}
+            {% endfor %}
+
+            {% if "Last Update" not in excluded_extra_fields %}
+            <!-- Last Update -->
+            <td style="text-align: center;" class="date">
+                {% if t.last_activity %}
+                    {{t.last_activity|datehhmm}}
+                {% else %}
+                    {{ t.date }}
+                {% endif %}
+            </td>
+            {% endif %}
+
+            <!-- Select -->
+            <td class="select_line">
+                <input class="chkbox dbtype_{{t.type_name|removespaces}}" type="checkbox" autocomplete="off"
+                       typedb="{{ t.type_name }}" name="chk_{{ t.id }}" data-action="click->community-fingerprint-listing#onSelectDatabase click->community-fingerprint-listing-table#onSelect"
+                       {% if t.id in selected_databases %}checked{% endif %}
+                >
+            </td>
+        </tr>
+        
+        {% endfor %}
+    </tbody>
+</table>

@@ -1,0 +1,15 @@
+.read-checkbox {
+	visibility: hidden;
+}
+
+.write-checkbox {
+	visibility: hidden;
+}
+
+/* icon for READ - eye */
+.read-checkbox + label {  color: lightgrey; } /* unchecked icon */
+.read-checkbox:checked + label { color: mediumseagreen; } /* checked icon */
+
+/* icon for WRITE - pencil */
+.write-checkbox + label {  color: lightgrey; } /* unchecked icon */
+.write-checkbox:checked + label {  color: mediumseagreen; } /* checked icon */

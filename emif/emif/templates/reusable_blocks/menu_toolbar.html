@@ -1,0 +1,258 @@
+
+{% load extra_tags %}
+{% comment %} # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# {% endcomment %}
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="btn-group pull-right">
+
+
+          {% comment %}
+          EDIT BUTTON that enables / disables editing the fields in realtime was removed by everyone thinking that its for the edit option
+          {% if not plugins and request.user|safe in users_db and not readonly %}
+          <button type="button" class="btn btn-default active" onclick="edit_db_option();" title="Enable/Disabled edit option" data-toggle="button">
+        <i class="fas fa-fw fa-pencil-alt"></i> Edit
+      </button>
+          {% endif %}
+          {% endcomment %}
+
+      {% if request.user.is_authenticated %}
+      <!--div class="btn-group" id="group_toolbar"-->
+        {% if dashboard %}
+          <div id="dashboardselectbox" class="btn btn-default btn-group"></div>
+          <button id="dashboardreset" title="Reset the dashboard widgets configuration to default original state. All personal preferences will be lost." onclick="dashzone.reset();" class="btn btn-default"><i class="fas fa-fw fa-undo"></i> Reset</button>
+
+        {% endif %}
+        
+        {% if plugin_add %}
+          {%if user|has_group:'developers' or user.is_staff %}
+            <a class="btn btn-default" href="developer/add" id="developer_add">
+            <i class="fas fa-fw fa-plus"></i>
+              Add Plugin
+            </a>
+          {% endif %}
+        {% endif %}
+        
+        {% if developer %}
+          <a class="btn btn-default" href="developer/docs" id="developer_docs">
+          <i class="fas fa-fw fa-question-circle"></i>
+            Developer Documentation
+          </a>
+        {% endif %}
+        
+        {% if fingerprint_dump %}
+          <!--div id="tabselectbox" class="btn btn-default btn-group"></div>
+          <button id="tabmanagerreset" title="Reset the tab widgets configuration to default original state. All personal preferences will be lost." onclick="tm.reset();" class="btn btn-default"><i class="fas fa-fw fa-undo"></i> Reset</button-->
+          {%if config.newsletter %}
+            {% if not subscription %}
+              <button id="dbsubscription" data-subscribed="false" class="btn btn-default"><i class="fas fa-fw fa-at"></i> Subscribe</button>
+            {% else %}
+              <button id="dbsubscription" data-subscribed="true" class="btn btn-default"><i class="fas fa-fw fa-at"></i> Unsubscribe</button>
+            {% endif %}
+          {% endif %}
+          
+          {% if config.more_like_this %}
+          <a class="btn btn-default morelikethis" href="{%if comm%}c/{{comm.slug}}/{%endif%}mlt/{{fingerprint_id}}" id="morelikethis_toolbar"> <i class="fas fa-fw fa-search icon"></i>
+            More Like This
+          </a>
+          {% endif %}
+        {% endif %}
+        
+        {% if results or databases or alldatabases or more_like_this %}
+        <div class=" btn-default btn-group">
+          <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#" id="add_list_toolbar">
+            <i class="fas fa-fw fa-retweet"></i> Compare
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+              <li><a id="comparabtn"  href=""  rel="tooltip" data-container="body" data-placement="left" data-original-title="This allows to compare databases.<br /> It is only possible to compare databases of the same type. <br /> When you choose a database, the type is defined automatically, and databases of other types can't be choosen.">
+            <i class="fas fa-fw fa-columns"></i>&nbsp; Databases</a>
+            </li>
+              {% if config.compare_populations %}
+            <li><a id="comparabtnPC"  href=""  rel="tooltip" data-container="body" data-placement="left" data-original-title="This allows to compare databases.<br /> It is only possible to compare databases of the same type. <br /> When you choose a database, the type is defined automatically, and databases of other types can't be choosen. <br /> If you want to choose other type of databases, you must only choose databases of this type.">
+            <i class="fas fa-fw fa-users"></i>&nbsp; Populations</a>
+            {% endif %}
+            </li>
+          </ul>
+        </div>
+        {% endif %}
+
+        {% if create_public and comm and own_dbs|length > 0 or comm|community_owner:user and comm_db_names %}
+        <div class="btn-group">
+          <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+            Create Private Link
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            {% if own_dbs and not comm|community_owner:user %}
+            {% for fg in own_dbs %}
+              <li>
+                <a href="public/fingerprint/create/{{fg.fingerprint}}/{{comm.slug}}">{{fg.name}}</a>
+              </li>
+              {% endfor %}
+            {% else %}
+              {% if comm|community_owner:user and comm_db_names %}
+                {% for f in comm_db_names %}
+                <li>
+                  <a href="public/fingerprint/create/{{f.fingerprint}}/{{comm.slug}}">{{f.name}}</a>
+                </li>
+                {% endfor %}
+              {% endif %}
+            {% endif %}
+          </ul>
+        </div>
+        {% endif %}
+
+      <!--/div-->
+      {% endif %}
+      
+      {% if  collapse %}
+      <a id="collapseall" class="btn btn-default" href="#" >
+              Expand all
+          </a>
+      {% endif %}
+      
+      {% comment %}
+        {% if config.geolocation %}
+          {% if geo or alldatabases or databases or results or more_like_this %}
+            <a class="btn btn-default" href="{%if comm%}c/{{comm.slug}}/{%endif%}geo" onclick="" > <i class=" icon"></i>
+              <i class="fas fa-fw fa-globe"></i> Map
+            </a>
+          {% endif %}
+        {% endif %}
+
+        {% if config.datatable %}
+          {% if data_table or isSearch or databases %}
+          <a class="btn btn-default" href="{%if comm%}c/{{comm.slug}}/{%endif%}alldatabases/data-table" onclick="" > <i class="icon fa fa-th"></i>
+            Data table
+          </a>
+          {% endif %}
+        {% endif %}
+      {% endcomment %}
+
+      {% if activesubmenu == 'datatable' %}
+                <button id="submit_dbs_qsets" class="btn btn-default" disabled> <i class="fas fa-fw fa-bar-chart"></i> Show </button>
+      {%endif%}
+
+      {% if comm.get_permissions.export_datatable or user|has_group:'exporters' or user.is_superuser %}
+        {% if export_datatable %}
+          {% if activesubmenu == 'datatable' %}
+                <button id="exportdatatable" class="btn btn-default" onclick="showExportMessage();" disabled> <i class="fas fa-fw fa-upload"></i> Export </button>
+          {%else%}
+            <button id="exportdatatable" class="btn btn-default" onclick="showExportMessage();"> <i class="fas fa-fw fa-upload"></i> Export </button>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+
+      {% if comm.get_permissions.export_dblist or user|has_group:'exporters' or user.is_superuser %}
+        {% if isSearch %}
+        <a class="btn btn-default" href="export_search_answers" onclick="showExportMessage();" > <i class="fas fa-fw fa-upload"></i>
+          Export
+        </a>
+        {% endif %}
+      {% endif %}
+        
+        {% comment %}
+          {% if request.user.is_superuser %}
+                {% if config.extra_information and api_token %}
+                    <a class="btn btn-default" href="api-info"> <i class=" icon"></i>
+                    <i class="fas fa-fw fa-info-sign"></i> API Info
+                    </a>
+                {% endif %}
+          {% endif %}
+        {% endcomment %}
+
+        {% if fingerprint_dump and owner_fingerprint or fingerprint_dump and request.user.is_superuser or comm and comm|community_owner:user and fingerprint_dump %}
+          <!-- Fingerprint: Manage option -->
+          <div class="btn btn-default btn-group">
+            <a id="managetoolbar" class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+              <i class="fas fa-fw fa-cogs"></i> Manage
+              <span class="caret"></span>
+            </a>
+            <ul class="pull-right dropdown-menu">
+              <li>
+                <a href="{%if comm%}c/{{comm.slug}}/{%endif%}dbEdit/{{fingerprint_id}}/{{fingerprint_ttype}}" id="edit_list_toolbar" title="Edit Database"> <i class="fas fa-fw fa-pencil-alt icon"></i>
+                  Edit
+                </a>
+              </li>
+              <li class="divider"></li>
+              <li style="margin-top: -10px;"><small style="margin-left: 20px; color: grey;">Share</small></li>
+              <li>
+                <a class="sharedb" href="" id="share_list_toolbar" onclick="return false;"> <i class="fas fa-fw fa-users"></i>
+                  Share with other user
+                </a>
+              </li>
+              <li>
+                <a id="editpermissions" href="" onclick="return false;"> <i class="fas fa-fw fa-lock"></i>&nbsp; Members with ownership
+                </a>
+              </li>
+              {% if config.privateLinksMenu %}
+              <li>
+                <a class="publiclink" href="" id="publiclink_toolbar" onclick="return false;"> <i class="fas fa-fw fa-share"></i>
+                  Create a private link
+                </a>
+              </li>
+              {% endif %}
+              <li class="divider"></li>
+              <li>
+                {% if comm.get_permissions.export_fingerprint or user|has_group:'exporters' or user.is_superuser %}
+
+                  {% if export_bd_answers %}
+                    <a href="export_bd_answers/{{ fingerprint_id }}" onclick="showExportMessage();" > <i class="fas fa-fw fa-upload"></i>
+                      Export
+                    </a>
+                  {% endif %}
+                  <a href="fingerprint/api/pdf/{{ fingerprint_id }}"> <i class="fas fa-fw fa-file-pdf"></i>
+                    Export to PDF
+                  </a>
+                {% endif %}
+                {% if user.is_staff %}
+                  <a href="fingerprint/api/montra/{{ fingerprint_id }}"> <i class="fas fa-fw fa-file"></i>
+                    Export Entire Database (Admin only)
+                  </a>
+                {% endif %}
+              </li>
+              <li class="divider"></li>
+              <li>
+                <a class="confirm-delete" href="" id="delete_list_toolbar" onclick="return false;"data-id="{{ fingerprint_id }}"  title="Remove Database"> <i class="fas fa-fw fa-trash icon"></i>
+                  Delete
+                </a>
+              </li>
+            </ul>
+          </div>
+        {% else %}
+          {% if user|has_group:'exporters' or user.is_superuser %}
+
+            {% if export_bd_answers %}
+            <a class="btn btn-default" href="export_bd_answers/{{ fingerprint_id }}" onclick="showExportMessage();" > <i class="fas fa-fw fa-upload"></i>
+              Export
+            </a>
+            {% endif %}
+          {% endif %}
+        {% endif %}
+    </div>
+  </div>
+</div>
+
+{% if results or databases or alldatabases or more_like_this %}
+<div id="selected_databases">
+<div class="pull-right">
+{%if not comm %}<strong>Type Selected:</strong> <span id="selected_dbstype">---</span>{%endif%} &nbsp; &nbsp; <strong>Selected databases:</strong> <span id="selected_dbscount">0</span>
+</div>
+</div>
+{% endif %}

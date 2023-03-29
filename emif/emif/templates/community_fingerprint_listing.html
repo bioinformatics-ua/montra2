@@ -1,0 +1,723 @@
+{% extends 'base.html' %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>. {% endcomment %} <!-- Load dependencies -->
+  {% load static %}
+  {% load versioned_static %}
+  {% load extra_tags %}
+  {% load django_bootstrap_breadcrumbs %}
+  {% load bootstrap_pagination %}
+
+  <!-- Adicional CSS -->
+  {% block styleinclude %}
+  <link rel="stylesheet" href="{% static 'css/theme.blue.css' %}">
+  <link rel="stylesheet" href="{% static 'css/vendor/jquery.boolrelwidget.css' %}">
+  <!-- <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css"> -->
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.0/c3.min.css">
+
+  <link rel="stylesheet" href="{% versioned_static 'css/community-fingerprint-listing.css' %}">
+
+
+  {% endblock %}
+  {% block styleextra %}
+  .hoverDiv {background: #fff;}
+  .hoverDiv:hover {background: #E8E8E8;}
+  {% endblock %}
+
+  <!-- Adicional JS -->
+  {% block scriptextraincludes %}
+    <script src="{% static 'js/vendor/jquery.boolrelwidget.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.ba-throttle-debounce.min.js' %}"></script>
+    <script src="{% static 'js/vendor/json2.js' %}"></script>
+    <script src="{% static 'js/paginator-sorter.js' %}"></script>
+    <script src="{% static 'js/emif.results.js' %}"></script>
+    <script src="{% static 'js/emif.comparison_populations.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.knob.js' %}"></script>
+    <script src="{% static 'js/jquery.matchheight-min.js' %}"></script>
+    <script src="{% static 'js/emif.utils.js' %}"></script>
+    <!-- montra components -->
+    <!-- 
+    <script
+      src="{% static 'components/community_fingerprint_listing/community_fingerprint_listing.controller.js' %}"></script>
+    <script
+      src="{% static 'components/community_fingerprint_listing/community_fingerprint_listing.service.js' %}"></script>
+    <script src="{% static 'components/community_fingerprint_listing/community_fingerprint_listing.view.js' %}"></script> 
+    -->
+
+    <!-- Patternfly -->
+    <script src=" https://cdnjs.cloudflare.com/ajax/libs/d3/5.9.2/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.7.0/c3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/js/patternfly.min.js"></script>
+
+  {% endblock %}
+
+  <!-- Results header -->
+
+  <!-- Breadcumb -->
+  {% block breadcrumbs %}
+    {{ block.super }}
+
+    {% if results %}
+      {% if comm %}
+        {% breadcrumb "Search" 'c/'|add:comm.slug|add:"/resultsdiff/1" %}
+      {% else %}
+        {% breadcrumb "Search" "resultsdiff/1" %}
+      {% endif %}
+      {% if not isAdvanced %}
+        {% if search_old == None %}
+          {% breadcrumb "None" "" %}
+        {% else %}
+          {% breadcrumb search_old "" %}
+        {% endif %}
+      {% endif %}
+    {% elif alldatabases %}
+      {% if comm %}
+        {% breadcrumb "All" "c/"|add:comm.slug|add:"/q/"|add:questionnaire.slug %}
+      {% else %}
+        {% breadcrumb "All" "c/"|add:comm.slug|add:"/q/"|add:questionnaire.slug %}
+      {% endif%}
+    {% elif databases %}
+      {% if comm and questionnaire %}
+        {% breadcrumb "Personal" "c/"|add:comm.slug|add:"/q/"|add:questionnaire.slug|add:"/databases" %}
+      {% else %}
+        {% breadcrumb "Personal" "databases" %}
+      {% endif%}
+    {% endif %}
+  {% endblock %}
+
+
+
+  <!-- Begin of block content-->
+  {% block content %}
+
+  {% csrf_token %}
+
+  </script>
+
+  <!-- Community Fingerprint Listing -->
+
+  <!-- Display header if enabled -->
+  {% if comm.header_display == comm.HEADER_DISPLAY_COMM_TYPE or comm.header_display == comm.HEADER_DISPLAY_BOTH_TYPE and comm.icon.url %}
+    <center><img src="{{comm.icon.url}}" class="community_logo" /></center>
+  {% endif %}
+
+  <!-- Create JSON model to render table -->
+  <script type="text/javascript">
+    // model is created as a global variable. Controller accesses its value by using
+    // window[m-controller-data]
+    //var community_fingerprint_listing_model = {{ component_json_data| safe }};
+  </script>
+  <!-- <div module="CommunityFingerprintListing">
+    <div mf-init="section: CommunityFingerprintListing" m-init="section: CommunityFingerprintListing"
+      m-controller-data="main:community_fingerprint_listing_model" controller="CommunityFingerprintListingController">
+      <div class="loader"></div>
+    </div>
+  </div> -->
+
+  {% if page_obj != None %}
+
+  {% get_uniquecommunityfields comm questionnaire view as configured_fields%}
+
+  <!-- Compare -->
+  <form id="compare_form" action="resultscomp" method="POST">
+    {% csrf_token %}
+    <div id="comparedbs"></div>
+    <input id="submitdbsimulate" type="submit" value="Submit">
+  </form>
+
+  <main class="cd-main-content" data-controller="community-fingerprint-listing" 
+            data-community-fingerprint-listing-base_filter="{{sort_params.base_filter}}"
+            data-community-fingerprint-listing-view="{{view}}"
+            data-community-fingerprint-listing-comm_slug="{{comm.slug}}"
+            data-community-fingerprint-listing-questionnaire_slug="{{questionnaire.slug}}">
+
+    <section class="cd-gallery">
+
+      <!-- Toolbar -->
+      <div class="container-fluid">
+        <div class="row toolbar-pf">
+          <div class="col-sm-12">
+
+            <!-- Toolbar actions form -->
+            <form class="toolbar-pf-actions">
+              
+              {% if request.user.is_authenticated %}
+
+              <!-- Menu - Compare, Export, Tools -->
+              <div class="toolbar-pf-action-left">
+                  <div class="form-group">
+                    {% if request.user.is_staff or comm|community_owner:request.user or comm|is_community_editor:request.user %}
+                    <div class="dropdown btn-group dropdown-kebab-pf">
+                      <button class="btn" onclick="location.href='c/{{comm.slug}}/add/{{questionnaire.id}}/0'" style="background-color:transparent" type="button" id="newEntryButton">
+                        New Entry
+                      </button>
+                    </div>
+                    {% endif %}
+                      <div class="dropdown btn-group dropdown-kebab-pf">
+                          <button class="btn dropdown-toggle" style="background-color:transparent" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Compare
+                            <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">                            
+                            {% if results or databases or alldatabases or more_like_this %}                            
+                              <!-- Compare -->
+                              <li class="dropdown-header">Compare</li>
+                              <li>
+                                <a class="cursor-pointer" id="comparabtn" role="button" rel="tooltip" data-container="body" data-placement="right" data-original-title="This allows to compare databases.<br /> It is only possible to compare databases of the same type. <br /> When you choose a database, the type is defined automatically, and databases of other types can't be choosen.">
+                                <i class="fas fa-fw fa-columns"></i>&nbsp; Databases</a>
+                              </li>
+                              {% if config.compare_populations %}
+                                <li>
+                                  <a class="cursor-pointer" id="comparabtnPC" role="button" rel="tooltip" data-container="body" data-placement="right" data-original-title="This allows to compare databases.<br /> It is only possible to compare databases of the same type. <br /> When you choose a database, the type is defined automatically, and databases of other types can't be choosen. <br /> If you want to choose other type of databases, you must only choose databases of this type.">
+                                  <i class="fas fa-fw fa-users"></i>&nbsp; Populations</a>                         
+                              </li>
+                              {% endif %}
+                            {% endif %}
+                          </ul>
+                        </div>
+
+
+                        <div class="dropdown btn-group dropdown-kebab-pf">
+                            <button class="btn dropdown-toggle" style="background-color:transparent" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                              Export
+                              <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                              
+                              {% if comm.get_permissions.export_dblist or user|has_group:'exporters' or user.is_superuser %}
+                                <!-- Export -->
+                                <li class="dropdown-header">Export</li>   
+                                {% if export_all_answers %}    
+                                      <li>
+                                        <a href="javascript:void(0)" onclick="exportAllFingerprintsCsv('{{ comm.slug }}')" >
+                                          <i class="fas fa-fw fa-database"></i>&nbsp; All databases
+                                        </a>
+                                      </li>
+
+                                      <li {% if not selected_databases %}class="disabled"{% endif %} id="selectFingerprintsLiId">
+                                        <a href="javascript:void(0)" onclick="onShowFingerprintDialog(false, '{{ comm.slug }}')">
+                                          <i class="fas fa-fw fa-object-group"></i>&nbsp; Selected databases
+                                        </a>
+                                      </li>
+
+                                  {% if user.is_staff %}
+                                    <li {% if not selected_databases %}class="disabled"{% endif %} id="selectFingerprintsMultimontraLiId">
+                                      <a href="javascript:void(0)" onclick="onShowFingerprintDialog(true, '{{ comm.slug }}')">
+                                        <i class="fas fa-fw fa-object-group"></i>&nbsp; Selected databases (Multimontra)
+                                      </a>
+                                    </li>
+                                  {% endif %}
+                                {% endif %}
+                                {% if export_my_answers %}
+                                  <li>
+                                    <a class="btn btn-default" href="c/{{comm.slug}}/export_my_answers" onclick="showExportMessage();" > <i class="fas fa-fw fa-upload"></i>
+                                      Export My Answers
+                                    </a>
+                                  </li>
+                                {% endif %}
+                                {% if isSearch %}
+                                  <li>
+                                    <a class="btn btn-default" href="export_search_answers" onclick="showExportMessage();" > <i class="fas fa-fw fa-upload"></i>
+                                      Export Searched Answers
+                                    </a>
+                                  </li>
+                                {% endif %}
+                              {% endif %}
+   
+                            </ul>
+                          </div>
+
+                          {% comment %}
+                          <div class="dropdown btn-group dropdown-kebab-pf">
+                              <button class="btn dropdown-toggle" style="background-color:transparent" type="button" id="dropdownMenu3" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Tools
+                                <span class="caret"></span>
+                              </button>
+                              <ul class="dropdown-menu" aria-labelledby="dropdownMenu3">
+                                
+                                  <li class="dropdown-header">Tools</li>
+
+                                  {# example dropdown entry #}
+                                  <li>
+                                    <a class="cursor-pointer" onclick="window.print();" title="Print">
+                                      <i class="fas fa-fw fa-print"></i> Print
+                                    </a>
+                                  </li>
+
+                              </ul>
+                          </div>
+
+                          {% endcomment %}
+                  </div>
+              </div>
+  
+              {% endif %}
+
+              <div class="toolbar-pf-action-right">
+
+                <!-- Views -->
+                <div class="form-group">
+                  <a class="toolbar-icon cursor-pointer {% if view == 'table' %}active-toolbar-icon{% endif %}" data-action="click->community-fingerprint-listing#onTableView"><i
+                          class="fas fa-fw fa-table"></i></a>
+                  <a class="toolbar-icon cursor-pointer {% if view == 'list' %}active-toolbar-icon{% endif %}" data-action="click->community-fingerprint-listing#onListView"><i
+                          class="fas fa-fw fa-list"></i></a>
+                  <a class="toolbar-icon cursor-pointer {% if view == 'card' %}active-toolbar-icon{% endif %}" data-action="click->community-fingerprint-listing#onCardView"><i
+                          class="fas fa-fw fa-th-large"></i></a>
+                </div>
+
+                <!-- Open filter panel-->
+                <div class="form-group">
+                  <a  class="cd-filter-trigger cursor-pointer" 
+                      data-action="click->community-fingerprint-listing#onFilterShow">
+                    <i class="fas fa-fw fa-filter"></i> Filters / <i class="fas fa-fw fa-sort"></i> Order By
+                  </a>
+                </div>
+              </div>
+            </form>
+
+            <!-- Active filters, sorters and selected indicator -->
+            <div class="row toolbar-pf-results">
+              <div class="col-sm-2">
+                <h5>{{hits}} Results</h5>
+              </div>
+
+              <div class="col-sm-6">
+                <ul class="list-inline">
+
+                  <!-- Configured Fields -->
+                  {% for field in configured_fields %}
+
+                    {% find_sort_param sort_params field.field.slug as fslug %}
+
+                    {% if fslug.filter %}
+                      <li class="active-filter-badge" data-target="community-fingerprint-listing.activefilter" data-filterslug="{{field.field.slug}}">
+                              <span class="label label-info">
+                                Filtered by: {{field.field.text|removehs}}:
+                                {% if field.field.type == 'numeric' or field.field.type == 'datepicker' %}
+                                  [ {{fslug.filter.0|datehhmm}} to {{fslug.filter.1|datehhmm}} ]
+                                {% else %}
+                                  {{fslug.filter}}
+                                {% endif %}
+                                <a  class="cursor-pointer"
+                                    data-action="click->community-fingerprint-listing#onRemoveFilter"
+                                    data-filterslug="{{field.field.slug}}">
+                                  <!-- <span class="fas fa-fw fa-filter"></span> -->
+                                  <span class="fas fa-fw fa-times"></span>
+                                </a>
+                              </span>
+                      </li>
+                    {% endif %}
+
+                    {% if sort_params.selected_name == field.field.slug %}
+                      <li class="active-filter-badge" data-target="community-fingerprint-listing.activesorter" data-filterslug="{{field.field.slug}}">
+                              <span class="label label-info">
+                                Sorted by: {{field.field.text|removehs}}
+                                <a  class="cursor-pointer"
+                                    data-action="click->community-fingerprint-listing#onRemoveSorter"
+                                    data-filterslug="{{field.field.slug}}">
+                                  {% if sort_params.selected_value == 'asc' %}
+                                    <span class="fas fa-fw fa-sort-up"></span>
+                                  {% else %}
+                                    <span class="fas fa-fw fa-sort-down"></span>
+                                  {% endif %}
+                                  <span class="fas fa-fw fa-times"></span>
+                                </a>
+                              </span>
+                      </li>
+                    {% endif %}
+
+                  {% endfor %}
+
+                  <!-- static fields -->
+
+                  <!-- database name -->
+                  {% find_sort_param sort_params 'database_name' as fslug %}
+                  {% if fslug.filter %}
+                    <li class="active-filter-badge" data-target="community-fingerprint-listing.activefilter" data-filterslug="database_name">
+                              <span class="label label-info">
+                                Filtered by: Database Acronym:{{fslug.filter}}
+                                <a  class="cursor-pointer"
+                                    data-action="click->community-fingerprint-listing#onRemoveFilter"
+                                    data-filterslug="database_name">
+                                  <!-- <span class="fas fa-fw fa-filter"></span> -->
+                                  <span class="fas fa-fw fa-times"></span>
+                                </a>
+                              </span>
+                    </li>
+                  {% endif %}
+                  {% if sort_params.selected_name == 'database_name' %}
+                    <li class="active-filter-badge" data-target="community-fingerprint-listing.activesorter" data-filterslug="database_name">
+                              <span class="label label-info">
+                                Sorted by: Database Acronym
+                                <a data-filterslug="database_name"
+                                  {% if sort_params.selected_value == 'asc' %}
+                                    >
+                                    <span class="fas fa-fw fa-sort-up"></span>
+                                  {% else %}
+                                    class="cursor-pointer"
+                                    data-action="click->community-fingerprint-listing#onRemoveSorter"
+                                    >
+                                    <span class="fas fa-fw fa-sort-down"></span>
+                                    <span class="fas fa-fw fa-times"></span>
+                                  {% endif %}
+                                </a>
+                              </span>
+                    </li>
+                  {% endif %}
+
+                  <!-- last update -->
+                  {% find_sort_param sort_params 'last_update' as fslug %}
+                  {% if fslug.filter %}
+                    <li class="active-filter-badge" data-target="community-fingerprint-listing.activefilter" data-filterslug="last_update">
+                              <span class="label label-info">
+                                Filtered by: Last update:[ {{fslug.filter.0|datehhmm}} to {{fslug.filter.1|datehhmm}} ]
+                                <a  class="cursor-pointer"
+                                    data-action="click->community-fingerprint-listing#onRemoveFilter"
+                                    data-filterslug="last_update">
+                                  <!-- <span class="fas fa-fw fa-filter"></span> -->
+                                  <span class="fas fa-fw fa-times"></span>
+                                </a>
+                              </span>
+                    </li>
+                  {% endif %}
+                  {% if sort_params.selected_name == 'last_update' %}
+                    <li class="active-filter-badge" data-target="community-fingerprint-listing.activesorter" data-filterslug="last_update">
+                              <span class="label label-info">
+                                Sorted by: Last Update
+                                <a  class="cursor-pointer"
+                                    data-action="click->community-fingerprint-listing#onRemoveSorter"
+                                    data-filterslug="last_update">
+                                    {% if sort_params.selected_value == 'asc' %}
+                                      <span class="fas fa-fw fa-sort-up"></span>
+                                    {% else %}
+                                      <span class="fas fa-fw fa-sort-down"></span>
+                                    {% endif %}
+                                  <span class="fas fa-fw fa-times"></span>
+                                </a>
+                              </span>
+                    </li>
+                  {% endif %}
+
+                  {# draft #}
+                  {% if request.user.is_staff or comm|community_owner:request.user%}
+                  {% find_sort_param sort_params 'draft' as fslug %}
+                  {% if fslug.filter %}
+                    <li class="active-filter-badge" data-target="community-fingerprint-listing.activefilter" data-filterslug="draft">
+                              <span class="label label-info">
+                                Filtered by: Draft: {{ fslug.filter|title }}
+                                <a  class="cursor-pointer"
+                                    data-action="click->community-fingerprint-listing#onRemoveFilter"
+                                    data-filterslug="draft">
+                                  <span class="fas fa-fw fa-times"></span>
+                                </a>
+                              </span>
+                    </li>
+                  {% endif %}
+                  {% endif %}
+
+                </ul>
+
+                <p>
+                  <a id="clear-filter-btn"
+                     class="cursor-pointer"
+                     style="display: none"
+                     data-action="click->community-fingerprint-listing#onRemoveAll"
+                     data-target="community-fingerprint-listing.clearFiltersOutside"
+                     rel="tooltip"
+                     title="Clear all filters and reset to the default sorting order."
+                  >Clear All</a>
+                </p>
+              </div>
+
+
+                <div class="col-sm-2">
+                  <p>
+                      <span style="margin-left:1em{% if not selected_databases %}; display: none{% endif %}" data-target="community-fingerprint-listing.selectedDatabasesContainer">
+                          <span>Selected databases: </span>
+                          <span class="badge" data-target="community-fingerprint-listing.selectedDatabasesIndicator">
+                            {% if selected_databases %} {{ selected_databases|length }} {% else %} 0 {% endif %}
+                          </span>
+                      </span>
+                  </p>
+                </div>
+                <div class="col-sm-1">
+                  <p>
+                    <a class="cursor-pointer"
+                       data-target="community-fingerprint-listing.selectedUnselectAll"
+                       data-action="click->community-fingerprint-listing#onSelectUnselectAll"
+                    >Select all</a>
+                  </p>
+                </div>
+              <div class="col-sm-1">
+                <p style="{% if not selected_databases %}display: none{% endif %}"
+                   data-target="community-fingerprint-listing.clearSelection"
+                >
+                  <a class="cursor-pointer" onclick="a.plugin.clearSelection()">Clear selection</a>
+                </p>
+              </div>
+
+              </div><!-- /col -->
+            </div><!-- /row -->
+
+          </div>
+        </div>
+
+      <!-- Results -->
+      <form id="result_form" method="POST">
+        {% csrf_token %}
+        <div>
+          {% if view == "list" %}
+            {% include "community_fingerprint_listing_list.html" %}
+          {% elif view == "table"%}
+            {% include "community_fingerprint_listing_table.html" %}
+          {% elif view == "card"%}
+            {% include "community_fingerprint_listing_card.html" %}
+          {% endif %}
+        </div>
+      </form>
+
+      <!-- footer -->
+      {% if page_obj != None %}
+        <div>
+            <div class="table-pag" style="min-width: 560px;">
+                {% if not page_rows == 99999 %}
+                  {% bootstrap_paginate page_obj url_view_name="fingerprint.listings.database_listing_by_community_questionnaire" url_extra_kwargs=extra_comm range=10  show_prev_next="false" show_first_last="true"%}
+                {%else %}
+                  <div style="width: 100%; height: 50px;"></div>
+                {% endif %}
+               
+                <div  class="pull-right pagination-centered">
+                    Show &nbsp;
+                    <select style="width: 70px;" 
+                            data-action="change->community-fingerprint-listing#onPaginatorChange" 
+                            data-target="community-fingerprint-listing.paginatorRows" 
+                            class="form-control paginator-page-selector" >
+                      <option value="5" {% if page_rows == 5 %}selected{% endif %}>5</option>
+                      <option value="10" {% if page_rows == 10 %}selected{% endif %}>10</option>
+                      <option value="25" {% if page_rows == 25 %}selected{% endif %}>25</option>
+                      <option value="50" {% if page_rows == 50 %}selected{% endif %}>50</option>
+                      <option value="-1" {% if page_rows > 50 %}selected{% endif %}>All</option>
+                    </select>&nbsp;
+                     items per page
+                </div>
+
+                <form data-target="community-fingerprint-listing.searchForm" method="POST" >
+                  <input data-target="community-fingerprint-listing.dataViewForm" type="hidden" name="view" value="{{view}}" />
+                  <input data-target="community-fingerprint-listing.pageForm" type="hidden" name="page" value="{{page}}" />
+                  <input data-target="community-fingerprint-listing.pageRowsForm" type="hidden" name="page_rows" value="{{page_rows}}" />
+                  <input data-target="community-fingerprint-listing.sForm" type="hidden" name="s" value="" />
+                {% csrf_token %}
+                </form>
+              </div>               
+        </div>
+      {% endif %}
+    </section>
+
+    <div id="cd-filter">
+      <form data-target="community-fingerprint-listing.cdForm">
+          <div class="filter-box">
+              <h4>Order By</h4>
+    
+              <div class="">
+                  
+                  <select class="form-control" name="sorter" data-target="community-fingerprint-listing.sorterSlug">
+                      <option value="database_name" {% if sort_params.selected_name == 'database_name' %} selected {% endif %}>Database Acronym</option>
+
+                      {% for field in configured_fields %}
+                        <option value="{{field.field.slug}}" {% if sort_params.selected_name == field.field.slug %} selected {% endif %}>
+                          {{field.field.text|removehs}}
+                        </option>
+                      {% endfor %}
+
+                      <option value="last_update" {% if sort_params.selected_name == 'last_update' %} selected {% endif %}>Last Update</option>
+                  </select>
+                  
+                  <div class="sort-values-margin">
+                      <label class="radio-inline">
+                        <input data-target="community-fingerprint-listing.sorterAscValue" 
+                              type="radio" name="optradio" value="asc" {% if sort_params.selected_value == 'asc' %} checked {% endif %}>
+                        Ascending
+                      </label>
+                      <label class="radio-inline">
+                        <input data-target="community-fingerprint-listing.sorterDescValue" 
+                            type="radio" name="optradio" value="desc" {% if sort_params.selected_value == 'desc' %} checked {% endif %}>
+                        Descending
+                      </label>
+                  </div>  
+                </div>
+                  
+          </div>
+
+        <hr class="filters-sorters-divider">
+
+        <div>
+          <h4>Filter By</h4>
+
+          <div class="filter-box">
+            <!-- filter content -->
+            <!-- database name -->
+            <div class="form-group filter_element" data-target="community-fingerprint-listing.filter" data-type="open" data-slug="database_name">
+              <label>Database Acronym</label>
+
+              {% find_sort_param sort_params 'database_name' as fslug %}
+
+              <!-- field type: open-->
+              <input data-target="community-fingerprint-listing.min" type="text" class="form-control" value="{{fslug.filter}}">
+              <input data-target="community-fingerprint-listing.max" type="hidden">
+            </div>
+
+            <!-- configured fields -->
+            {% for field in configured_fields %}
+              <div class="form-group filter_element" data-target="community-fingerprint-listing.filter" data-type="{{field.field.type}}" data-slug="{{field.field.slug}}">
+                <label>{{field.field.text|removehs}}</label>
+
+                {% find_sort_param sort_params field.field.slug as fslug %}
+
+                {% if field.field.type == 'numeric' %}
+                <!-- field type: numeric-->
+                <div class="input-group" class="form-control">
+                  <input data-target="community-fingerprint-listing.min" type="number" class="form-control" value="{{fslug.filter.0}}"/>
+                  <span class="input-group-addon">to</span>
+                  <input data-target="community-fingerprint-listing.max" type="number" class="form-control" value="{{fslug.filter.1}}"/>
+                </div>
+                
+                {% elif field.field.type == 'datepicker' %}
+                <!-- field type: date-->
+                <div class="input-group filter-date-group">
+                  <input data-target="community-fingerprint-listing.min" type="date" class="form-control filter-date" placeholder="Start" value="{{fslug.filter.0|datehhmm}}"/>
+                  <span class="input-group-addon date-to">to</span>
+                  <input data-target="community-fingerprint-listing.max" type="date" class="form-control filter-date" placeholder="End" value="{{fslug.filter.1|datehhmm}}"/>
+                </div>
+
+                {% elif field.field.type == 'choice-yesno' %}
+                <!-- field type: yesno checkbox-->
+                <div class="input-group">
+                  <label class="radio-inline"><input data-target="community-fingerprint-listing.min" type="radio" name="{{field.field.slug}}" {% if fslug.filter == 'yes' %} checked {% endif %}> Yes</label>
+                  <label class="radio-inline"><input data-target="community-fingerprint-listing.max" type="radio" name="{{field.field.slug}}" {% if fslug.filter == 'no' %} checked {% endif %}>No</label>
+                </div>
+
+                {% else %}
+                <!-- field type: open-->
+                <input data-target="community-fingerprint-listing.min" type="text" class="form-control" value="{{fslug.filter}}">
+                <input data-target="community-fingerprint-listing.max" type="hidden">
+                {% endif %}
+                
+              </div>
+            {% endfor %}
+
+            <!-- last update -->
+            <div class="form-group filter_element" data-target="community-fingerprint-listing.filter" data-type="datepicker" data-slug="last_update">
+                <label>Last Update</label>
+
+                {% find_sort_param sort_params 'last_update' as fslug %}
+
+                <!-- field type: date-->
+                <div class="input-group filter-date-group"e>
+                  <input data-target="community-fingerprint-listing.min" type="date" class="form-control filter-date" placeholder="Start" value="{{fslug.filter.0|datehhmm}}"/>
+                  <span class="input-group-addon date-to">to</span>
+                  <input data-target="community-fingerprint-listing.max" type="date" class="form-control filter-date" placeholder="End" value="{{fslug.filter.1|datehhmm}}"/>
+                </div>
+                
+            </div>
+
+            {# draft #}
+            {% if request.user.is_staff or comm|community_owner:request.user%}
+            <div class="form-group filter_element" data-target="community-fingerprint-listing.filter" data-type="choice-yesno" data-slug="draft">
+              <label>Draft</label>
+
+              {% find_sort_param sort_params 'draft' as fslug %}
+
+              <!-- field type: yesno checkbox-->
+              <div class="input-group">
+                <label class="radio-inline"><input data-target="community-fingerprint-listing.min" type="radio" name="draft" {% if fslug.filter == 'yes' %} checked {% endif %}>Yes</label>
+                <label class="radio-inline"><input data-target="community-fingerprint-listing.max" type="radio" name="draft" {% if fslug.filter == 'no' %} checked {% endif %}>No</label>
+              </div>
+
+            </div>
+            {% endif %}
+
+          </div>
+        </div>
+      </form>
+
+      <button class="btn btn-clear cd-bottom-btn"
+              style="width: 30%"
+              data-action="click->community-fingerprint-listing#onRemoveAll"
+              data-target="community-fingerprint-listing.clearFiltersInside"
+      >
+        Clear all
+      </button>
+      <button class="btn btn-primary cd-bottom-btn pull-right"
+              style="width: 70%"
+              data-target="community-fingerprint-listing.applyFilter"
+              data-action="click->community-fingerprint-listing#onFilter"
+      >
+        Apply
+      </button>
+
+      <a class="cd-close cursor-pointer" data-action="click->community-fingerprint-listing#onFilterClose">Close</a>
+    </div> <!-- cd-filter -->
+  </main> <!-- cd-main-content -->
+
+  {% else %}
+  <div class="no-results-top-margin"></div>
+  {% endif %}
+
+
+  {% endblock %}
+
+  {% block scriptextra %}
+
+    $(".dial").knob({
+      width: 50,
+      height: 46,
+      readOnly: 'true'
+    });
+
+    $(function(){
+        {% if page_obj != None %}
+          const allFilters = [
+          {% for field in comm.list_fields.all %}
+            '{{field.slug}}',
+          {% endfor %}
+          ];
+
+          initializePaginatorSorter(
+              '{{sort_params.base_filter}}',
+              '{{sort_params.selected_name}}',
+              '{{sort_params.selected_value}}',
+              '{{sort_params.extraObjects|safe}}',
+              allFilters
+          );
+
+        {% endif %}
+
+        setRefineEvent({% if isAdvanced %} true, '{{request.session.query_type}}', '{{request.session.query_id}}' {% else %} false, null, null {% endif %});
+
+         {% if isAdvanced %}
+            setBooleanPlugin('{{request.session.serialization_query}}', '{{request.session.query_type}}', '{{request.session.query_id}}');
+         {% endif %}
+    });
+
+     function searchFacet(comm){
+          $('#s_'+comm).submit();
+     }
+
+  {% endblock %}

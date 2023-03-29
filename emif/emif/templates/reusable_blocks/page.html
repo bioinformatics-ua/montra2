@@ -1,0 +1,171 @@
+{% load static %}
+    <!-- Preloader -->
+    <div class="loading-container">
+      <div class="loading"><img src="{% static 'img/loading.gif' %}" width="40px;"></div>
+    </div>
+    <!-- Preloader -->
+
+
+    <aside class="left-panel">
+
+            <div class="user text-center">
+                  <img src="assets/images/avtar/user.png" class="img-circle" alt="...">
+                  <h4 class="user-name" id="UserNameMenu">Dr. Grey</h4>
+            </div>
+
+
+
+            <nav class="navigation">
+                <ul class="list-unstyled">
+                    <li class="active"><a href="index.php"><i class="fas fa-fw fa-home"></i><span class="nav-label">Dashboard</span></a></li>
+                    <li ><a href="#"><i class="fas fa-fw fa-bookmark"></i><span class="nav-label">About</span></a></li>
+                    <li class="has-submenu"><a href="#"><i class="fas fa-fw fa-database"></i> <span class="nav-label">Databases</span></a>
+                        <ul class="list-unstyled">
+                            <li><a href="#">New</a></li>
+                            <li><a href="#">Complet List</a></li>
+                            <li><a href="#">My List</a></li>
+                        </ul>
+                    </li>
+
+                </ul>
+            </nav>
+
+    </aside>
+    <!-- Aside Ends-->
+
+    <section class="content">
+
+        <header class="top-head container-fluid">
+            <button type="button" class="navbar-toggle pull-left">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+
+            <nav class=" navbar-default hidden-xs" role="navigation">
+                <ul class="nav navbar-nav">
+                    <li><a href="index.php" class="TitleIndex"><span>EMIF</span> CATALGUE</a></li>
+                </ul>
+            </nav>
+
+
+
+            <ul class="nav-toolbar" style="float:right !important">
+                <li class="dropdown"><a href="#" data-toggle="dropdown"><i class="fas fa-fw fa-comments"></i> <span class="badge bg-warning">7</span></a>
+                    <div class="dropdown-menu md arrow pull-right panel panel-default arrow-top-right messages-dropdown">
+                        <div class="panel-heading">
+                        Messages
+                        </div>
+
+                        <div class="list-group">
+
+                            <a href="#" class="list-group-item">
+                            <div class="media">
+                              <div class="user-status pull-left">
+                              <img class="media-object img-circle pull-left" src="assets/images/avtar/user2.png" alt="user#1" width="40">
+                              </div>
+                              <div class="media-body">
+                                <h5 class="media-heading">Lorem ipsum dolor sit consect....</h5>
+                                <small class="text-muted">23 Sec ago</small>
+                              </div>
+                            </div>
+                            </a>
+                            <a href="#" class="list-group-item">
+                            <div class="media">
+                              <div class="user-status pull-left">
+                              <img class="media-object img-circle pull-left" src="assets/images/avtar/user3.png" alt="user#1" width="40">
+                              </div>
+                              <div class="media-body">
+                                <h5 class="media-heading">Nunc elementum, enim vitae</h5>
+                                <small class="text-muted">23 Sec ago</small>
+                              </div>
+                            </div>
+                            </a>
+                            <a href="#" class="list-group-item">
+                            <div class="media">
+                              <div class="user-status pull-left">
+                              <img class="media-object img-circle pull-left" src="assets/images/avtar/user4.png" alt="user#1" width="40">
+                              </div>
+                              <div class="media-body">
+                                <h5 class="media-heading">Praesent lacinia, arcu eget</h5>
+                                <small class="text-muted">23 Sec ago</small>
+                              </div>
+                            </div>
+                            </a>
+                            <a href="#" class="list-group-item">
+                            <div class="media">
+                              <div class="user-status pull-left">
+                              <img class="media-object img-circle pull-left" src="assets/images/avtar/user5.png" alt="user#1" width="40">
+                              </div>
+                              <div class="media-body">
+                                <h5 class="media-heading">In mollis blandit tempor.</h5>
+                                <small class="text-muted">23 Sec ago</small>
+                              </div>
+                            </div>
+                            </a>
+
+                            <a href="#" class="btn btn-info btn-flat btn-block">View All Messages</a>
+
+                        </div>
+
+                    </div>
+                </li>
+
+                <li class="dropdown"><a href="#" data-toggle="dropdown"><i class="fas fa-fw fa-ellipsis-v"></i></a>
+                    <div class="dropdown-menu lg pull-right arrow panel panel-default arrow-top-right">
+                        <div class="panel-heading">
+                            User Menu
+                        </div>
+                        <div class="panel-body text-center">
+                            <div class="row">
+                                <div class="col-xs-6 col-sm-4"><a href="#" class="text-info"><span class="h2"><i class="fas fa-fw fa-plus-square"></i></span><p class="text-gray no-margn">New DB</p></a></div>
+                                <div class="col-xs-6 col-sm-4"><a href="#" class="text-info"><span class="h2"><i class="fas fa-fw fa-database"></i></span><p class="text-gray no-margn">My DB</p></a></div>
+
+                                <div class="col-xs-12 visible-xs-block"><hr></div>
+
+                                <div class="col-xs-6 col-sm-4"><a href="#" class="text-info"><span class="h2"><i class="fas fa-fw fa-heart"></i></span><p class="text-gray no-margn">Favorite DB</p></a></div>
+
+                                <div class="col-lg-12 col-md-12 col-sm-12  hidden-xs"><hr></div>
+
+                                <div class="col-xs-6 col-sm-4"><a href="#" class="text-info"><span class="h2"><i class="fas fa-fw fa-user"></i></span><p class="text-gray">Profile</p></a></div>
+
+                                <div class="col-xs-12 visible-xs-block"><hr></div>
+
+                                <div class="col-xs-6 col-sm-4"><a href="#" class="text-info"><span class="h2"><i class="fas fa-fw fa-sign-out-alt"></i></span><p class="text-gray">Logout</p></a></div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+            <form role="search" class="navbar-left app-search pull-left hidden-xs" style="width:40% !important; float:right !important">
+              <input type="text" placeholder="Search here..." class="form-control form-control-circle">
+            </form>
+
+        </header>
+        <!-- Header Ends -->
+
+
+        <div class="warper container-fluid">
+
+            <div class="page-header"><h1>Dashboard <small>Come and <span style="color:#4983AF">join to our communities</span></small></h1></div>
+
+
+
+
+            <div class="row">
+
+                {% block content %}
+
+                {% endblock %}
+
+            </div>
+
+
+
+
+
+        </div>
+        <!-- Warper Ends Here (working area) -->
+    </section>

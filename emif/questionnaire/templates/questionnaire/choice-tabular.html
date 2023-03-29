@@ -1,0 +1,91 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+
+<div class="clearfix">
+    <div style="overflow-y: auto;" class="input">
+            <input type="text" class="form-control" id="question_{{ question.number }}" name="question_{{ question.number }}" value="" />
+            <script type="text/javascript">
+            $(function(){
+                {% if question.metadata %}
+                var configuration;
+                try{
+                configuration = {{question.metadata|safe}};
+                console.log(configuration);
+                } catch(err){
+                    console.error('INVALID METADATA DESCRIPTION FOR DATATABLE');
+                };
+
+                try{
+                {% if advanced_search %}
+                configuration.data.answers = {{qdict.value|fixhighlight|safe}};
+                {% else %}
+                configuration.data.answers = {{qdict.value|fixhighlight|safe}};
+                {% endif %}
+                } catch(err){
+                    configuration.data.answers = [];
+                };
+                {% if readonly %}
+                    configuration.data.blocked = true;
+                {% endif %}
+
+                console.log(configuration);
+
+
+                var matrixt = $('[id="question_{{ question.number }}"]').matrixinput(configuration);
+
+                $(matrixt).on('matrix:change', function(e, data, target){
+                    $('[id="question_{{ question.number }}"]').val(JSON.stringify(data.answers));
+                    markAnswered('{{ question.number|removedots }}');
+                    {% if advanced_search %}
+                        var ctarget = $(target);
+                        var cid = ctarget.attr('id');
+                        cid = cid.substring(2, cid.length);
+                        //var dirty = qnum.replace('question_', '').replace('_', ':');
+                        var valor;
+
+                        if(ctarget[0].type === 'checkbox'){
+                            valor = ''+ctarget.is(':checked');
+                        } else {
+                            valor = ctarget.val();
+                        }
+
+                    if(valor === 'false' || valor.trim().length == 0)
+                        bool_container.splice('question_nr_{{ question.number }}*****' + cid + '*****', '{{question.text_en|removehs}} '+ ctarget.data('x')+' '+ ctarget.data('y'),
+                        valor);
+                    else
+                        bool_container.pushWithDelegate('question_nr_{{ question.number }}*****' + cid + '*****', '{{question.text_en|removehs}} '+ ctarget.data('x')+' '+ ctarget.data('y'),
+                        valor, 'clearTable(\'[id="acc_qc_{{question.number}}"] #c_' + cid + '\');');
+
+                        {% endif %}
+                    });
+            {% else %}
+                $('[id="question_{{ question.number }}"]_').val('ERROR: MUST DEFINE A TABLE SCHEMA ON METADATA FIELD');
+            {% endif %}
+            });
+
+                {% if qdict.value %}
+                    markAnswered('{{ question.number|removedots }}');
+
+                    valchanged('question_{{ question.number }}','{{ qdict.value|striptags }}', this);
+                {% endif %}
+             </script>
+
+    </div>
+</div>

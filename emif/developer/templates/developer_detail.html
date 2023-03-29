@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see
+<http: //www.gnu.org/licenses />.
+{% endcomment %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load crispy_forms_tags %}
+
+{% block styleinclude %}
+<link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}">
+<link rel="stylesheet" href="{% static 'css/dev_detail.css' %}" {% endblock %} {% block headextra %} <script
+    src="{% static 'js/jquery.dataTables.js' %}">
+</script>
+<script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+{% endblock %}
+{% block breadcrumbs %}
+{{ block.super }}
+{% breadcrumb "Developer" "developer" %}
+{% if plugin %}
+{% breadcrumb plugin.name "" %}
+{% else %}
+{% breadcrumb "Add new Plugin" "" %}
+{% endif %}
+{% endblock %}
+
+{% block toolbar %}
+{% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+
+{%if user|has_group:'developers' or user.is_staff %}
+
+<form class="form-horizontal" id="save_plugin" action="developer/save/" method="post" enctype="multipart/form-data">
+    <input name="plugin_hash" id="current_slug" class="hide" type="text" value="{{plugin.slug}}" />
+    {% csrf_token %}
+    <h3>Details</h3>
+    {% if error %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <strong>Error: </strong> {{error}}
+    </div>
+    {% endif %}
+    <div class="container panel panel-default col-sm-12 col-md-12 col-lg-12">
+        <div class="panel-body col-sm-12 col-md-12 col-lg-12">
+            <div class="col-sm-12 col-md-2 col-lg-2" style="vertical-align:middle;">
+                {% if plugin.icon %}
+                <img style="max-width: 150px; max-height: 150px;" src="{{plugin.icon.url}}" />
+                {% else %}
+                <i style="font-size: 15em" class="fas fa-fw fa-image"></i>
+                {% endif %}<br />
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div style="margin-left: 10px; width: 100%;" class="form-group">
+                    <label class="control-label" for="id-name">Name</label>
+                    <div class="input-group">
+                        <input autocomplete="off" name="name" class="form-control col-md-12" id="id-name"
+                            value="{{plugin.name}}" type="text" placeholder="Plugin name" />
+
+                        <span class="input-group-addon" id="id-name-icon">
+                            &nbsp;
+                        </span>
+                    </div>
+                </div>
+                <div style="margin-left: 10px; width: 100%;" class="form-group">
+                    <label class="control-label" for="id-index">Position</label>
+                    <div class="input-group">
+                        <input autocomplete="off" name="index" class="form-control col-md-12" id="id-index"
+                            value="{%if plugin.plugin_index < 1000%}{{plugin.plugin_index}}{%endif%}" type="number" placeholder="Plugin Position for Sidemenu" />
+
+                        <span class="input-group-addon" id="id-index-icon">
+                            <i title="The value is valid, and can be used." class="fas fa-fw fa-check fa-1x text-success"></i>
+                        </span>
+                    </div>
+                </div>
+                <div style="margin-left: 10px; width: 100%;" class="form-group">
+                    <label class="control-label" for="id-type">Type</label>
+                    <div class="input-group">
+                        <select name="type" id="id-type" class="form-control col-md-12">
+                            <option value="-1">-- Please select a plugin type</option>
+                            {% for type, representation in plugin_types %}
+                            <option value="{{type}}" {%if plugin.type == type%} selected{% endif %}>
+                                {{representation}}</option>
+                            {% endfor %}
+                        </select>
+                        <span class="input-group-addon" id="id-type-icon">
+                            &nbsp;
+                        </span>
+                    </div>
+                </div>
+                <div style="margin-left: 10px; width: 100%;" class="form-group">
+                    <label class="control-label" for="id-type">Icon</label>
+                    <div class="controls">
+
+                        <div class="input-group">
+                            <input class="col-md-12 form-control" readonly="" type="text" />
+
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                    <i class="fas fa-fw fa-folder-open"></i><input name="icon" id="depuploader"
+                                        type="file" accept="image/*">
+                                </span>
+                            </span>
+
+                        </div>
+
+                        {% if plugin.icon %}
+                        <input type="checkbox" name="remove_icon" id="remove-icon-checkbox" value="yes">
+                        <label for="remove-icon-checkbox">Remove icon</label>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-4">
+                <div style="margin-left: 30px; width: 100%;" class="form-group">
+                    <label class="control-label" for="group">Plugin Menu</label>
+                    <div class="input-group">
+                        <input autocomplete="off" class="form-control col-md-10" list="leftSubmenuList"
+                            value="{{plugin.plugin_group}}" name="group" id="submenu">
+                        <datalist id="leftSubmenuList">
+                            {% for group in plugin_groups %}
+                            <option value="{{ group.plugin_group }}">
+                                {% endfor %}
+                        </datalist>
+                        <span class="input-group-addon" id="id-group-icon">
+                            <i title="The value is valid, and can be used."
+                                class="fas fa-fw fa-check fa-1x text-success"></i>
+                        </span>
+                    </div>
+                </div>
+                <div style="margin-left: 30px; width: 100%;" class="form-group">
+                    <label class="control-label" for="id-group-index">Menu Position</label>
+                    <div class="input-group">
+                        <input autocomplete="off" name="group_index" class="form-control col-md-12" id="id-group-index"
+                            value="{%if plugin.plugin_group_index < 1000%}{{plugin.plugin_group_index}}{%endif%}" type="number" placeholder="Menu Position for the Sidemenu" />
+
+                        <span class="input-group-addon" id="id-group-index-icon">
+                            <i title="The value is valid, and can be used." class="fas fa-fw fa-check fa-1x text-success"></i>
+                        </span>
+                    </div>
+                </div>
+                <div style="margin-left: 30px; width: 100%;" class="form-group">
+                    <div class="input-group">
+                        <!--HTML code for the 'use as external link' option-->
+                        <label class="control-label radio-lg-label" for="iframe_type">Use the HTML Iframe
+                        </label>
+                        <input class="radio-lg-input" type="radio" value="0" name="iframe_type" id="def-checkbox"
+                            {%if plugin.plugin_view == 0%} checked {% endif %}>
+                        <span class="input-group-addon" style="border: 1px solid #ccc;">
+                            <i title="Check this box if you want your plugin to open with the default HTML option"
+                                class="fas fa-fw fa-info-circle fa-1x text-primary"></i>
+                        </span>
+                    </div>
+                    <div class="input-group">
+                        <!--HTML code for the 'use external IFrame' option-->
+                        <label class="control-label radio-lg-label" for="iframe_type"> Use The X-Frame-Bypass
+                        </label>
+                        <input class="radio-lg-input" type="radio" value="1" name="iframe_type" id="iframe-checkbox"
+                            {%if plugin.plugin_view == 1%} checked {% endif %}>
+                        <span class="input-group-addon" style="border: 1px solid #ccc;">
+                            <i title="Check this box if your plugin doesn't support the default HTML iframe"
+                                class="fas fa-fw fa-info-circle fa-1x text-primary"></i>
+                        </span>
+                    </div>
+                    <div class="input-group">
+                        <!--HTML code for the 'use as external link' option-->
+                        <label class="control-label radio-lg-label" for="iframe_type">Open in a New Tab
+                        </label>
+                        <input class="radio-lg-input" type="radio" value="2" name="iframe_type" id="link-checkbox"
+                            {%if plugin.plugin_view == 2%} checked {% endif %}>
+                        <span class="input-group-addon" style="border: 1px solid #ccc;">
+                            <i title="Check this box if you want your plugin to open as a new tab to the plugin"
+                                class="fas fa-fw fa-info-circle fa-1x text-primary"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row col-sm-12 col-md-2 col-lg-2" style="position: absolute; bottom: 10px; right: 10px">
+                <button type="submit" id="save-plugin" class="pull-right btn btn-primary col-md-10 col-lg-10 col-sm-12"
+                    type="submit"><i class="fas fa-fw fa-inverse fa-save"></i>&nbsp; Save plugin </button>
+            </div>
+        </div>
+    </div>
+    </div>
+</form>
+
+{% if plugin %}
+<h3>Versions</h3>
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class=" col-md-3 pull-right">
+            <div class="row">
+                <a class="btn col-md-12 btn-default" href="developer/{{plugin.slug}}/add">
+                    <i class="fas fa-fw fa-briefcase"></i> &nbsp;Add version
+                </a></div>
+        </div>
+        <table id="versions" class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Version</th>
+                    <th>Script Location</th>
+                    <th>Create Date</th>
+                    <th>Latest Update</th>
+                    <th>Submitted</th>
+                    <th>Approved</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for version in plugin.versions %}
+                <tr>
+                    <td><a href="developer/{{plugin.slug}}/{{version.version}}">{{version.version}}</a></td>
+                    <td>
+                        {% if version.is_remote %}Remote{%else%}Local{%endif%}
+                    </td>
+                    <td>{{version.create_date_repr}}</td>
+                    <td>{{version.latest_update_repr}}</td>
+                    <td class="text-center">
+                        <i
+                            class="fas fa-fw fa-2x {% if version.submitted %}fa-check-square text-success{% else %} fa-minus-circle text-danger{% endif %}" />
+                    </td>
+                    <td>
+                        <i
+                            class="fas fa-fw fa-2x {% if version.approved %}fa-check-square text-success{% else %}fa-minus-circle text-danger{% endif %}" />
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</div>
+{% else %}
+
+<center>
+    <h4>The access to this page is restricted to developers. To become a developer, please contact the platform
+        administration.</h4>
+</center>
+
+{% endif %}
+{% endblock content %}
+
+{% block uncompressed_js %}
+<script src="{% static 'js/emif.developer_detail.js' %}"></script>
+{% endblock %}

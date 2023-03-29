@@ -1,0 +1,62 @@
+[
+    {
+        "pk": 1,
+        "model": "flatpages.flatpage",
+        "fields": {
+            "registration_required": false,
+            "title": "<i class='fa fa-bookmark-o'></i> About",
+            "url": "/about/",
+            "template_name": "flatpages/wordpress_page.html",
+            "sites": [
+                1
+            ],
+            "content": "<iframe src='/{WORDPRESS_PREFIX}/?page_id=15'></iframe>",
+            "enable_comments": false
+        }
+    },
+    {
+        "pk": 2,
+        "model": "flatpages.flatpage",
+        "fields": {
+            "registration_required": false,
+            "title": "Help",
+            "url": "/documentation/",
+            "template_name": "flatpages/wordpress_page.html",
+            "sites": [
+                1
+            ],
+            "content": "<iframe src='/{WORDPRESS_PREFIX}/?page_id=16'></iframe>",
+            "enable_comments": false
+        }
+    },
+    {
+        "pk": 3,
+        "model": "flatpages.flatpage",
+        "fields": {
+            "registration_required": false,
+            "title": "FAQ",
+            "url": "/faq/",
+            "template_name": "flatpages/wordpress_page.html",
+            "sites": [
+                1
+            ],
+            "content": "<iframe src='/{WORDPRESS_PREFIX}/?page_id=17'></iframe>",
+            "enable_comments": false
+        }
+    },
+    {
+        "pk": 4,
+        "model": "flatpages.flatpage",
+        "fields": {
+            "registration_required": true,
+            "title": "Wrapper Client",
+            "url": "/doc/api/wrapper-client/",
+            "template_name": "",
+            "sites": [
+                1
+            ],
+            "content": "<h4>Introduction</h4> <p> <b><a target='_blank' rel='noopener noreferrer' href='https://github.com/bioinformatics-ua/montra-client-python'>Client Wrapper</a></b> is a wrapper for montra webservices written in python. It was developed to make the integration of montra webservices easier, giving an addional layer of abstraction. </p> <p> Please check the documentation availabe on project's <a target='_blank' rel='noopener noreferrer' href='https://github.com/bioinformatics-ua/montra-client-python'>github page</a> for further details about how to use this client. </p> <h4>Instalation</h4> <ul> <li> Pip install: <p><code>pip install -e git://github.com/bioinformatics-ua/montra-client-python.git#egg={{config.client_wrapper_name}}</code></p> </li> <li> Include it on your program: <p><code>from montra import Montra</code></p> </li> </ul> <h4>How to use it</h4> <p> <b>Client initialization</b> <ul> <li> Using basic authentication: <p><code>montra = Montra(url='http://127.0.0.1:8000', username='username', password='password')</code></p> </li> <li> Using token authentication: <p><code>montra = Montra(url='http://127.0.0.1:8000', token='sometoken', auth_type='token')</code></p> </li> </ul> </p> <p><b>Examples</b></p> <ul> <li> Search for datasets: <p><code> list_of_datasets = montra.search_datasets(questionnaire='some dataset slug or name')</code></p> </li> <li> Get dataset: <p><code> questionnaire = montra.get_dataset(communityName='Some community name', questionnaireSlug='somequestionnaireSlug')</code></p> </li> <li> Create database: <p><code> database = montra.new_database(database_name='some database name', communityName='some community name', questionnaireSlug='some questionnaire slug')</code></p> </li> <li> Update database: <p><code> database = montra.update_database(fingerprintHash='some fingerprint hash', draft=True) </code></p> </li> <li> Get database: <p><code>database_entry = montra.get_database(fingerprintHash='somefingerprinthash')</code></p> </li> <li> List database's answers and questions: <p><code>answers = montra.list_answer(fingerprintHash='somefingerprinthash')</code></p> <p><b>Note: </b> <span>Only answers of the following types are available: 'open', 'open-textfield', 'comment', 'numeric', 'email' and 'url'</span></p> </li> <li> Get answer for a database question: <p></p><code>answer = montra.get_answer(fingerprintHash='somefingerprinthash', question='questionslug')</code></p> </li><li> Update answer: <p><code>newAnswer = montra.put_answer(fingerprintHash='somefingerprinthash', question='questionslug', newAnswer='newAnswer')</code></p> </li> </ul>",
+            "enable_comments": false
+        }
+    }
+]

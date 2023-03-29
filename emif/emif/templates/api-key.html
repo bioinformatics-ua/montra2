@@ -1,0 +1,199 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+
+{% if comm %}
+    {% breadcrumb "Personal" "c/"|add:comm.slug|add:"/databases" %}
+{% else %}
+    {% breadcrumb "Personal" "databases" %}
+{% endif %}
+
+{% breadcrumb "API Info" "api-info" %}
+
+{% endblock %}
+
+{% block headextra %}
+{% endblock %}
+
+
+{% block scriptextraincludes %}
+
+  <script src="{% static 'js/vendor/jquery.ba-throttle-debounce.min.js' %}"></script>
+  <script src="{% static 'js/paginator-sorter.js' %}"></script>
+  <script src="{% static 'js/emif.paginator.js' %}"></script>
+
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6">
+            <h3>API Info Details</h3>
+        </div>
+        <div class="col-md-6 pull-right" style="text-align:right">
+            <a class="btn btn-default right" href="{%if comm%}c/{{comm.slug}}/{% endif %}docs/api"> <i class=" icon"></i>
+                <i class="icon-book"></i>&nbsp; API Doc
+            </a>
+        </div>
+    </div>
+    <hr>
+    <div class="well">
+    <p><strong>User:</strong> {{ user}}</p>
+
+    <p><strong>Token:</strong> {{ token}}</p>
+            </div>
+    <!--<hr>-->
+    <p><strong>Fingerprints</strong></p>
+
+    {% if list_databases %}
+    <div class="panel panel-default">
+    <table class="table table-bordered table-hover fingerprint_table table-striped" id="table_databases" data-provides="rowlink">
+    <thead>
+        <tr>
+            <th class="sorter-database_name sorter {%if "icon-minus" not in sort_params.database_name.icon %}selected-sorter{% endif %}"  onclick="a.onClick('database_name', '{{sort_params.database_name.next}}');">
+            <div class="pull-left">Name</div>
+                 <div class="pull-right"><i class="{{sort_params.database_name.icon}}"></i></div>
+            </th>
+            <th class="sorter-institution sorter {%if "icon-minus" not in sort_params.institution.icon %}selected-sorter{% endif %}"  onclick="a.onClick('institution', '{{sort_params.institution.next}}');">
+            <div class="pull-left">Institution Name</div>
+                 <div class="pull-right"><i class="{{sort_params.institution.icon}}"></i></div>
+            </th>
+            <!--<th>Creation Date</th>-->
+            <th class="sorter-location sorter {%if "icon-minus" not in sort_params.location.icon %}selected-sorter{% endif %}" onclick="a.onClick('location', '{{sort_params.location.next}}');">
+                <div class="pull-left">Location</div>
+                <div class="pull-right"><i class="{{sort_params.location.icon}}"></i></div>
+            </th>
+            <th class="sorter-nrpatients sorter {%if "icon-minus" not in sort_params.nrpatients.icon %}selected-sorter{% endif %}" onclick="a.onClick('nrpatients', '{{sort_params.nrpatients.next}}');">
+                <div class="pull-left">Nr. Patients</div>
+                <div class="pull-right"><i class="{{sort_params.nrpatients.icon}}"></i></div>
+            </th>
+            <th class="sorter-lastupdate sorter {%if "icon-minus" not in sort_params.last_update.icon %}selected-sorter{% endif %}" onclick="a.onClick('last_update', '{{sort_params.last_update.next}}');">
+            <div class="pull-left">Last update</div>
+                <div class="pull-right"><i class="{{sort_params.last_update.icon}}"></i></div>
+            </th>
+          {% if not comm %}
+            <th class="sorter-type sorter {%if "icon-minus" not in sort_params.type.icon %}selected-sorter{% endif %}" onclick="a.onClick('type', '{{sort_params.type.next}}');">
+            <div class="pull-left">Type</div>
+              <div class="pull-right"><i class="{{sort_params.type.icon}}"></i></div>
+            </th>
+          {% endif %}
+        </tr>
+         <tr>
+          <td class="table_filter">
+                <input class="form-control filter_input" id="database_name_filter" type="text" value="{{sort_params.database_name.filter}}" placeholder="Filter">
+          </td>
+           <td class="table_filter">
+                 <input class="form-control filter_input" id="institution_filter" type="text" value="{{sort_params.institution.filter}}" placeholder="Filter">
+          </td>
+          <td class="table_filter">
+                 <input class="form-control filter_input" id="location_filter" type="text" value="{{sort_params.location.filter}}" placeholder="Filter">
+          </td>
+          <td class="table_filter">
+                 <input class="form-control filter_input" id="nrpatients_filter" type="text" value="{{sort_params.nrpatients.filter}}" placeholder="Filter">
+          </td>
+          <td class="table_filter">
+                 <input class="form-control filter_input" id="last_update_filter" type="text" value="{{sort_params.last_update.filter}}" placeholder="Filter">
+          </td>
+          {% if not comm %}
+           <td class="table_filter">
+              {% show_fingerprints_dropdown request.user sort_params %}
+          {% endif %}
+          </td>
+        </tr>
+    </thead>
+    <tbody id="table_content">
+
+        {% for t in page_obj %}
+        <tr>
+            <!--<td><img class="db_logo" src="{% static 'upload_images/' %}{{t.logo}}" width="50px" height="50px" /></td>-->
+          <td>
+            {% if comm %}
+              <a href="c/{{comm.slug}}/fingerprint/{{ t.id }}/1">{{ t.name }}</a>
+            {% else %}
+              <a href="fingerprint/{{ t.id }}/1">{{ t.name }}</a>
+            {% endif %}
+            <br />
+              <small style="word-break:break-all;">ID: {{t.id}}</small>
+        </td>
+        <td>{{t.institution}}</td>
+        <td>{{t.location}}</td>
+        <td style="text-align: right;">{{t.number_patients}}</td>
+        <!--
+          <td style="min-width: 120px;">
+                 {{ t.date }}
+        -->
+          </td>
+          <td style="text-align: center;" class="date">
+                {% if t.last_activity %}
+                    {{t.last_activity|datehhmm}}
+                {% else %}
+                    {{ t.date }}
+                {% endif %}
+          </td>
+          {% if not comm %}
+          <td class="type">{{ t.type_name }} </td>
+          {% endif %}
+        </tr>
+
+        {% endfor %}
+
+        </tbody>
+    </table>
+    </div>
+    <script type="text/javascript">
+    var a;
+
+    $(document).ready(function(){
+      var allFilters = [];
+      {% for field in comm.list_fields.all %}
+        allFilters.push('{{field.slug}}');
+      {% endfor %}
+        a = new PaginatorSorter("table_databases", '{{sort_params.base_filter}}', '{{sort_params.selected_name}}', '{{sort_params.selected_value}}', '{{sort_params.extraObjects|safe}}', allFilters);
+    });
+
+    </script>
+
+    {% include "reusable_blocks/post_paginator.html" %}
+
+    {% else %}
+    <p><strong>Info: </strong> Currently, there are no databases in your account. You can add new ones through the
+        option "Databases -> New"</p>
+    {% endif %}
+    <form id="send2" method="POST" >
+      <input id="page" type="hidden" name="page" value="{{page}}"></input>
+      <input id="s" type="hidden" name="s" value=""></input>
+    {% csrf_token %}
+    </form>
+
+    {% endblock %}
+
+    {% block scriptextra %}
+    {% comment %}
+    <script>
+        {% endcomment %}
+        $('#li_workspace').addClass("active");
+        {% comment %}
+    </script>
+    {% endcomment %}
+
+    {% endblock %}

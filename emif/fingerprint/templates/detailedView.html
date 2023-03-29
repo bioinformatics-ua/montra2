@@ -1,0 +1,104 @@
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% comment %} 
+
+Template for Menu inside Fingerprint with
+values for answered, total_count, percentage
+and notification about requests, highlight
+
+{% endcomment %}
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+{% load django_bootstrap_breadcrumbs %}
+{% load hitcount_tags %}
+
+<div class="row">
+<div class="col-md-9" id="set_container">
+  {% comment %} Here is the fingerprint area showing questions / answers {% endcomment %}
+</div>
+<div class="col-md-3">
+  <div class="qslist well col-md-10" style="max-width: 340px; padding: 8px 0; float: left;">
+
+    <ul class="nav nav-list nav-pills nav-stacked ">
+      {% for qs, answered, total_count, percentage, requests, highlight, allow_qset_reading, allow_qset_writing in questionsets %}
+      {% if qs.sortid != 0 and qs.sortid != 99 %}
+      <li{% if questionset.text == qs.text %} class="active" {% endif %} id="li_qs_{{qs.sortid}}">
+        <!--<a href="q2/{{runinfo.random}}/{{ qs.sortid }}">
+        -->
+        <a class="{% if highlight %}highlight{% endif %} {% if not allow_qset_reading and not owner_fingerprint and not request.user.is_superuser %}not-active{% endif %}"
+            href="{%if comm%}c/{{comm.slug}}/{% endif %}fingerprint/{{fingerprint_id}}/{{ qs.sortid }}"
+            onclick="questionsets_handle('qs_{{ qs.sortid }}', '{{fingerprint_id}}', '{{q_id}}', QsType.VIEW); return false;">
+          <table class="fullwidth">
+            <tr>
+              <td title="{{ qs.text|removeh1 }} ({{answered}}/{{total_count}})" class="tooltippable" style="width: 58%; font-size: 93%;">
+              {% if highlight%}
+                <div class="highlight_mark">
+                <img title="This section has search keywords" class="markered pull-left" src="{% static 'img/marker.png' %}" />
+                </div>
+              {% endif %}
+              {% if config.Request_Answer and requests|length > 0  and not readonly %}
+                <div style="margin-left:-32px; color: black;" class="pull-left">
+                <i title="Some users requested questions on this section to be filled." class="tooltippable fa fa-bell"></i>
+                </div>
+              {% endif %}
+              {% comment %} #TOFIX Nr. QSet Text {% endcomment %}
+              {% if qs.sortid != 0 and qs.sortid != 99 %}{{ qs.sortid }}. {% endif %}{{ qs.text|removeh1 }}
+              {% if qs.sortid != 0 and qs.sortid != 99 %}
+                <span id="counter0_{{ qs.sortid }}"> ({{answered}}/{{total_count}})</span>
+              {%endif%}
+              </td>
+              <td style="width: 12%; text-align: right;">
+              {% if qs.sortid != 0 and qs.sortid != 99 %}
+               <span id="counter1_{{ qs.sortid }}" class="counter_badge">{{percentage}}%</span>
+               {%endif%}
+              </td>              
+            </tr>
+        </table>
+      </a>
+
+    </li>
+    {%endif%}
+    {% endfor %}
+  </ul>
+  </div>
+  {% if config.useQuestionSetRBAC %}
+  <div class="qslist col-md-1" style="max-width: 340px; padding: 8px 0; float: left;">
+    <ul class="nav nav-list nav-pills nav-stacked">
+      {% for qs, answered, total_count, percentage, requests, highlight, allow_qset_reading, allow_qset_writing in questionsets %}
+      {% if qs.sortid != 0 and qs.sortid != 99 %}
+        <li>
+          <a class="{% if highlight %}highlight{% endif %} {% if not allow_qset_reading and not owner_fingerprint and not request.user.is_superuser %}not-active{% endif %}"
+          {% if not allow_qset_writing and not owner_fingerprint and not request.user.is_superuser %} style="visibility: hidden;" {% endif %}
+            href="{%if comm%}c/{{comm.slug}}/{% endif %}dbEdit/{{fingerprint_id}}/{{fingerprint_ttype}}/{{ qs.sortid }}"
+            {% comment %}onclick="questionsets_handle('qs_{{ qs.sortid }}', '{{fingerprint_id}}', '{{q_id}}', QsType.EDIT); return false;"{% endcomment %}
+            ><span class="fas fa-fw fa-pen-square"/></a>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>
+{% if not readonly %}
+<input type="hidden" id="edit_db_inputs" value="0">
+{% else %}
+<input type="hidden" id="edit_db_inputs" value="1">
+{% endif %}
+</div>

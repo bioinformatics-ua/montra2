@@ -1,0 +1,65 @@
+{% extends "faq/base.html" %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %} # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# {% endcomment %}
+
+{% block title %}{{ block.super }}: Topics{% endblock %}
+
+{% block headextra %}
+  <script src="{% static 'js/emif.faq.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+
+<center><h2>Frequently Asked Questions</h2></center>
+  {% if topics|length == 0 %}
+    <div class="well"><center>There's no Frequently Asked Questions Yet.</center></div>
+  {% elif topics|length == 1 %}
+    <div id="faqsection_{{topics.0.slug}}"></div>
+
+  {% else %}
+ <div class="panel-group" id="faqsections">
+
+  {% for topic in topics %}
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <a class="accordion-toggle" data-toggle="collapse" data-parent="#faqsellections" href="#faqaccordion_{{topic.slug}}">
+        {{ topic }}
+      </a>
+    </div>
+    <div id="faqaccordion_{{topic.slug}}" class="panel-collapse in collapse">
+      <div class="panel-body">
+        <div id="faqsection_{{topic.slug}}"><center><h4>Loading...</h4></center></div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+  </div>
+  {% endif %}
+
+<script type="text/javascript">
+    $(function(){
+        {% for topic in topics %}
+            getSection("{{topic.get_absolute_url}}", "{{topic.slug}}");
+        {% endfor %}
+    });
+</script>
+
+{% endblock %}

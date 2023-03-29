@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load bootstrap_pagination %}
+
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+  {{ block.super }}
+
+  {% breadcrumb "My Searches" "advsearch/history" %}
+
+{% endblock %}
+
+{% block styleinclude %}
+  <link rel="stylesheet" href="{% static 'css/vendor/jquery.boolrelwidget.css' %}"></script>
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/jquery.boolrelwidget.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<div style="margin-left: 0px;" class="col-md-12">
+<ul class="nav nav-tabs">
+  <li {% if source == '0' %} class="active" {% endif %}><a href="#advanced" data-toggle="tab">My Advanced Searches</a></li>
+
+  <li {% if not source == '0' %} class="active" {% endif %}><a href="#simple" data-toggle="tab">Free Text History</a></li>
+</ul>
+<div class="tab-content">
+  <div class="tab-pane {% if not source == '0' %} active {% endif %}" id="simple">
+      {% include 'simple.html' %}
+  </div>
+  <div class="tab-pane {% if source == '0' %} active {% endif %}" id="advanced">
+      {% include 'advanced.html' %}
+  </div>
+</div>
+</div>
+{% endblock %}

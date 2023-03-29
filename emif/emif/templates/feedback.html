@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load django_bootstrap_breadcrumbs %}
+{% load crispy_forms_tags %}
+{% with RECAPTCH_PUBLIC_KEY=RECAPTCH_PUBLIC_KEY %}
+
+
+{% block breadcrumbs %}
+
+        {% breadcrumb "Home" "home" %}
+        {% breadcrumb "Feedback" "" %}
+
+{% endblock %}
+{% block headextra %}
+    <script src="{% static 'js/main.feedback.js' %}"></script>
+
+    {% if not config.recaptcha_verification %}
+        <script>
+            feedbackRecaptchaCallback();
+        </script>
+    {% endif %}
+{% endblock %}
+
+{% block uncompressed_js %}
+    {% if config.recaptcha_verification %}
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+    {% endif %}
+{% endblock %}
+
+{% block styleinclude %}
+<link rel="stylesheet"  href="{% static 'css/main.feedback.css' %}" />
+{% endblock %}
+
+{% block content%}
+
+    <div class="row">
+    <div class="col-md-12">
+     <div class="panel panel-default">
+                    <div class="panel-body">
+               <div id="contact_wrap" class="col-md-offset-3 col-md-6 rows">
+
+               <h2>Feedback</h2>
+               We’re keen to receive your feedback and incorporate your ideas into improving and expanding the catalogue. We look forward to your input.
+
+                <div id="contact" class="clearfix" style="">
+                    <div id="c_form">
+                        <br /><br />
+                        <form name="theform" action="feedback" method="post" id="theform">
+                          {% csrf_token %}
+                            {{form|crispy}}
+                            <!-- capcha -->
+                            {% if config.recaptcha_verification %}
+                                <div class="g-recaptcha capchaModule" data-callback="feedbackRecaptchaCallback" data-sitekey="{{RECAPTCH_PUBLIC_KEY}}"></div>
+                            {% endif %}
+                            <div id="submit">
+                                <button style="margin-left: 0px;" class="btn btn-blue col-md-12" id="feedbackSubmitBtn" name="submit"  type="submit">Send</button>
+                            </div><!-- end submit -->
+                            <input class="hidden" type="hidden" name="topic" value="{{config.brand}}: Feedback" id="subject" />
+                        </form>
+
+                    </div><!-- end c_form -->
+                </div><!-- end contact -->
+                </div>
+                </div>
+        </div>
+    </div>
+    </div>
+
+{% endblock %}
+
+{% endwith %}

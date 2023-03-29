@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor/wysihtml5.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-tagsinput.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/emif.community_qsets.css' %}" />
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/bootstrap3-typeahead.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'js/emif.manage_community_qsets.js' %}"></script>
+    <script src="{% static 'js/vendor/wysihtml5x-toolbar.min.js' %}"></script>
+
+    <script src="{% static 'js/vendor/advanced_and_extended.js' %}"></script>
+    <script src="{% static 'js/vendor/multiselect.min.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.orderablemultiselect.js' %}"></script>
+    <script src="{% static 'js/vendor/bootstrap-tagsinput.js' %}"></script>
+    
+    <script type="text/javascript">
+      function read_ticks_write(cb, cbparent) {
+        const label = document.querySelector(`label[for="${cb.id}"]`);
+        if (label) {
+            for (const child of label.children) {
+                child.remove();
+            }
+
+            const icon = document.createElement("i");
+            icon.classList.add("fas");
+            icon.classList.add(cb.checked ? "fa-eye" : "fa-eye-slash");
+
+            label.append(icon);
+        }
+
+        if(!cb.checked && document.getElementById(cbparent).checked) {
+          document.getElementById(cbparent).click();
+        }
+      }
+
+      function write_ticks_read(cb, cbparent) {
+        if(cb.checked && !document.getElementById(cbparent).checked) {
+          document.getElementById(cbparent).click();
+        }
+      }
+
+      function toggle(src, selector) {
+        const tr = src.closest('tr');
+        const boxes = tr.querySelectorAll(selector);
+        for (let i = 0; i < boxes.length - 1; ++i) {
+          boxes[i].checked = !src.checked;
+          boxes[i].click();
+        }
+      }
+
+      function toggleRead(src) {
+        read_ticks_write(src, src.nextElementSibling.nextElementSibling.id);
+        toggle(src, '.read-checkbox');
+      }
+
+      function toggleWrite(src) {
+        write_ticks_read(src, src.previousElementSibling.previousElementSibling.id);
+        toggle(src, '.write-checkbox');
+      }
+  </script>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+        {% breadcrumb "All" "c/"|add:comm.slug %}
+        {% breadcrumb "Manage Community - Groups" "" %}
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+
+
+{% if comm.public %}
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  <strong>Warning message</strong> Groups and Restrictions by groups are not allowed in open communities.
+</div>
+{% endif%}
+
+    <div class="row">
+    <div class="col-lg-12">
+
+    <h3>Manage {{comm.name}} - Question Set Permissions </h3>
+    </div>
+
+
+    <div class="col-lg-12 groups-qsets-container">
+      <div class="panel panel-default">
+        <div class="panel-heading">Groups and Question Sets</div>
+        <div class="panel-body" style="overflow: auto">
+          {% if ugroup|length > 0 %}
+            <form>
+              {% csrf_token %}
+              <input type="hidden" name="medit" value="." />
+              <table id="groups_qsets" class="table table-bordered table-stripped">
+                <thead>
+                  {# header - each column is a qset #}
+                  <tr>
+                    {% for elem in groupmatrix.0 %}
+                      {% comment %} SKIP the introductory question set {% endcomment %}
+                      {% if forloop.counter != 2 %}
+                        <th style="text-align: center;">{{elem}}</th>
+                      {% endif %}
+                    {% endfor %}
+
+                    <th style="text-align: center;">ALL</th>
+
+                  </tr>
+
+                </thead>
+
+                <tbody>
+                {# Each line is a group #}
+                {% for line in groupmatrix %}
+                  {% if forloop.counter > 1 %}
+                    <tr>
+                    {% for elem in line %}
+                      {% if forloop.counter == 1 %}
+                        <td style="width: 200px;"><b>{{elem.name}}</b></td>
+                      {% else %}
+                      {% comment %} SKIP the introductory question set {% endcomment %}
+                        {% if forloop.counter != 2 %}
+                          <td nowrap>
+                            <div style="text-align: center;">
+                              <input id="r_{{forloop.parentloop.counter}}_{{forloop.counter}}" class="read-checkbox"
+                                name="elem_r_{{elem.id}}" type="checkbox" {% if elem.can_read %}checked{% endif %} onclick="read_ticks_write(this, 'w_{{forloop.parentloop.counter}}_{{forloop.counter}}')"
+                                m-click="update" m-args="r_{{elem.id}}" />
+                              <label rel="tooltip" data-original-title="Read" for="r_{{forloop.parentloop.counter}}_{{forloop.counter}}" style="cursor: pointer">
+                                <i
+                                  {% if elem.can_read %}
+                                  class="fas fa-eye"
+                                  {% else %}
+                                  class="fas fa-eye-slash"
+                                  {% endif %}
+                                ></i>
+                              </label>
+                              <input id="w_{{forloop.parentloop.counter}}_{{forloop.counter}}" class="write-checkbox"
+                                name="elem_w_{{elem.id}}" type="checkbox" {% if elem.can_write %}checked{% endif %} onclick="write_ticks_read(this, 'r_{{forloop.parentloop.counter}}_{{forloop.counter}}')"
+                                m-click="update" m-args="r_{{elem.id}}" />
+                              <label rel="tooltip" data-original-title="Write" for="w_{{forloop.parentloop.counter}}_{{forloop.counter}}" style="cursor: pointer">
+                                <i class="fas fa-pencil-alt"></i>
+                              </label>
+                            </div>
+                          </td>
+                        {% endif %}
+                      {% endif %}
+                    {% endfor %}
+
+                    <td nowrap>
+                      <div style="text-align: center;">
+                        <input id="read_all_{{ forloop.counter }}" class="read-checkbox" type="checkbox" onclick="toggleRead(this)" />
+                        <label rel="tooltip" data-original-title="Read" for="read_all_{{ forloop.counter }}" style="cursor: pointer">
+                          <i class="fas fa-eye-slash"></i>
+                        </label>
+                        <input id="write_all_{{ forloop.counter }}" class="write-checkbox" type="checkbox" onclick="toggleWrite(this)" />
+                        <label rel="tooltip" for="write_all_{{ forloop.counter }}" style="cursor: pointer">
+                          <i class="fas fa-pencil-alt"></i>
+                        </label>
+                      </div>
+                    </td>
+
+                    </tr>
+                  {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="btn-toolbar pull-right manage-save-groups" role="group" >
+              <button type="button" m-submit="save()" class="pull-right btn btn-success"><i class="fas fa-fw fa-save"></i> Save</button> 
+              <button type="reset" m-submit="reset()" class="btn btn-default pull-right">Revert Changes</button> 
+            </div>
+          </form>
+        </div>
+        {% else %}
+        There are no community groups yet.
+        <br>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+
+{% endblock %}
+
+{% block scriptextra %}
+
+{% endblock %}

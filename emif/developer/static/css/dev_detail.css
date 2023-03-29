@@ -1,0 +1,16 @@
+.radio-lg-label {
+    word-wrap:break-word;
+    display: inline-block;
+}
+
+.radio-lg-input {
+    width: 30px; 
+    height: 30px; 
+    margin: 0 25px; 
+    vertical-align: middle;
+    float: right;
+}
+
+.input-group {
+    padding: 5px 0;
+}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+Loading
+
+<script>
+    const baseUrl = $('#base_link').attr('href');
+    const url = window.location.href;
+    const id = url.substr(url.lastIndexOf('/') + 1);
+    function doPoll() {
+        $.get('api/questionnaire-import-status/' + id)
+            .done(data => {
+                if (data.status === 'PREVIEW') {
+                    window.location.replace(
+                        baseUrl + 'fingerprint/' + data.fingerprint_hash + '/0/?preview=1');
+                }
+                else if (data.status === 'ABORTED') {
+                    window.location.replace(baseUrl + 'questionnaire/import');
+                }
+                else {
+                    setTimeout(doPoll, 500);
+                }
+            });
+    }
+    doPoll();
+</script>
+
+{% endblock %}

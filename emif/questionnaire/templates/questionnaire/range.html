@@ -1,0 +1,49 @@
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+<div class="clearfix rangeinput">
+    <div class="input">
+        <input id="question_{{ question.number }}" name="question_{{ question.number }}" type="text" value="{{ qdict.current }}" />
+
+        <span style="margin-left: 10px;" id="question_{{ question.number }}_label" class="range_label" data-unit="{{ qdict.runit }}"> {{ qdict.current|safe }} {{ qdict.runit }}</span>
+    </div>
+    {% if question.extra %}
+        <span class="help-block">{{ question.extra }}</span>
+    {% endif %}
+    {% if qdict.current %}
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-slider.css' %}">
+        <script src="{% static 'js/vendor/bootstrap-slider.js' %}"></script>
+        <script type="text/javascript">
+            markAnswered('{{ question.number|removedots }}');
+
+            var mySlider = $('[id="question_{{ question.number }}"]').bootstrapSlider({
+                // initial options object
+                value: {{ qdict.current|striptags }},
+                step: {{ qdict.rstep }},
+                min: {{ qdict.rmin }},
+                max: {{ qdict.rmax }},
+                {% if readonly %}enabled: false,{% endif %}
+                tooltip: 'hide'
+            }).on("slide", function(slideEvt) {
+                $('[id="question_{{ question.number }}_label"]').text(slideEvt.value);
+            });
+        </script>
+    {% endif %}
+</div>

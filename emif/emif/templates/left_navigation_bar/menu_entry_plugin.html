@@ -1,0 +1,18 @@
+{% load compress %}
+{% load left_menu_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+<ul class="list-unstyled">
+    <li {% if activemenu == menu_entry.id %} class="active" {% endif %}>
+        <a href="{{ menu_entry.url }}"{% if menu_entry.extLink %} target="_blank" rel="noopener" {% endif %}>
+            {% autoescape off %}
+                {% if menu_entry.image %}
+                    <img src="{{ menu_entry.image }}" style="max-width: 1em; max-height: 1em; margin-right: 6px;"/>
+                {% else %}
+                    <i class="fas fa-fw fa-puzzle-piece"></i>
+                {% endif %}
+            {% endautoescape %}
+            <span id={{ menu_entry.id }} class="nav-label"> {{ menu_entry.text }}</span>
+        </a>
+    </li>
+</ul>

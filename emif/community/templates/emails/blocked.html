@@ -1,0 +1,11 @@
+Dear {{ user_full_name }},
+
+You have been blocked from the community {{ community_name }}.
+
+{% if comm_manager_msg %}
+  <p>The community manager attached the following message:</p>
+  <p>{{ comm_manager_msg }}</p>
+{% endif %}
+
+Sincerely,
+{{ brand }}

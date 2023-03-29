@@ -1,0 +1,580 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+    {% if comm %}
+        {{ block.super }}
+        {% if request.session.query %}
+            {% if request.session.search_origin == 'all' %}
+                {% breadcrumb "Search" "resultsdiff/1" %}
+            {% else %}
+                {% breadcrumb "Search" "c/"|add:comm.slug|add:"/resultsdiff/1" %}
+            {% endif %}
+        {% elif request.session.list_origin == 'personal' %}
+            {% breadcrumb "Personal" "c/"|add:comm.slug|add:"/databases" %}
+        {% else %}
+            {% breadcrumb "All" "c/"|add:comm.slug|add:"/alldatabases" %}
+        {% endif %}
+
+        {% breadcrumb "Compare Databases" "" %}
+    {% else %}
+        {{ block.super }}
+        {% if request.session.query %}
+            {% breadcrumb "Search" "resultsdiff/1" %}
+        {% elif request.session.list_origin == 'personal' %}
+            {% breadcrumb "Personal" "databases" %}
+        {% else %}
+            {% breadcrumb "All" "alldatabases" %}
+        {% endif %}
+
+        {% breadcrumb "Compare Databases" "" %}
+    {% endif %}
+
+
+{% endblock %}
+
+{% block scriptextraincludes %}
+    <script src="{% static 'js/vendor/jquery.bootstrap-matrix-input.js' %}"></script>
+    <script src="{% static 'js/vendor/tablediff.js' %}"></script>
+    <script src="{% static 'js/vendor/taskqueuer.js' %}"></script>
+
+    <!--[if gte IE 9]><!-->
+    <script type="text/javascript" src="{% static 'js/emif.results_comp.js' %}"></script>
+    <!--<![endif]-->
+{% endblock %}
+
+
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/results_comp.css' %}">
+{% endblock %}
+
+
+{% block toolbar %}
+    <form id="result_form" action="resultscomp" method="POST">
+        {% csrf_token %}
+        <div>
+
+            <div class="btn-group pull-right">
+                <a id="collapseall" class="btn btn-default" href="">
+                    <i class="fas fa-fw fa-plus"></i>&nbsp; Expand all
+                </a>
+
+                <div class="btn-group">
+                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+                        <i class="fas fa-fw fa-wrench"></i>&nbsp; Show/Hide
+                        <span class="caret"></span>
+                    </a>
+
+                    <ul class="dropdown-menu">
+                        <!-- dropdown menu links -->
+                        <li><a id="match" href="#"><i id="imatch" class="fas fa-fw fa-check active"></i> Match</a></li>
+                        <li><a id="unmatch" href="#"><i id="iunmatch" class="fas fa-fw fa-check active"></i> Unmatch</a>
+                        </li>
+                        <li><a id="proximity" href="#"><i id="iproximity" class="fas fa-fw fa-check active"></i>
+                            Proximity</a></li>
+                        <li><a id="emptyrows" href="#"><i id="iemptyrows" class="fas fa-fw fa-check active"
+                                                          style="visibility: hidden;"></i> Empty rows</a></li>
+                    </ul>
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+{% endblock %}
+
+{% block content %}
+    <div class="clearboth">
+        <!--[if lte IE 8]>
+        <div class="well">Currently IE 7 and 8 don't support this functionality. To use this functionality please update
+            your browser to a modern browser, like IE 9 or better, Google Chrome, Firefox, Opera or Safari.
+        </div>
+        <![endif]-->
+        <!--[if gte IE 9]><!-->
+
+        <ul class="pager">
+            <li class="pull-left"><input type="text" size="60" style="margin-left: 0px;" class="form-control col-md-9"
+                                         id="searchfilter" placeholder="To filter questions, type your keywords here"
+                                         tabindex="1"></li>
+            <li>
+                <div class="pull-right">
+                    <!--button id="compare_previous" class="btn"><i class="fas fa-fw fa-arrow-left"></i></button>
+      <span id="compare_id" class="btn disabled">1/{{results|length|add:-1}}</span>
+      <button id="compare_next" class="btn"><i class="fas fa-fw fa-arrow-right"></i></button-->
+                    <table>
+                        <tr>
+                            <td>
+                                {% if results|length <= config.compare_maximum_DBs %}
+                                    Comparing {{ results|length }} databases &nbsp; &nbsp;
+                                {% else %}
+                                    Comparing {{ config.compare_maximum_DBs }} databases out of {{ results|length }}
+                                    &nbsp; &nbsp;
+                                {% endif %}
+                            </td>
+                            <td style="margin-top: -25px; ">
+                                <i style="font-size: 30px;" id="compare_information" class="fas fa-fw fa-balance-scale"
+                                   data-toggle="popover" data-placement="bottom" data-content="This is the compare databases page. <br /><br/>In this page it is possible to compare several database by analysing responses to the same question across several databases. <br /><br />
+      By default, the first {{ config.compare_maximum_DBs }} selected databases are compared, having the first database being the reference.<br /><br />
+      If there are less than {{ config.compare_maximum_DBs }} databases, the user only will see two databases.<br /> <br />
+      If there are more than {{ config.compare_maximum_DBs }} databases, the user will see the first {{ config.compare_maximum_DBs }}, and the others will be available to replace the current showing selection, by using the dropdowns on the databases.<br /><br />
+      In any case, the database of reference can also be changed by using the dropdown."
+                                   title="Compare Databases - Help"></i>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </li>
+
+        </ul>
+    </div>
+    <div class="row">
+        <div id="comparecontainer" class="col-md-12">
+            <div style="overflow-x: auto;" class="well panel-group" id="accordion2">
+                <div style="opacity: 0;" class="database_listing_names">
+                    <div style="width: 220px;">
+                        <div style="width: 220px;" class="clearfix database_title btn-darkgrey">
+                            <div style="height: 26px;" class="database_title_text pull-left"> &nbsp;
+                            </div>
+                        </div>
+                        <div style="height:0; overflow: hidden; margin:0; padding:0; border:0;"
+                             data-block="{{ forloop.counter }}" class="filler panel panel-default">
+                            <div class="panel-heading">Space filler</div>
+                            <div class="panel-body">
+                                --------------------------------------------------------------------------------------------------------
+                                --------------------------------------------------------------------------------------------------------
+                            </div>
+
+                        </div>
+                        {% for k,v in results.items.0.1.qset.ordered_items %}
+                            <div id="sm{{ forloop.counter }}" class="block_{{ forloop.counter }} panel panel-default">
+                                <div style="background-color: white;" title="{{ k|removeh1 }}"
+                                     class="tooltippable panel-heading">
+                                    <small><a id="a_collapse{{ k|removespaces|clean }}_{{ name|removespaces|clean }}"
+                                              class="accordion-toggle" data-toggle="collapse"
+                                              data-parent="#sm{{ forloop.counter }}"
+                                              href="#collapse{{ k|removespaces|clean }}_{{ name|removespaces|clean }}">
+                                        <div style="width: 195px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ k|removeh1 }}</div>
+                                    </a></small>
+                                </div>
+
+                                <div data-loop="{{ forloop.counter }}" data-size="{{ v.list_ordered_tags|length }}"
+                                     id="collapse{{ k|removespaces|clean }}_{{ name|removespaces|clean }}"
+                                     class="panel-collapse collapse">
+                                    <div class="panel-body">
+
+                                        <table id="HEADER_{{ k|removespaces }}"
+                                               class="table table-bordered table-hover">
+                                            <thead></thead>
+
+                                            <tbody>
+                                            {% for t in v.list_ordered_tags %}
+                                                {% if t.ttype != 'publication' %}
+
+                                                    <tr data-qid="{{ t.id }}" data-fingerprintid="HEADER"
+                                                        data-rowid="{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+                                                        class="entry rowid_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+                                                        <td style="background-color: white; font-size: 85%;"
+                                                            class="{% if t.ttype == 'comment' %}comp_category {% endif %}tooltippable questioncell"
+                                                            data-original-title="" title=""
+                                                            valign="top">{{ t.tag|removehs }}
+                                                        </td>
+                                                    </tr>
+                                                {% endif %}
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div style="display: table-cell;" id="database_listings">
+                    <div id="database_rows">
+                        {% for fingerprint_id, content in results.items %}
+
+                            <div id="db_{{ fingerprint_id }}" class="database_listing database_listing_away">
+                                <div {% if forloop.first %}style="margin-left: 0px;"{% endif %}>
+                                    <div data-clampedwidth=".database_listing"
+                                         class="clearfix database_title btn-darkgrey">
+                                        <div data-title="{{ content.name }}"
+                                             class="database_title_text pull-left tooltippable">{{ content.name|ellipsis:25 }}</div>
+                                        <div class="dropdown_placer pull-right">
+                                            ---
+                                        </div>
+                                    </div>
+                                    <div style="height:0; overflow: hidden; margin:0; padding:0; border:0;"
+                                         data-block="{{ forloop.counter }}" class="filler panel panel-default">
+                                        <div class="panel-heading">Space filler</div>
+                                        <div class="panel-body">
+                                            --------------------------------------------------------------------------------------------------------
+                                            --------------------------------------------------------------------------------------------------------
+                                        </div>
+
+                                    </div>
+                                    {% for k,v in content.qset.ordered_items %}
+                                        <div id="sm{{ forloop.counter }}" style="background-color: white;"
+                                             data-block="{{ forloop.counter }}"
+                                             class="block_{{ forloop.counter }} elips panel panel-default">
+                                            <div title="{{ k|removeh1 }}" class="tooltippable panel-heading">
+                                                <small><a
+                                                        id="a_collapse{{ k|removespaces|clean }}_{{ content.name|removespaces|hash }}"
+                                                        class="accordion-toggle" data-toggle="collapse"
+                                                        data-parent="#sm{{ forloop.counter }}"
+                                                        href="#collapse{{ k|removespaces|clean }}_{{ content.name|removespaces|hash }}">
+                                                    <div class="linktoellipse"
+                                                         style="width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ k|removeh1 }}</div>
+                                                </a></small>
+                                            </div>
+                                            <div id="collapse{{ k|removespaces|clean }}_{{ content.name|removespaces|hash }}"
+                                                 class="panel-collapse collapse">
+                                                <div class="panel-body">
+
+                                                    <table id="{{ fingerprint_id|removespaces|clean }}_{{ k|removespaces|hash }}"
+                                                           class="table table-bordered table-hover">
+                                                        <thead></thead>
+
+                                                        <tbody>
+                                                        {% for t in v.list_ordered_tags %}
+                                                            {% if t.ttype != 'publication' %}
+                                                                <tr data-qid="{{ t.id }}" data-type="{{ t.ttype }}"
+                                                                    data-fingerprintid="{{ fingerprint_id }}"
+                                                                    data-rowid="{{ forloop.parentloop.counter }}_{{ forloop.counter }}"
+                                                                    class="entry rowid_{{ forloop.parentloop.counter }}_{{ forloop.counter }} {% if t.ttype == 'comment' %}comp_category {% endif %}">
+                                                                    <td class="comphidden tooltippable"
+                                                                        data-original-title="{{ t.tag|removehs }}"
+                                                                        title="">{{ t.tag|removehs }}</td>
+                                                                    <td style="font-size: 85%;"
+                                                                        class="{% if t.ttype != 'choice-tabular' %}tooltippable{% endif %} {% if t.ttype == 'comment' %}comp_category {% endif %} resultcell"
+                                                                        data-original-title=""
+                                                                        title="">{{ t.value.strip|escape|safe }}</td>
+                                                                </tr>
+                                                            {% endif %}
+                                                        {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div id="no_results" class="pull-center"><h4>No results found, for this filtering parameters.</h4></div>
+                <div style="display: none;" id="comparingwait" class="pull-center"><h4>Comparing results, please
+                    wait</h4></div>
+            </div>
+        </div>
+    </div>
+    <!--<![endif]-->
+
+    </div>
+
+{% endblock %}
+
+
+<!--[if gte IE 9]><!-->
+{% block scriptextra %}
+
+  $('.collapse').on('shown.bs.collapse', function () {
+    var loop = parseInt($(this).data('loop'));
+    var size = parseInt($(this).data('size'));
+
+    for(var j=1;j<=size+1;j++){
+      setMinimumCommonHeight(loop, j);
+    }
+
+  });
+function applyFilters(){
+  reset_empties();
+      var others = [];
+
+      for(var i=0;i<dbs.showing.length;i++){
+        if(dbs.showing[i] != dbs.reference){
+          others.push(dbs.showing[i]);
+        }
+      }
+  var filter_string = $("#searchfilter").val().trim();
+
+  filter_results(others, dbs.reference, filter_string, match, unmatch, emptyrows, proximity);
+
+  //doublecheck_expansions();
+}
+
+
+$("#match").bind('click',function(e)
+{
+
+          e.preventDefault();
+          e.stopPropagation();
+
+          match = !match;
+
+          if (!match)
+          {
+            document.getElementById('imatch').style.visibility = 'hidden'
+          }
+          else
+          {
+            document.getElementById('imatch').style.visibility = 'visible'
+          }
+          applyFilters();
+
+          return false;
+});
+
+$("#unmatch").bind('click',function(e)
+{
+
+          e.preventDefault();
+          e.stopPropagation();
+
+
+
+          unmatch = !unmatch ;
+          applyFilters();
+          if (!unmatch)
+          {
+            document.getElementById('iunmatch').style.visibility = 'hidden'
+          }
+          else
+          {
+            document.getElementById('iunmatch').style.visibility = 'visible'
+          }
+          return false;
+});
+
+$("#emptyrows").bind('click',function(e)
+{
+
+          e.preventDefault();
+          e.stopPropagation();
+
+
+
+          emptyrows = !emptyrows ;
+          applyFilters();
+          if (!emptyrows)
+          {
+            document.getElementById('iemptyrows').style.visibility = 'hidden'
+
+          }
+          else
+          {
+            document.getElementById('iemptyrows').style.visibility = 'visible'
+          }
+          return false;
+});
+
+$("#proximity").bind('click',function(e)
+{
+
+          e.preventDefault();
+          e.stopPropagation();
+
+
+          proximity = !proximity ;
+          applyFilters();
+
+          if (!proximity)
+          {
+            document.getElementById('iproximity').style.visibility = 'hidden'
+
+          }
+          else
+          {
+            document.getElementById('iproximity').style.visibility = 'visible'
+          }
+          return false;
+});
+
+var comparing_current=1;
+var max_comparing = {{results|length|add:-1}};
+var dbs = null;
+function compareDbsSelected(initial){
+  cleantablediff();
+  console.log('initial:'+initial);
+    if(!initial && hasFilters()){
+      $('.database_listing_names').fadeOut('fast');
+      $('.database_listing').fadeOut('fast');
+      $('#comparingwait').fadeIn('fast');
+    }
+      var ref = dbs.reference;
+
+      var others = [];
+
+      for(var i=0;i<dbs.showing.length;i++){
+        if(dbs.showing[i] != ref){
+          others.push(dbs.showing[i]);
+        }
+      }
+
+  var threadpool = new TaskQueuer(20);
+  var priority=1;
+      var thread;
+      {%for fingerprint_id, content in results.items|slice:":1" %}
+        {% for k,v in content.qset.ordered_items %}
+          for( var i = 0; i < others.length;i++){
+            thread = new Runnable(compareDatabase, priority++, ref+'_{{k|removespaces|hash}}', others[i]+'_{{k|removespaces|hash}}');
+            threadpool.run(thread);
+          }
+        {% endfor %}
+      {% endfor %}
+      threadpool.destroy(
+        function(){
+            if(!initial && hasFilters()){
+            $('#comparingwait').fadeOut('fast');
+
+            $('.database_listing_names').fadeIn('fast');
+            $('.database_listing').fadeIn('fast');
+            }
+            $(".tooltippable").tooltip({container:"body", html: true});
+            applyFilters();
+        }
+      );
+      $('.basetable').removeClass('basetable');
+      $('table[id^="'+ref+'_"] tr').addClass('basetable');
+
+}
+function compareDbsSelectedAfter(){
+  compareDbsSelected(false);
+}
+$(function(){
+  $('#compare_information').popover({'html': true, 'trigger': 'hover',
+  'container': 'body',
+  'template': '<div class="popover popover-medium"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'});
+
+  options = {
+    dropdown_subcontainer: '.dropdown_placer',
+    select_callback: compareDbsSelectedAfter
+  };
+
+  {% if results.items|length == 2 %}
+    dbs = new DatabaseSelector('#database_rows', 2, options);
+  {% elif results.items|length > 2 and results.items|length <= config.compare_maximum_DBs %}
+    dbs = new DatabaseSelector('#database_rows', {{results.items|length}}, options);
+  {% else %}
+    dbs = new DatabaseSelector('#database_rows', {{ config.compare_maximum_DBs }}, options);
+  {% endif %}
+
+  {%for fingerprint_id, content in results.items %}
+  dbs.addDatabase(
+    '{{fingerprint_id}}',
+    {
+      label: '{{content.name|removespaces}}'
+    });
+  {% endfor %}
+
+  dbs.draw();
+  $('.database_listing_names').fadeTo( "fast", 1);
+  compareDbsSelected(true);
+
+  $('[id^="{{database_to_compare|removespaces}}"] td').addClass("basetable");
+
+  $('#compare_previous').prop('disabled', true);
+  if(comparing_current == max_comparing)
+     $('#compare_next').prop('disabled', true);
+
+var first = null;
+
+$('[data-clampedwidth]').each(function () {
+    var elem = $(this);
+    var parentPanel = elem.data('clampedwidth');
+
+    if(first == null){
+      first = $(parentPanel).width();
+    }
+
+    var resizeFn = function () {
+        var sideBarNavWidth = first;
+        elem.css('width', sideBarNavWidth);
+
+        if(elem.hasClass('elips')){
+          elem.find('.linktoellipse').each(function(){
+            $(this).css({
+              overflow: 'hidden',
+              'text-overflow': 'ellipsis',
+              'white-space': 'nowrap',
+              display: 'block'
+            });
+          });
+        }
+
+    };
+
+    resizeFn();
+    $(window).resize(resizeFn);
+});
+  $('.database_title').affix({
+    offset: {
+      top: $('.database_title').offset().top
+    }
+  });
+
+  var isw = $.cookie('ignore_comp_warning');
+
+  if(!isw){
+    bootbox.dialog({
+      title: 'Comparing items',
+      message: '<div style="text-align: justify;">This functionality, allows you to compare multiple items side-side. It is possible to compare up to {{ config.compare_maximum_DBs }} items simultaneously.<br />\
+      <center><i class="fa-4x fa fa-compress"></i></center>\
+      <br /> \
+       If a bigger number of items are to be compared, they can be pre-selected and switched in the interface, by using the "Compared" dropdown buttons.<br /> It is also possible to switch the reference database at any time, by using the "Reference" dropdown button.<br /> <br />\
+       This functionality makes use of the following colors to differenciate entry fields: <br />\
+       <ul>\
+        <li>Green: Field is identical to the reference item field;</li>\
+        <li>Red: Is different from the reference item field;</li>\
+        <li>Yellow: Has similarities to the reference item;</li>\
+        <li>White: Empty reference item field.</li>\
+       </ul>\
+       <div class="checkbox">\
+       <label><input style="margin-top: 4px;" id="ignore_comp" type="checkbox"/> Do not show this again</label>\
+       </div></div>\
+       ',
+       buttons: {
+        confirm: {
+          label: "Close",
+          className: "btn-default",
+          callback: function(e){
+            if(document.getElementById('ignore_comp').checked) {
+              $.cookie('ignore_comp_warning', true);
+            }
+          }
+        }
+       }
+    });
+  }
+
+});
+var databases = [];
+
+function compareDatabase(base, other){
+  tablediffall_two(base, [other]);
+  //console.log(base)
+  this.complete();
+}
+
+{% endblock %}
+<!--<![endif]-->

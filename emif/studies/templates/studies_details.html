@@ -1,0 +1,377 @@
+<!-- # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-->
+{% load flatpages %}
+{% load compress %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+{% get_flatpages for user as flatpages %}
+
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js ns lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ns lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ns lt-ie9 gt-ie7"> <![endif]-->
+<!--[if IE 9 ]>    <html class="no-js ie9 gt-ie7"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" class="no-js">
+    <!--<![endif]-->
+    <head>
+        <!-- This is WRONG and just for testing, on deploy it must be changed to static base url -->
+        <base id="base_link" href="{{ BASE_URL }}">
+        <!--<base id="base_link" href="{{ request.get_host }}">-->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>{% block title %}{{config.brand}}{% endblock title %}</title>
+        <meta name="description" content="{{config.brand}}">
+        <meta name="viewport" content="width=device-width">
+        <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+
+        {% compress css %}
+        <link href="{% static 'css/opensans.css' %}" rel='stylesheet' type='text/css'>
+        <link href="{% static 'css/abel.css' %}" rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'css/vendor/jquery-ui-1.10.4.custom.min.css' %}">
+
+
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'css/bootstrap-theme.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.vertical-tabs.css' %}">
+
+        <link href="{% static 'css/vendor/roboto.css' %}" rel='stylesheet' type='text/css'>
+
+        <!-- IE 7 doesnt recognize awesome icons correctly... -->
+        <!--[if IE]>
+        <link rel="stylesheet" media="all" href="{% static 'font-awesome/css/font-awesome-ie7.min.css' %}" />
+        <script src="{% static 'js/ie7_fixes.js' %}"></script>
+        <![endif]-->
+
+        <!--link rel="stylesheet" href="{% static 'css/bootstrap-responsive.min.css' %}"-->
+        <link rel="stylesheet" media="screen" href="{% static 'css/main.css' %}" />
+        <link rel="stylesheet" media="screen" href="{% static 'css/app.v1.css' %}">
+        <link rel="stylesheet" media="print" href="{% static 'css/print.css' %}">
+
+        
+        <style media="screen" type="text/css">
+        {% block styleextra %}
+        {% endblock %}
+        </style>
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-datetimepicker.min.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/jquery.nanoscroller.css' %}" />
+        {% endcompress %}
+
+
+        {% compress js %}
+        <script src="{% static 'js/vendor/jquery-1.9.1.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/inheritance.js' %}"></script>
+        <script src="{% static 'js/vendor/modernizr-2.6.2.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery-1.9.1.min.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.bifrost.min.js' %}"></script>
+
+
+        <script src="{% static 'js/vendor/bootstrap.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery-ui-1.10.4.custom.min.js' %}"></script>
+       
+
+        <script src="{% static 'js/vendor/promise-6.1.0.min.js' %}"></script>
+        <script src="{% static 'js/vendor/promise-done-6.1.0.min.js' %}"></script>
+        <script src="{% static 'js/emif.proxies.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery.cookie.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.canclear.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.highlight.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.history.js' %}"></script>
+
+        <script src="{% static 'js/vendor/bootbox.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/typeahead.jquery.min.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery-scrolltofixed.js' %}"></script>
+
+        <script src="{% static 'js/vendor/moment.min.js' %}"></script>
+        <script src="{% static 'js/vendor/bootstrap-datetimepicker.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.nanoscroller.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery.hotkeys.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.localize.js' %}"></script>
+        <script src="{% static 'js/montra.api.js' %}"></script>
+        <script type="application/javascript">
+            // We need to configure this to be able to send requests by json with the csrftoken
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+        </script>
+        <!--[if lt IE 9]>
+        <script src="{% static 'js/vendor/respond.min.js' %}"></script>
+        <link rel="stylesheet" href="bootstrap_ie_compatibility" />
+        <![endif]-->
+        
+        {% endcompress %}
+    </head>
+    <body>
+
+
+{% block styleinclude %}
+
+<!-- Generic page styles -->
+<link rel="stylesheet" href="{% static 'css/vendor/style.css' %}">
+<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+<link rel="stylesheet" href="{% static 'css/vendor/jquery.fileupload-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/c3.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery.dyndropdown.css' %}">
+<link rel="stylesheet" href="{% static 'css/pc.css' %}">
+
+
+{% endblock %}
+
+
+{% block headextra %}
+
+<script src="{% static 'js/emif.studies.js' %}"></script>
+
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="{% static 'js/vendor/jquery.ui.widget.js' %}"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="{% static 'js/vendor/load-image.min.js' %}"></script>
+<!-- The basic File Upload plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload.js' %}"></script>
+<!-- The File Upload processing plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-process.js' %}"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-image.js' %}"></script>
+<!-- The File Upload validation plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-validate.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.cookie.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.boolrelwidget.js' %}"></script>
+<!--[if gte IE 9]><!-->
+
+{% endblock %}
+
+
+
+{% block content %}
+<!--div>
+<h4 style="color: cornflowerblue;"> {{study.name}} </h4>
+
+</div-->
+
+<div id="container" style="width:100%;">                                   
+  <div id="studyDetailDiv" style="float:left; width:45%;"> <h4 style = "text-align: center; color: cornflowerblue;"> Study details </h4>
+    
+       <div class="form-group">
+        Requester's Name
+        <input disabled class="form-control" size="255" type="text" cols="100" name="user_name" id = "user_name" value="{{study_user.first_name}} {{study_user.last_name}}">
+        </div>
+        <div class="form-group">
+        Email
+        <input disabled class="form-control"  size="255" type="text" cols="100" name="user_email" id = "user_email" value="{{study_user.email}}">       
+        </div>
+        <div class="form-group">
+        Institution
+        <input disabled class="form-control"  size="255" type="text" cols="100" name="user_institution" id = "user_institution" value = "{{institution}}">          
+        </div> 
+        <div class="form-group">
+        Position
+        <input disabled class="form-control"  size="255" type="text" cols="100" name="user_position" id = "user_position" value = "{{position}}">          
+        </div> 
+        <div class="form-group">
+        Expected Deadline
+        <input disabled class="form-control"  size="255" type="text" cols="100" name="deadline" id = "deadline" value = "{{study.deadline}}">       
+        </div>  
+        Study Title
+        <div class="form-group">
+        <input disabled class="form-control" size="255" type="text" cols="100"  name="title" id = "title" value="{{study.name}}" >   
+        </div>
+        Study Request
+        <div class="form-group">
+        <textarea disabled class="form-control"  name="question" id = "question">{{study.question}} </textarea>    
+        </div>
+
+       
+
+        {%if databases_names%}
+         Databases:
+
+        {% for database_name in databases_names %}
+
+        {{database_name}} &#8226
+
+        {% endfor %} <br><br>
+
+        {%endif%}
+
+        {% if study_manager or request.user.is_superuser %}
+
+            {% if study.status == "SUBMITTED"%}
+            <button class="btn btn-warning" style="float:right;margin-left:10px" onclick="showPopupRejection()">Reject Study</button>
+           
+            <form id="accept_study" action="studies/accept_study/{{comm.slug}}/{{study.id}}/" method="post">
+                {% csrf_token %} 
+            <button class="btn btn-primary" style="float:right;" href="studies/accept_study/{{comm.slug}}/{{study.id}}/">Accept Study</button>
+            </form>
+            <!--/div-->
+
+            <div id="popup_rejection" style="display:none" >
+             <form id="reject_feedback_form2" cols="200" method="post" action="studies/reject_study/{{comm.slug}}/{{study.id}}/" enctype="multipart/form-data">
+                 {% csrf_token %}
+
+            <div class="form-group">
+            <textarea class="form-control input-block-level" rows="4" name="chat_message" id = "chat_message" required></textarea>            
+            </div>
+
+         <div>          
+         <input type="submit" class = "btn btn-success" value="Submit feedback" id="submit_feedback" > 
+         </form>
+         <button type="cancel" class = "btn btn-success" onclick="return quitBox('quit');">Cancel</button>
+         </div>
+    </div>
+
+
+    {% else %}
+
+     This study is {{study.status}}. <br>
+     Mark this study as:
+            
+    <select id="study_status">
+
+    {% if study.status == "CLOSED" %}
+        <option value="CLOSED">CLOSED</option>  
+        <option value="COMPLETED" >COMPLETED</option> 
+        <option value="INPROGRESS" selected >INPROGRESS</option> 
+    {% elif study.status == "COMPLETED" %}               
+        <option value="COMPLETED" >COMPLETED</option>  
+        <option value="CLOSED" >CLOSED</option> 
+        <option value="INPROGRESS" selected >INPROGRESS</option> 
+    {% else %}               
+        <option value="COMPLETED" selected >COMPLETED</option>  
+        <option value="CLOSED" >CLOSED</option> 
+        <option value="INPROGRESS" >INPROGRESS</option> 
+    {%endif%}
+    </select>    
+
+    <i class='fas fa-fw fa-question-circle' title="COMPLETED - Study request is concluded but messages can still be exchanged.
+CLOSED - Study request is concluded and no further messages can be exchanged."></i>
+
+    <button class="btn btn-primary" style="float:right;" onclick='update_study_status("{{comm.slug}}", "{{study.id}}")'>Update study</button>
+
+    {%endif%}
+    {% endif%}
+
+ </div>                     
+  <div id="chatDiv" style="float:right; width:45%;"> <h4 style = "text-align: center;color: cornflowerblue;"> Q & A </h4>
+
+    {% if messages %}
+        <link rel="stylesheet" href="{% static 'css/bubbles.css' %}">
+
+        {% for message in messages %}
+            <table>
+                {% if message.sender == request.user %}
+            <td>
+            <div class="talk-bubble tri-right right-top">
+            <div class="talktext">
+            <p style="text-align:right;"> <i> On {{message.created_date}} {{message.sender.first_name}} {{message.sender.last_name}} wrote: </i></p><br>
+            <p>{{message.message}}</p> 
+            {% for document in message.documents.all %}
+             <a>
+            <span style="cursor: pointer;" class="glyphicon glyphicon-paperclip" title = "Download File" onclick='requestFile("{{document.file_name}}","{{document.revision}}")'>{{document.file_name}}</span>
+             </a><br>
+             <div style="display: none;">
+          <form id="downloadfile" action="api/getcommunityfile" method="post">
+        {% csrf_token %}
+        <input name="filename" value="" />
+        <input name="revision" value="" />
+        <input type="submit"  value="d"/>
+    </form>
+    </div>
+             {% endfor %}
+            </div>
+            </div>
+            </td>
+                {% else %}
+
+            <td>
+            <div class="talk-bubble tri-right left-top">
+            <div class="talktext">
+            <p style="text-align:left;"> <i> On {{message.created_date}} {{message.sender.first_name}} {{message.sender.last_name}} wrote: </i></p><br>
+            <p>{{message.message}}</p>
+             {% for document in message.documents.all %}
+             <a >
+            <span style="cursor: pointer;" class="glyphicon glyphicon-paperclip" title = "Download File" onclick='requestFile("{{document.file_name}}","{{document.revision}}")'>{{document.file_name}}</span>
+             </a> <br>
+             <div style="display: none;">
+          <form id="downloadfile" action="api/getcommunityfile" method="post">
+        {% csrf_token %}
+        <input name="filename" value="" />
+        <input name="revision" value="" />
+        <input type="submit"  value="d"/>
+    </form>
+    </div>
+      {% endfor %}
+            </div>
+            </div>
+            </td>
+
+            {%endif%}
+            </table>
+
+            
+         {% endfor %}
+        <!--button type="button" class="btn btn-primary" type="submit" onclick="showChatWindow()" id="new_message" style="float:right; margin:10px;">New message</button-->
+    {% else %}
+        <h4 style = "text-align: center;"> No discussion history. </h4>
+        <!--button type="button" class="btn btn-primary" type="submit" onclick="showChatWindow()" id="new_message" style="float:right; margin:10px;">New message</button-->
+    {% endif %}
+
+
+
+    {% if study.status != "CLOSED"%}
+    
+     <div class="well well-sm" id="chat" style="display:block">
+
+    <form id="study_email" action="studies/create_study_message/{{comm.slug}}/{{study.id}}/" method="post" enctype="multipart/form-data">
+    <textarea class="form-control input-block-level" rows="2" name="chat_message" id = "chat_message" required></textarea>   
+     {% csrf_token %}
+     <input type="file" name="file" id="choose_study_file" multiple>
+     <input type="submit" class="btn btn-success fileinput-button"  id="send_message" style="float:right; margin:10px;" value="Send" >
+     </form>  <br><br>
+     </div>
+
+     {%endif%}
+
+    </div>  
+      
+  </div>                   
+</div>  
+
+
+{% endblock %}
+
+</body>
+</html>

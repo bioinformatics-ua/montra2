@@ -1,0 +1,73 @@
+# Copyright (C) 2022 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Django==1.11.29
+biopython==1.76
+celery==3.1.26.post2
+django-ace==1.0.11
+django-adminplus==0.5
+django-allauth==0.40.0
+django-bootstrap-breadcrumbs==0.9.2
+django-bootstrap-pagination==1.7.1
+django-celery==3.3.1
+django-compressor==2.4.1
+django-constance[database]==2.5.0
+django-countries==5.5
+django-crispy-forms==1.8.1
+django-extensions==1.9.9
+django-filter==1.1.0
+django-grappelli==2.12.4
+django-guardian==1.5.1
+git+https://github.com/bioinformatics-ua/django-hitcount.git#egg=django-hitcount
+django-js-reverse==0.9.1
+django-markup-deprecated==0.0.4
+git+https://github.com/bioinformaticsua/django-neue-transmeta#egg=django-neue-transmeta
+django-newsletter==0.8b1
+django-premailer==0.2.0
+django-resized==0.3.11
+django-sslserver==0.20  # package used for testing with https
+django-tables2==2.0.6
+django-webpack-loader==0.7.0
+djangorestframework==3.9.4
+djangosaml2==0.18.1
+drf-nested-routers==0.91
+easy-thumbnails==2.6.0
+geopy==0.99  # version 1 also supports python 2
+github3.py==1.0.0a4
+openpyxl==2.6.4
+psycopg2-binary==2.8.6
+pymongo==2.9.5  # version 3 also supports python 2
+pyparsing==1.5.7  # version 2 also supports python 2
+pysolr==3.8.1
+python-Levenshtein==0.12.2
+python-dateutil==2.8.2
+python-memcached==1.59
+rarfile==2.8
+recaptcha2==0.1
+requests==2.27.1
+selenium==3.141
+six==1.16.0
+textile==2.3.12  # warning: from 2.3.13 onward, textile has breaking changes
+git+https://github.com/bioinformatics-ua/django-userena.git@84b1fa9610860596dd7c95c1f1af24b3942c8ff4#egg=userena
+wsgiref==0.1.2
+xhtml2pdf==0.2.5
+
+# maybe not used/no references on code
+django-contrib-comments==1.9.2
+
+# pinned packages for python 2 compatibility
+django-appconf==1.0.3
+jwcrypto==0.9.1
+pysaml2==4.9.0

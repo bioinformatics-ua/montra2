@@ -1,0 +1,20 @@
+{# Template used on the "manage_community_views.html" template #}
+{# Renders the Extra fields section of a specfic view #}
+{# Expects that a variable "view" is set to the respective view value/id #}
+
+{% load extra_tags %}
+
+{% get_item comm_extra_fields view as view_active_extra_fields %}
+{% if view_active_extra_fields %}
+  {% get_excluded_extra_community_fields comm questionnaire view as excluded_extra_fields %}
+
+  <h4>Extra Fields</h4>
+  <div class="col-xs-6">
+    <div class="well well-sm">
+      {% for extra_field in view_active_extra_fields %}
+        <input id="extra_{{ extra_field }}" name="extra_{{ extra_field }}" type="checkbox" {% if extra_field not in excluded_extra_fields %}checked{% endif %}>
+        <label for="extra_{{ extra_field }}">{{ extra_field }}</label>
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

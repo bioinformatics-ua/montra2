@@ -1,0 +1,273 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor/wysihtml5.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-tagsinput.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'css/vendor/themes/default/style.min.css' %}" />
+
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome-iconpicker/css/fontawesome-iconpicker.min.css' %}" />
+
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/bootstrap3-typeahead.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+        <script src="{% static 'js/vendor/wysihtml5x-toolbar.min.js' %}"></script>
+
+    <script src="{% static 'js/vendor/advanced_and_extended.js' %}"></script>
+    <script src="{% static 'js/vendor/multiselect.min.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.orderablemultiselect.js' %}"></script>
+    <script src="{% static 'js/vendor/bootstrap-tagsinput.js' %}"></script>
+
+    <script src="{% static 'js/vendor/jstree.min.js' %}"></script>
+    <script src="{% static 'vendor/fontawesome-iconpicker/js/fontawesome-iconpicker.min.js' %}"></script>
+
+
+{% endblock %}
+
+
+{% block breadcrumbs %}
+        {% breadcrumb "All" "c/"|add:comm.slug %}
+        {% breadcrumb "Manage Community" "" %}
+{% endblock %}
+
+{% block content %}
+
+  <div data-controller="manage-community-settings"
+        data-manage-community-settings-community="{{comm.slug}}"
+        data-manage-community-settings-questionnaire="{{questionnaire.slug}}">
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#general"><i class="fas fa-fw fa-tools"></i> General Settings</a></li>
+        <li><a data-toggle="tab" href="#table-view"><i class="fas fa-fw fa-table"></i> Table View</a></li>
+        <li><a data-toggle="tab" href="#list-view"><i class="fas fa-fw fa-list"></i> List View</a></li>
+        <li><a data-toggle="tab" href="#card-view"><i class="fas fa-fw fa-th-large"></i> Card View</a></li>
+    </ul>
+
+    <div class="tab-content">
+
+        <!-- general settings -->
+        <div id="general" class="tab-pane fade in active">
+            <div class="panel panel-default">
+
+                <div class="panel-body">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <h4>Advanced Search Visible Questions</h4>
+                        <div class="form-group">
+                            <input type="hidden" name="adv_change" id="adv_change" value="" />
+                            <div id="adv_tree" data-target="manage-community-settings.adv_tree"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-block btn-success"><i class="fas fa-fw fa-save"></i> Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table settings -->
+        <div id="table-view" class="tab-pane fade">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                Fields
+                </div>
+                <div class="panel-body">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <!-- view id -->
+                        <input name="view" type="hidden" value="{{ comm_fields_class.TABLE_VIEW }}">
+
+                        <!-- section 0 -->
+                        <input name="section-0" id="field_container_table_0" data-target="manage-community-settings.field_container_table_0" type="hidden" value="">
+                        <div id="field_selector_table_0" data-target="manage-community-settings.field_selector_table_0"></div>
+
+                        {% include "manage_community_views_extra_fields.html" with view=comm_fields_class.TABLE_VIEW %}
+
+                        <button class="btn btn-block btn-success" type="submit">
+                            <i class="fas fa-fw fa-save"></i> &nbsp;Save
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- List View settings -->
+        <div id="list-view" class="tab-pane fade">
+
+            <!-- help -->
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Available Sections
+                </div>
+                <div class="panel-body">
+                    <p>
+                        <span></span>
+                    </p>
+                    <button type="button" class="btn btn-transparent" data-toggle="modal" data-target="#listmodal">
+                            Click here to check the position of each section
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                Fields per section
+                </div>
+                <div class="panel-body">
+                    <form method="POST">
+                        {% csrf_token %}
+
+                        <!-- view id -->
+                        <input name="view" type="hidden" value="{{ comm_fields_class.LIST_VIEW }}">
+
+                        <!-- Section 0-->
+                        <h4>Section 0</h4>
+                        <input name="section-0" id="field_container_list_0" data-target="manage-community-settings.field_container_list_0" type="hidden" value="">
+                        <div id="field_selector_list_0" data-target="manage-community-settings.field_selector_list_0">
+                        </div>
+
+                        <hr/>
+
+                        <!-- Section 1-->
+                        <h4>Section 1</h4>
+                        <input name="section-1" id="field_container_list_1" data-target="manage-community-settings.field_container_list_1" type="hidden" value="">
+                        <div id="field_selector_list_1" data-target="manage-community-settings.field_selector_list_1"></div>
+
+                        {% include "manage_community_views_extra_fields.html" with view=comm_fields_class.LIST_VIEW %}
+
+                        <button class="btn btn-block btn-success" type="submit">
+                            <i class="fas fa-fw fa-save"></i> &nbsp;Save
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card View settings -->
+        <div id="card-view" class="tab-pane fade">
+
+            <!-- help -->
+            <div class="panel panel-default">
+                    <div class="panel-heading">
+                    Available Sections
+                    </div>
+                    <div class="panel-body">
+                            <p>
+                                    <span></span>
+                                </p>
+                                <button type="button" class="btn btn-transparent" data-toggle="modal" data-target="#cardmodal">
+                                        Click here to check the position of each section
+                                </button>
+                    </div>
+                </div>
+
+            <div class="panel panel-default">
+                    <div class="panel-heading">
+                    Fields per Section
+                    </div>
+                    <div class="panel-body">
+                        <form method="POST">
+                            {% csrf_token %}
+
+                            <!-- view id -->
+                            <input name="view" type="hidden" value="{{ comm_fields_class.CARD_VIEW }}">
+
+                            <!-- Section 0-->
+                            <h4>Section 0</h4>
+                            <input name="section-0" id="field_container_card_0" data-target="manage-community-settings.field_container_card_0" type="hidden" value="">
+                            <div id="field_selector_card_0" data-target="manage-community-settings.field_selector_card_0"></div>
+
+                            <hr/>
+
+                            <!-- Section 1-->
+                            <h4>Section 1</h4>
+                            <input name="section-1" id="field_container_card_1" data-target="manage-community-settings.field_container_card_1" type="hidden" value="">
+                            <div id="field_selector_card_1" data-target="manage-community-settings.field_selector_card_1"></div>
+
+                            <hr/>
+
+                            <!-- Section 2-->
+                            <h4>Section 2</h4>
+                            <input name="section-2" id="field_container_card_2" data-target="manage-community-settings.field_container_card_2" type="hidden" value="">
+                            <div id="field_selector_card_2" data-target="manage-community-settings.field_selector_card_2"></div>
+
+                            {% include "manage_community_views_extra_fields.html" with view=comm_fields_class.CARD_VIEW %}
+
+                            <button class="btn btn-block btn-success" type="submit">
+                                <i class="fas fa-fw fa-save"></i> &nbsp;Save
+                            </button>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+<!-- List Modal -->
+<div class="modal fade" id="listmodal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Available sections on List View</h4>
+            </div>
+            <div class="modal-body">
+                <center>
+                    <img src="{% static 'img/view-list.png'%}" class="img-responsive">
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Card Modal -->
+<div class="modal fade" id="cardmodal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Available sections on Card View</h4>
+            </div>
+            <div class="modal-body">
+                <center>
+                    <img src="{% static 'img/view-card.png'%}" class="img-responsive">
+                </center>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

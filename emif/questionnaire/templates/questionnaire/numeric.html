@@ -1,0 +1,182 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+    <div class="clearfix">
+    {% if advanced_search %}
+       {% include "questionnaire/range_field.html" %}
+    </div>
+<script type="text/javascript">
+/*
+$("#question_{{ question.number|escapedots }}").inputmask("decimal", { radixPoint: ".", autoGroup: true, groupSeparator: ",", groupSize: 3, rightAlignNumerics: false  });
+
+$('[id="question_{{ question.number }}"]').change(function() {
+    if ($(this).val() == '') {
+        $(this).inputmask("remove");
+        $(this).inputmask("decimal", { radixPoint: ".", autoGroup: true, groupSeparator: ",", groupSize: 3, rightAlignNumerics: false  });
+    }
+});
+*/
+/*
+$("#from_{{ question.number|removedots }}").inputmask("decimal", {
+    radixPoint: ".",
+    autoGroup: true,
+    groupSeparator: ",",
+    groupSize: 3,
+    rightAlignNumerics: false
+});
+$("#to_{{ question.number|removedots }}").inputmask("decimal", {
+    radixPoint: ".",
+    autoGroup: true,
+    groupSeparator: ",",
+    groupSize: 3,
+    rightAlignNumerics: false
+});
+*/
+
+$('.dropdown-menu').on('click', function(e) {
+    if ($(this).hasClass('dropdown-menu-form')) {
+        e.stopPropagation();
+    }
+});
+$('#anyfrom_{{ question.number|removedots }}').change(function() {
+    if ($(this).is(':checked')) {
+        $('#from_{{ question.number|removedots }}').prop('disabled', true);
+    } else {
+        $('#from_{{ question.number|removedots }}').prop('disabled', false);
+    }
+});
+$('#anyto_{{ question.number|removedots }}').change(function() {
+    if ($(this).is(':checked')) {
+        $('#to_{{ question.number|removedots }}').prop('disabled', true);
+    } else {
+        $('#to_{{ question.number|removedots }}').prop('disabled', false);
+    }
+});
+
+$('#define_{{ question.number|removedots }}').click(function() {
+    var is_any_from = $('#anyfrom_{{ question.number|removedots }}').is(':checked');
+    var is_any_to = $('#anyto_{{ question.number|removedots }}').is(':checked');
+    console.log("from: " + is_any_from);
+    console.log("to: " + is_any_to);
+    if (is_any_from && is_any_to) {
+        $('#error_{{ question.number|removedots }}').text("Having a range start and end on \"any value\", is the same as not specifying one.").fadeIn('fast');
+    } else {
+        var start = null;
+        var end = null;
+        if (is_any_from) {
+            start = '*';
+            var to_val = $('#to_{{ question.number|removedots }}').val().replace(/'/g, '');
+            end = parseFloat(to_val);
+            console.log(to_val);
+
+        } else if (is_any_to) {
+            end = '*';
+            var from_val = $('#from_{{ question.number|removedots }}').val().replace(/'/g, '');
+            start = parseFloat(from_val);
+        } else {
+            var from_val = $('#from_{{ question.number|removedots }}').val().replace(/'/g, '');
+            start = parseFloat(from_val);
+            var to_val = $('#to_{{ question.number|removedots }}').val().replace(/'/g, '');
+            end = parseFloat(to_val);
+        }
+        console.log("start: " + start);
+        console.log("end: " + end);
+        if (start == null || end == null || checkNaN(start) || checkNaN(end)) {
+            $('#error_{{ question.number|removedots }}').text("You must specify a range of valid numbers.").fadeIn('fast');
+        } else {
+            if (end < start) {
+                var temp = start;
+                start = end;
+                end = temp;
+            }
+            var result = "[ " + start + " TO " + end + " ]";
+
+            $('[id="question_{{ question.number }}"]').inputmask('remove');
+            $('[id="question_{{ question.number }}"]').val(result);
+            $('[id="question_{{ question.number }}"]').change();
+            $('#error_{{ question.number|removedots }}').fadeOut('fast');
+            $('[id="answer_{{ question.number }}"] .dropdown-toggle').click();
+        }
+    }
+});
+
+// * Ref from : http://designpepper.com/blog/drips/the-problem-with-testing-for-nan-in-javascript 
+function checkNaN(check_this) {
+    return (check_this !== check_this);
+}
+
+</script>
+
+
+{% if question.extra %}
+<span class="help-block">{{ question.extra }}</span>
+{% endif %}
+{% else %}
+    {% if qdict.value %}
+        <script type="text/javascript">
+            markAnswered('{{ question.number|removedots }}');
+
+        </script>
+    {% endif %}
+    <div class="row">
+    <div class="input col-md-9">
+        {% if readonly %}
+            <div class="form-control fake_input fake_input_disabled" id="question_{{ question.number }}" name="question_{{ question.number }}">{{ qdict.value|safe }}</div>
+        {% else %}
+
+            {#% if "qprocessor_errors" in qdict %#}
+                <div id='numeric_validator_{{question.number}}' class="form-group error numeric_validator">
+                    <input type="number" class="form-control" size="60" id="question_{{ question.number }}" name="question_{{ question.number }}" value="{{ qdict.value }}" min="0" pattern="[0-9]*[.,]?[0-9]+" title="<number>" step="0.01" lang="en" />
+                    <span class="help-block">Please Note: Do not use thousand separators. If needed, use a dot "." as a decimal mark.</span>
+
+                    {#<span class="help-inline">{{ qdict.qprocessor_errors }}</span>#}
+                </div>
+
+            {% comment %}
+            {% else %}
+                <div id='numeric_validator_{{question.number}}' class="form-group numeric_validator">
+                    <input type="number" class="form-control" size="60" id="question_{{ question.number }}" name="question_{{ question.number }}" value="{{ qdict.value }}" style="text-align:left"/>
+                    <span class="help-block">It should be a number.</span>
+                </div>
+            {% endif %}
+            {% endcomment %}
+
+        {% endif %}
+
+        {% if question.extra %}
+            <span class="help-block">{{ question.extra }}</span>
+        {% endif %}
+        {% if qdict.value %}
+            <script type="text/javascript">
+                markAnswered('{{ question.number|removedots }}');
+            </script>
+        {% endif %}
+            <script type="text/javascript">
+            // *** LMF
+            /*  
+                $(document).ready(function(){
+                $("#question_{{ question.number|escapedots }}").inputmask("decimal", { radixPoint: ".", autoGroup: true, groupSeparator: ",", groupSize: 3, rightAlignNumerics: false  });
+                });
+            */
+            // ***
+            </script>
+    </div>
+    </div>
+{% endif %}
+</div>

@@ -1,0 +1,206 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+<div class="clearfix">
+    <div class="row">
+        <div class="input col-md-9">
+
+            {% comment %} {% if readonly %}
+            <div class="form-control fake_input fake_input_disabled" id="question_{{ question.number }}" name="question_{{ question.number }}">{{ qdict.value|safe }}</div>
+            {% else %} {% endcomment %}
+
+            {% if advanced_search %}
+                <input type="text" class="form-control" size="60" id="question_{{ question.number }}" name="question_{{ question.number }}" value="" />
+            {% else %}
+
+                {% if not readonly %}
+                    <div id="dialog-confirm-tabulator-remove-row" title="Remove this row?" style="display:none">
+                        <p><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Are you sure you want to remove the row?</p>
+                    </div>
+                    <div class="table-controls">
+                      <div id="tabulator-add-row_{{ question.number }}">
+                        <i class="fas fa-fw fa-plus-square" style="color:steelblue; vertical-align: bottom; cursor: pointer;" style="margin-top: 6px" title="Add new row"></i>
+                      </div>
+                    </div>
+                {% endif %}
+                <div id="tabulator-question_{{ question.number }}" class="tabulator-for-question-redraw"></div>
+                <input type="hidden" id="question_{{ question.number }}" name="question_{{ question.number }}" value="{{ qdict.value|escape }}" />
+                {% comment %} <input type="text" class="form-control" size="60" id="question_{{ question.number }}" name="question_{{ question.number }}" value="{{ qdict.value|striptags }}" /> {% endcomment %}
+                {% comment %} {% endif %} {% endcomment %}
+                
+                {% if question.extra %}
+                    <span class="help-block">{{ question.extra }}</span>
+                {% endif %}
+                
+                {% if qdict.value %}
+                    <script type="text/javascript">
+                        markAnswered('{{ question.number|removedots }}');
+                    </script>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% comment %}
+aditional auxiliary code for init and filling the table with data
+{% endcomment %}
+{% if not advanced_search %}
+    <script type="text/javascript">
+        // datePicker logic code for tabulator based on jquery datepicker
+        var dateEditor = function (cell, onRendered, success, cancel) {
+            //create and style input
+            var input = $("<input type='text'/>");
+        
+            input.datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: "dd/mm/yy",
+            });
+        
+            input.css({
+                "border":"1px",
+                "background":"transparent",
+                "padding":"4px",
+                "width":"100%",
+                "box-sizing":"border-box",
+            });
+        
+            input.val(cell.getValue());
+        
+            onRendered(function(){
+                input.focus();
+            });
+        
+            var inputBlur = function(e){
+                if(e.target != input[0]){
+                    if( $(e.target).closest(".ui-datepicker").length == 0){
+                        $(document).off("mousedown", inputBlur);
+                        success(input.val());
+                    }
+                }
+            }
+        
+            $(document).on("mousedown", inputBlur);
+        
+            //submit new value on blur
+            input.on("change", function(e){
+                $(document).off("mousedown", inputBlur);
+                success(input.val());
+            });
+        
+            input.on("click", function(e){e.stopPropagation()});
+        
+            //submit new value on enter
+            input.on("keydown", function(e){
+                if(e.keyCode == 13){
+                    $(document).off("mousedown", inputBlur);
+                    success(input.val());
+                }
+            });
+        
+            return input;
+        }
+        
+        // init tabulator to make our table
+        $("div[id='tabulator-question_{{ question.number }}']").tabulator({
+            height:205, // set height of table, this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+            layout:"fitColumns", //fit columns to width of table (optional)
+            {% if readonly %}
+            selectable:false,
+            {% endif %}
+            {% if not readonly %}
+            movableRows: true,
+            {% endif %}
+            initialSort:[
+                {column:"date", dir:"asc"},
+            ],
+            columns:[ //Define Table Columns
+                {rowHandle:true, formatter:"handle", headerSort:false, frozen:true, width:30, minWidth:30},
+                {title:"Date", field:"date", formatter:"plaintext", sorter:"date", align:"center", width:130 {% if not readonly %}, editor: dateEditor {% endif %} },
+                
+                {{question.metadata|safe}} ,
+                
+                {% if not readonly %}
+                {title:"", field:"delete", formatter:"buttonCross", headerSort:false, frozen:true, width:30, minWidth:30, editor: false, cellClick:function(e, cell) {
+                    //alert("Deleting row with value:" + cell.getValue()); //display the cells value
+
+                    $( "#dialog-confirm-tabulator-remove-row" ).dialog({
+                        resizable: false, height: "auto", width: 400, modal: true,
+                        buttons: {
+                            "Delete row": function() {
+                            cell.getRow().delete();
+                            $( this ).dialog( "close" );
+                            },
+                            Cancel: function() {
+                            $( this ).dialog( "close" );
+                            }
+                        }
+                    });
+                },
+                }
+                {% endif %}
+            ]
+            {% if not readonly %}
+            ,
+            dataEdited:function(data) {
+                $("input[id='question_{{ question.number }}']").val(JSON.stringify(data));
+                if (!(typeof formHasChanged === 'undefined')) {
+                    formHasChanged = true;
+                }
+            }
+            {% endif %}
+        });
+
+        {% if readonly %}
+            var colDefs_DisableEditing = $("div[id='tabulator-question_{{ question.number }}']").tabulator("getColumnDefinitions")
+
+            for(var i in colDefs_DisableEditing)
+                delete colDefs_DisableEditing[i]["editor"];
+
+            $("div[id='tabulator-question_{{ question.number }}']").tabulator("setColumns", colDefs_DisableEditing);
+        {% endif %}
+
+        // Enable in-cell HTML processing so that the advanced search functionality can highlight the result
+        {% if is_advanced_query_result_page %}
+            var colDefs = $("div[id='tabulator-question_{{ question.number }}']").tabulator("getColumnDefinitions")
+
+            for(var i in colDefs) {
+                // Filter out the two headers
+                if(i == 0 || i == 1)
+                    continue;
+                colDefs[i]["formatter"] = "html";
+            }
+
+            $("div[id='tabulator-question_{{ question.number }}']").tabulator("setColumns", colDefs);
+        {% endif %}
+
+        var tabledata = [{{ qdict.value|safe }}];
+        tabledata = [].concat.apply([], tabledata);
+        
+        //load sample data into the table
+        $("div[id='tabulator-question_{{ question.number }}']").tabulator("setData", tabledata);
+        // update the hidden field with loaded backend data
+        $("input[id='question_{{ question.number }}']").val(JSON.stringify(tabledata));
+
+        $("div[id='tabulator-add-row_{{ question.number }}']").click(function(){
+            $("div[id='tabulator-question_{{ question.number }}']").tabulator("addRow", {});
+        });
+
+    </script>
+{% endif %}

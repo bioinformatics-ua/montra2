@@ -1,0 +1,18 @@
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+
+{% if request.user.is_staff %}
+    <span class="pull-right">
+        <a class="dedit" href="admin/questionnaire/question/{{ question.id }}/">
+            <i class="icon-pencil">&nbsp;</i>
+        </a>
+    </span>
+{% endif %}
+<span class="pull-right">
+    <a class="dedit" href="" onclick="toggle_comments('{{question.number|removedots}}'); return false;">
+        <i class="{% if qdict.comment %} icon-comment {% else %} icon-comment-alt {% endif %}">&nbsp;</i>
+    </a>
+</span>
+<span class="pull-right answered hide" id="answered_{{ question.number|removedots }}">
+    <i class="icon-check green">&nbsp;</i>
+</span>

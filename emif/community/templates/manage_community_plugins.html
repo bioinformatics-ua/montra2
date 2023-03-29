@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor/wysihtml5.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-tagsinput.css' %}" />
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/bootstrap3-typeahead.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'js/emif.manage_community_groups.js' %}"></script>
+    <script src="{% static 'js/vendor/wysihtml5x-toolbar.min.js' %}"></script>
+
+    <script src="{% static 'js/vendor/advanced_and_extended.js' %}"></script>
+    <script src="{% static 'js/vendor/multiselect.min.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.orderablemultiselect.js' %}"></script>
+    <script src="{% static 'js/vendor/bootstrap-tagsinput.js' %}"></script>  
+{% endblock %}
+
+
+{% block breadcrumbs %}
+        {% breadcrumb "All" "c/"|add:comm.slug %}
+        {% breadcrumb "Manage Community - Groups" "" %}
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+
+
+{% if comm.public %}
+<div class="alert alert-warning alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">×</span></button>
+  <strong>Warning message</strong> Groups and Restrictions by groups are not allowed in open communities.
+</div>
+{% endif%}
+
+<div class="row">
+<div class="col-lg-12"> <h3>Manage {{comm.name}} - Plugins</h3> </div>
+
+<div class="col-lg-12">
+    <div class="panel panel-default">
+    <div class="panel-heading">Groups and Plugins</div>
+    <div class="panel-body">
+    {% if ugroup|length > 0 %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="medit" value="." />
+            <table id="groups_plugins" class="table table-bordered table-stripped" >
+                <thead>
+                    <tr>
+                    {% for elem in groupmatrix.0 %}
+                    <th><center>{{elem}}</center></th>
+                    {% endfor %}
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for line in groupmatrix %}
+                    {% if forloop.counter > 1 %}
+                    <tr>
+                    {% for elem in line %}
+                        {% if forloop.counter == 1 %}
+                        <td style="width: 200px;"><b>{{elem.name}}</b>
+                        </td>                          
+                        {% else %}
+                        <td>
+                            <center>
+                            <input class="g_{{forloop.counter}}" name="elem_{{elem.id}}" type="checkbox" {% if elem.allow %}checked{% endif %} />
+                            </center>
+                        </td>
+                        {% endif %}
+                    {% endfor %}
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="btn-toolbar pull-right manage-save-groups" role="group" >
+                <button class="pull-right btn btn-success"><i class="fas fa-fw fa-save"></i> Save</button> 
+                <button type="reset" class="btn btn-default pull-right">Revert Changes</button> 
+            </div>
+            </form>
+        </div>
+    {% else %}
+        There are no community groups yet.
+    {% endif %}
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scriptextra %}
+
+{% endblock %}

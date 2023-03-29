@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+
+        {% breadcrumb "Home" "home" %}
+        {% breadcrumb "History" "" %}
+
+{% endblock %}
+
+{% block content%}
+<div class="panel with-nav-tabs panel-default">
+    <div class="panel-heading">
+        {% if request.user.is_staff %}
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#milestones" data-toggle="tab">Releases</a></li>
+          <li><a href="#closedissues" data-toggle="tab">Recently Closed Issues</a></li>
+          <li><a href="#openissues" data-toggle="tab">Open Issues</a></li>
+        </ul>
+        {% else %}
+        <h2>Releases</h2>
+        {% endif %}
+    </div>
+    <div class="panel-body">
+    <div id="contact_wrap" class="rows">
+<div class="tab-content">
+  <div class="tab-pane active" id="milestones">
+            <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Milestone</th>
+                    <th>Description</th>
+                    <th style="width: 100px;">Closed Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+                <tbody>
+                    {% for milestone in milestones %}
+                        {% if milestone.state == 'closed' or request.user.is_staff %}
+                        <tr>
+                            <td>{{milestone.title}}</td>
+                            <td>
+                                {{milestone.description|safe|linebreaks}} <br />
+                                <div class="labels">
+                                    <div class="pull-right">
+                                    {% for label in milestone.iter_labels %}
+                                        {% if label|is_usecase %}
+                                        <span style="background-color: #{{label.color}}" class="label">{{ label.name }}</span>
+                                        {% endif %}
+
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{milestone.due_on|date:"Y-m-d"}}</td>
+                            <td style="text-align: center">
+                                {% if milestone.state == 'closed' %}
+                                    <i title="closed" class="fas fa-fw fa-2 fa-check"></i>
+                                {% else %}
+                                    <i title="open" class="fas fa-fw fa-2 fa-circle"></i>
+                                {%endif %}
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+  </div>
+{% if request.user.is_staff %}
+  <div class="tab-pane" id="closedissues">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Use Cases</th>
+                <th style="width: 100px;">Closed Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for issue in issues_closed %}
+                <tr>
+                    <td>{{issue.title}}</td>
+                    <td>
+                        <div class="labels">
+                            <div class="pull-right">
+                            {% for label in issue.labels %}
+                                {% if label|is_usecase %}
+                                <span style="background-color: #{{label.color}}" class="label">{{ label.name }}</span>
+                                {% endif %}
+
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {{issue.closed_at|date:"Y-m-d"}}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+  <div class="tab-pane" id="openissues">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Use Cases</th>
+                <th style="width: 100px;">Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for issue in issues_open %}
+                <tr>
+                    <td>{{issue.title}}</td>
+                    <td>
+                        <div class="labels">
+                            <div class="pull-right">
+                            {% for label in issue.labels %}
+                                {% if label|is_usecase %}
+                                <span style="background-color: #{{label.color}}" class="label">{{ label.name }}</span>
+                                {% endif %}
+
+                            {% endfor %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        {{issue.created_at|date:"Y-m-d"}}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+  </div>
+{%endif%}
+</div>
+        <!-- end contact_wrap --> </div>
+</div>
+</div>
+
+{% endblock %}
+
+ {% block scriptextra %}
+{% comment %}
+<script>
+{% endcomment %}
+
+$('#li_history').addClass("active");
+
+{% comment %}
+</script>
+{% endcomment %}
+
+{% endblock %}
+
+

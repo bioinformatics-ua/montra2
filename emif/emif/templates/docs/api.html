@@ -1,0 +1,599 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load flatpages %}
+{% load extra_tags %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>. {% endcomment %}
+    {% load django_bootstrap_breadcrumbs %} {% block breadcrumbs %} {{ block.super }} {% if comm %}
+    {% breadcrumb "Personal" "c/"|add:comm.slug|add:"/databases" %} {% else %} {% breadcrumb "Personal" "databases" %}
+    {% endif %} {% breadcrumb "API Doc" "api-doc" %} {% endblock %} {% block styleextra %} <!--body {-->
+    <!--padding-top: 20px;-->
+    <!--padding-bottom: 40px;-->
+    <!--}-->
+
+    
+    {% endblock %}
+
+
+    {% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/doc_api.css' %}">
+    {% endblock %}
+
+    {% block content %}
+    <div>
+        <div class="row">
+            <div class="col-md-6">
+                <h3>API Documentation</h3>
+            </div>
+            <div class="col-md-6 text-right">
+                <a class="btn btn-default right" href="{%if comm%}c/{{comm.slug}}/{% endif %}api-info"> <i
+                        class=" icon"></i>
+                    <i class="icon-info-sign"></i>&nbsp; API Info
+                </a>
+            </div>
+        </div>
+        <hr>
+
+        <ul id="myTab" class="nav nav-pills">
+            <li class="active"><a href="#intro" data-toggle="tab">Intro</a></li>
+            <li><a id="how-to-use" href="#services" data-toggle="tab">How to use</a></li>
+            <li><a id="montra-wrapper" href="#montrawrapper" data-toggle="tab">Python Client</a></li>
+            <!--li><a href="#license" data-toggle="tab">License</a></li-->
+        </ul>
+        <br />
+
+        <div class="tab-content text-left">
+            <div class="panel panel-default tab-pane fade in active" id="intro">
+                <div class="panel-body">
+                    <p>
+                        This API was developed to make it easier for other partners to exchange information with the application.
+                    </p>
+                    <p>
+                        Available methods:
+                        <ul>
+                            <li>Get community information</li>
+                            <li>Search for datasets</li>
+                            <li>Get dataset</li>
+                            <li>Get database</li>
+                            <li>Create database</li>
+                            <li>Update database</li>
+                            <li>List database's answers and questions</li>
+                            <li>Get answer</li>
+                            <li>Update answer</li>
+                        </ul>
+                    </p>
+                    <p>
+                        It can be used directly by executing the corresponding endpoints, as described on
+                        <a style="cursor:pointer;" onclick="onHowToUse()">How to Use</a>, or by using
+                        <a style="cursor:pointer;" onclick="onMontraWrapper()">the python client</a>.
+                    </p>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="services">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Get Token and Fingerprint IDs</h4>
+                        <hr>
+                        <p>First, you need access to the information of the API Key (Token) and the fingerprint IDs
+                            associated with
+                            your account.</p>
+
+                        <p>To get that information, you should press the "API Info" button on the top right area of this page.
+                        </p>
+
+                        <p>All information you need to use API Services will be listed.</p>
+                        <table>
+                            <tr>
+                                <td><img data-toggle="modal" href="#myModal" width="300px" class="img-rounded"
+                                        src="static/img/api-info.png" title="API Info Example" /></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center"><i>
+                                        <small>Click on image to enlarge</small>
+                                    </i></td>
+                            </tr>
+                        </table>
+                        <div class="modal fade" id="myModal" style="padding-left: 175px;">
+                            <div class="modal-body">
+                                <a class="close" data-dismiss="modal">&times;</a>
+                                <img src="static/img/api-info.png" class="img-rounded img-responsive" style="width: 700px;
+                                top: 50%;
+                                left: 50%;
+                                margin-left: -400px;
+                                margin-top: 150px;
+                                position: absolute;"
+                                title="API Info Example" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+        <!-- get community info -->
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h4>Get community info</h4>
+                <hr>
+                <p>Parameteres:</p>
+                <ul>
+                    <li>
+                        <b>Url: </b>{{BASE_URL}}api/communities/<i>&lt;community name&gt;</i>/  (<i>&lt;community name&gt;</i> must be encoded)
+                    </li>
+                    <li><b>Method: </b>GET</li>
+                    <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                    <li><b>Output: </b>
+                        <div style="width: 45%;">
+                            <pre>
+{
+    "id": 1,
+    "name": "EMIF EHR",
+    "description": "EMIF-EHR ...",
+    "slug": "observational2",
+    "questionnaires": [{
+        "id": 49,
+        "name": "Observational Data",
+        "slug": "observationaldatasources",
+        "fingerprint_set": [
+            "cc7f3a8f8af0f6c99f9385c7372c8fe3", 
+        
+            ...
+        },
+
+    ...
+
+    ]
+}
+                            </pre>
+                        </div>
+                    </li>
+                </ul>
+                <h5>Example</h5>
+                <code>
+                    <small>curl -X GET -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                            token&gt;</i>"
+                            {{BASE_URL}}api/communities/<i>&lt;community name&gt;</i>/
+                    </small>
+                </code>
+            </div>
+        </div>
+
+                <!-- Search for datasets -->
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Search for databases</h4>
+                        <hr>
+                        <p>Parameteres:</p>
+                        <ul>
+                            <li>
+                                <b>Url: </b>{{BASE_URL}}api/questionnaires/?search=<i>&lt;questionnaire slug or name&gt;</i>
+                            </li>
+                            <li><b>Method: </b>GET</li>
+                            <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                            <li><b>Output: </b>
+                                <div style="width: 45%;">
+                                    <pre>
+[
+    {
+        'fingerprint_set': [ 
+            '8e133d653ce8e3f89f8b0438d9dff561', 
+            ... 
+        ],
+        'name': Demo Observational Data',
+        'slug': 'demo-observational-data'
+    },
+    ...                           
+]
+                                    </pre>
+                                </div>
+                            </li>
+                        </ul>
+                        <h5>Example</h5>
+                        <code>
+                            <small>curl -X GET -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                                token&gt;</i>"
+                                {{BASE_URL}}api/questionnaires/?search=<i>&lt;search_string&gt;</i>
+                            </small>
+                        </code>
+                    </div>
+                </div>
+
+                <!-- get a dataset -->
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Get dataset - a dataset is a collection of databases that use the same questionnaire template</h4>
+                        <hr>
+                        <p>Parameteres:</p>
+                        <ul>
+                            <li>
+                                <b>Url: </b>{{BASE_URL}}api/questionnaires/<i>&lt;questionnaire slug&gt;</i>/
+                            </li>
+                            <li><b>Method: </b>GET</li>
+                            <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                            <li><b>Output: </b>
+                                <div style="width: 45%;">
+                                    <pre>
+{
+    "name":"AD-Cohort",
+    "slug":"ad-cohort",
+    "fingerprint_set":[
+        "c762618611b490cfa6ebc54000e758d3",
+        ...
+    ]
+},
+                                    </pre>
+                                </div>
+                            </li>
+                        </ul>
+                        <h5>Example</h5>
+                        <code>
+                            <small>curl -X GET -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                                    token&gt;</i>"
+                                    {{BASE_URL}}api/questionnaires/<i>&lt;questionnaire slug&gt;</i>/
+                            </small>
+                        </code>
+                    </div>
+                </div>
+
+                <!-- Create database -->
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Create database</h4>
+                        <hr>
+                        <p>Parameteres:</p>
+                        <ul>
+                            <li>
+                                <b>Url: </b>
+                                    <p>
+                                        {{BASE_URL}}api/fingerprints/
+                                    </p>
+                            </li>
+                            <li><b>Method: </b>POST</li>
+                            <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                            <li><b>Data: </b>
+                                <div style="width: 60%;">
+                                    <pre>
+{
+    "questionnaire":&lt;questionnaire id&gt;, 
+    "description": "",
+    "database_name": &lt;database name&gt;,
+    "draft": &lt;true/false&gt;, 
+    "community": &lt;community id&gt;
+}
+                                    </pre>
+                                </div>
+                            </li>
+                            <li><b>Output: </b>
+                                <div style="width: 60%;">
+                                    <pre>
+{
+    "database_name": &lt;database name&gt;,
+    "fingerprint_hash": &lt;hash&gt;,
+    "description": "",
+    "last_modification": &lt;creation date&gt;,
+    "created": &lt;creation date&gt;,
+    "hits": 0,
+    "removed": false,
+    "fill": 0.0,
+    "draft": &lt;true/false&gt;,
+    "questionnaire": &lt;questionnaire id&gt;,
+    "community": &lt;community id&gt;,
+    "owner": &lt;owner id&gt;,
+    "shared": []
+}
+                                    </pre>
+                                </div>
+                            </li>
+                        </ul>
+                        <h5>Example</h5>
+                        <code>
+                            <small>curl -X POST -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                                    token&gt;</i>" -d "{\"database_name\":\"&lt;database name&gt;\",\"questionnaire\":\"&lt;questionnaire id&gt;\",\"draft\": \"&lt;true/false&gt;\", \"community\": \"&lt;community id&gt;\"}" {{BASE_URL}}api/fingerprints/
+                            </small>
+                        </code>
+                    </div>
+                </div>
+
+            <!-- Update database -->
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Update database</h4>
+                    <hr>
+                    <p>Parameteres:</p>
+                    <ul>
+                        <li>
+                            <b>Url: </b>
+                                <p>
+                                    {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/
+                                </p>
+                        </li>
+                        <li><b>Method: </b>PUT</li>
+                        <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                        <li><b>Data: </b>
+                            <div style="width: 60%;">
+                                <pre>
+{
+    "questionnaire":&lt;questionnaire id&gt;, 
+    "description": "",
+    "database_name": &lt;database name&gt;,
+    "draft": &lt;true/false&gt;, 
+    "community": &lt;community id&gt;
+}
+                                </pre>
+                            </div>
+                        </li>
+                        <li><b>Output: </b>
+                            <div style="width: 60%;">
+                                <pre>
+{
+    "database_name": &lt;database name&gt;,
+    "fingerprint_hash": &lt;hash&gt;,
+    "description": "",
+    "last_modification": &lt;creation date&gt;,
+    "created": &lt;creation date&gt;,
+    "hits": 0,
+    "removed": false,
+    "fill": 0.0,
+    "draft": &lt;true/false&gt;,
+    "questionnaire": &lt;questionnaire id&gt;,
+    "community": &lt;community id&gt;,
+    "owner": &lt;owner id&gt;,
+    "shared": []
+}
+                                </pre>
+                            </div>
+                        </li>
+                    </ul>
+                    <h5>Example</h5>
+                    <code>
+                        <small>curl -X PUT -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                                token&gt;</i>" -d "{\"questionnaire\":\"&lt;questionnaire id&gt;\", \"draft\": \"&lt;true/false&gt;\", \"community\": \"&lt;community id&gt;\"}" {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/
+                        </small>
+                    </code>
+                </div>
+            </div>
+
+            <!-- get a database -->
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Get database</h4>
+                    <hr>
+                    <p>Parameteres:</p>
+                    <ul>
+                        <li>
+                            <b>Url: </b>
+                                <p>To be used with a fingerprint hash:
+                                    <br>
+                                    {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/
+                                </p>
+                                <p>To be used with a questionnaire slug and acronym:
+                                    <br>
+                                    {{BASE_URL}}api/fingerprint-cslug-fslug/<i>&lt;questionnaire slug&gt;</i>/<i>&lt;database acronym&gt;</i>/
+                                </p>
+                        </li>
+                        <li><b>Method: </b>GET</li>
+                        <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                        <li><b>Output: </b>
+                            <div style="width: 60%;">
+                                <pre>
+{
+    "database_name":"AD-Cohort",
+    "fingerprint_hash":"903dd7cfc26e34d6fcb30323565d9f0d",
+    "description":"",
+    "last_modification":"2015-11-10T16:15:50.362679Z",
+    "created":"2015-11-10T16:15:50.363002Z",
+    "hits":2,
+    "removed":true,
+    "fill":0.5,
+    "draft":true,
+    "questionnaire":57,
+    "community":4,
+    "owner":106,
+    "shared":[]
+},
+                                </pre>
+                            </div>
+                        </li>
+                    </ul>
+                    <h5>Example</h5>
+                    <code>
+                        <small>curl -X GET -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                                token&gt;</i>"
+                                {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/
+                        </small>
+                    </code>
+                </div>
+            </div>
+
+            <!-- list database answers and questions -->
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>List the questions and answers of a database</h4>
+                    <hr>
+                    <p>Parameteres:</p>
+                    <ul>
+                        <li>
+                            <b>Url: </b>
+                                <p>
+                                    {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/answers/
+                                </p>
+                        </li>
+                        <li><b>Method: </b>GET</li>
+                        <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                        <li><b>Output: </b>
+                            <div style="width: 60%;">
+                                <pre>
+[
+    {
+        "question":"AC__Address",
+        "data":""
+    },
+    ...
+]
+                                </pre>
+                            </div>
+                        </li>
+                    </ul>
+                    <h5>Example</h5>
+                    <code>
+                        <small>curl -X GET -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                                token&gt;</i>"
+                                {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/answers/
+                        </small>
+                    </code>
+                </div>
+            </div>
+
+            <!-- get database answer -->
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h4>Get answer for a database question</h4>
+                    <hr>
+                    <p>Parameteres:</p>
+                    <ul>
+                        <li>
+                            <b>Url: </b>
+                                <p>
+                                    {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/answers/<i>&lt;question slug&gt;</i>/
+                                </p>
+                        </li>
+                        <li><b>Method: </b>GET</li>
+                        <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                        <li><b>Output: </b>
+                            <div style="width: 60%;">
+                                <pre>
+{
+    "question":"AC__Address",
+    "data":""
+}
+
+                                </pre>
+                            </div>
+                        </li>
+                    </ul>
+                    <h5>Example</h5>
+                    <code>
+                        <small>curl -X GET -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                                token&gt;</i>"
+                                {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/answers/<i>&lt;question slug&gt;</i>/
+                        </small>
+                    </code>
+                </div>
+            </div>
+
+            
+
+                            <!-- post answer -->
+            <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h4>Update answer</h4>
+                        <hr>
+                        <p>Parameteres:</p>
+                        <ul>
+                            <li>
+                                <b>Url: </b>
+                                    <p>
+                                        {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/answers/<i>&lt;question slug&gt;</i>/
+                                    </p>
+                            </li>
+                            <li><b>Method: </b>PUT</li>
+                            <li><b>HTTP Header: </b>"Authentication: Token <i>&lt;your token&gt;</i>"<p>(Basic authentication is also available)</p></li>
+                            <li><b>Data: </b>
+                                <div style="width: 60%;">
+                                    <pre>
+{
+    "data":&lt;answer&gt;,
+}
+    
+                                    </pre>
+                                </div>
+                            </li>
+                            <li><b>Output: </b>
+                                <div style="width: 60%;">
+                                    <pre>
+{
+    "question":"AC__Address",
+    "data":&lt;answer&gt;
+}
+    
+                                    </pre>
+                                </div>
+                            </li>
+                        </ul>
+                        <h5>Example</h5>
+                        <code>
+                            <small>curl -X PUT -H "Content-Type: application/json" -H "Authorization: Token <i>&lt;your
+                                    token&gt;</i>" -d "{\"data\":\"&lt;answer&gt;\"}" 
+                                    {{BASE_URL}}api/fingerprints/<i>&lt;fingerprint hash&gt;</i>/answers/<i>&lt;question slug&gt;</i>/
+                            </small>
+                        </code>
+                    </div>
+                </div>
+
+            </div>
+            <!--div class="panel panel-default tab-pane fade" id="license">
+                <div class="panel-body">
+                    <p><i>Under construction...</i></p>
+                </div>
+            </div-->
+
+            <!-- Montra Client Wrapper Panel-->
+            <div class="tab-pane fade" id="montrawrapper">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        
+                        <!-- Add flat page -->
+                        {% get_flatpages '/doc/api/wrapper-client/' for request.user as wrapper_client %}
+
+                        {{wrapper_client.0.content|config_vars|safe}}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function onHowToUse() {
+                $('#how-to-use').tab('show');
+            }
+            function onMontraWrapper() {
+                $('#montra-wrapper').tab('show');
+            }
+        </script>
+
+
+        {% endblock %}
+
+        {% block scriptextra %}
+
+        {% comment %}
+        <script>
+            {%
+                endcomment %
+    }
+            $('#myTab a').click(function (e) {
+                e.preventDefault();
+                $(this).tab('show');
+            })
+
+
+
+            {%
+                comment %
+    }
+        </script>
+        {% endcomment %}
+
+        {% endblock %}

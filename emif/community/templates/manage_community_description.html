@@ -1,0 +1,374 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor/wysihtml5.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-tagsinput.css' %}" />
+
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/bootstrap3-typeahead.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'js/emif.manage_community_description.js' %}"></script>
+    <script src="{% static 'js/vendor/wysihtml5x-toolbar.min.js' %}"></script>
+
+    <script src="{% static 'js/vendor/advanced_and_extended.js' %}"></script>
+    <script src="{% static 'js/vendor/multiselect.min.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.orderablemultiselect.js' %}"></script>
+    <script src="{% static 'js/vendor/bootstrap-tagsinput.js' %}"></script>
+
+    <script src="{% static 'js/vendor/croppie.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/vendor/croppie.min.css' %}" />
+
+    <script src="{% static 'js/vendor/sweetalert.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/vendor/sweetalert.css' %}">
+
+{% endblock %}
+
+
+{% block breadcrumbs %}
+        {% breadcrumb "All" "c/"|add:comm.slug %}
+        {% breadcrumb "Manage Community" "" %}
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block styleextra%}
+  .bootstrap-tagsinput{
+    width: 100%;
+  }
+  .pnote{
+    color: #717171;
+    font-size: 12px;
+  }
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+    <div class="col-lg-12">
+
+    <h3>Manage {{comm.name}} - Description</h3>
+    </div>
+        <div class="row">
+        <div class="col-lg-12">
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                <strong>Community Logo</strong><br />
+                <br />
+                    <center>
+                      {% if comm.icon %}
+                      <div id="vanilla-demo"></div>
+
+                      <div class="actions">
+                        <button type="submit" class="btn btn-primary community_icon">
+                          Community Icon
+                        </button>
+
+                        <button type="submit" class="btn btn-primary community_thumbnail">
+                          Community Thumbnail
+                        </button>
+
+                        
+                      </div>
+                      
+                      {% if request.user.is_staff %}
+                      <div id="result" style="padding-top:15px" class="pull-right">
+                        <button type="submit" class="btn btn-primary image_preview">
+                          <i class="fas fa-fw fa-eye"></i> Save
+                        </button>
+                      </div>
+                      {%endif%}
+
+                      <script>
+                        var comm_icon_url = '{{comm.icon.url}}';
+                      </script>
+                      {% else %}
+                        <i class="fas fa-fw fa-5x fa-image"></i>
+                      {% endif %}
+                    </center>
+
+                    {% if request.user.is_staff %}
+                    <form class="row" id="save_plugin" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    </form>
+                    <div class="col-md-12 form-group" style="padding-top:15px">
+                      <form method="post">
+                        {% csrf_token %}
+                        <label class="control-label" for="id-type">Set Type of Header Display</label>
+                        <div class="input-group controls">
+                          {{ header_choice_form.display }}
+                          <span class="input-group-btn">
+                            <input type="submit" class="btn btn-success" style="margin-left: 1px;" id="header_set" name="header_set" value="Apply" />
+                          </span>
+                        </div>
+                      </form>
+                    </div>
+                    <div class="col-md-12">
+                      <p>This will enable showing the community and/or questionnaire logos in the respective pages.</p>
+                    </div>
+
+                  <div class="col-md-12 form-group">
+                    <form method="post" enctype="multipart/form-data">
+                    <label class="control-label" for="id-type">Change Community logo</label>
+                    <div class="controls">
+                      {% csrf_token %}
+
+
+                        <div class="input-group">
+                            <input class="col-md-12 form-control" readonly="" type="text" />
+
+                            <span class="input-group-btn">
+                                <span class="btn btn-primary btn-file">
+                                    <!--<input id="icon" type="hidden" name="icon" type="file"/>
+                                    <input id="thumbnail" type="hidden" name="thumbnail" type="file"/>-->
+                                    <i class="fas fa-fw fa-folder-open"></i><input name="new_logo" id="depuploader" type="file">
+                                </span>
+                                <button type="submit" class="btn btn-success"><i class="fas fa-fw fa-save"></i> Save</button>
+                            </span>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </form>
+                {% endif %}
+                <div class="col-md-12">
+                  <hr />
+                  <p>The recent publications in the system homepage are searched using a PubMed query. It is possible to define the query using the same syntax as PubMed, or using Tags.</p>
+                  <p>The system prioritizes the PubMed query, which means in case of both fields filled, only the query will be used for this search.</p>
+                  <p>PubMed query example: "Blood pressure AND (vehicle* OR traffic) AND (emissions OR particulates OR exhaust)"</p>
+                  <p><span class="pnote">Note: The defined tags are also indexed by Google.</span></p>
+                </div> <br />
+                {% if success is not None and not success %}
+                <div class="col-md-12 alert alert-danger" role="alert">
+                  Invalid Query: {{request.POST.query_container}}
+                </div>
+                {%endif%}
+                <strong>Pubmed Query (Results: <span {% if not query_results%} style="color: red" {%endif%}>{{query_results}}</span>)</strong><br />
+                <div class="col-md-12">
+                  <form class="row" id="save_query" method="post" enctype="multipart/form-data" style="margin-bottom: 10px;">
+                    {% csrf_token %}
+                    <input class="form-control" id="query_container" name="query_container" type="text" value="{{comm.query}}" style="margin-bottom: 5px;" />
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-fw fa-save"></i> Save query</button>
+                  </form>
+                </div>
+                <hr />
+                <strong>Tags</strong><br />
+                <div class="col-md-12">
+                  <form class="row" id="save_plugin" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input id="tag_container" name="tag_container" type="text" value="{% for tag in comm.tags.all %}{{tag.slug}},{% endfor %}" />
+                    <button type="submit" class="btn btn-success btn-block"><i class="fas fa-fw fa-save"></i> Save</button>
+                  </form>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                  Community Description
+                </div>
+                <div class="panel-body">
+                <form method="POST">
+                {% csrf_token %}
+
+                <strong>Short Description (max. 150 characters):</strong><br />
+                <div>
+
+                  <div id="wysihtml5-toolbar-short" style="display: none;">
+                    <div class="btn btn-group">
+                    <!--div class="btn btn-group">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fas fa-fw fa-paint-brush"></i>
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a style="background-color: red;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="red">&nbsp;</a></li>
+                        <li><a style="background-color: green;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="green">&nbsp;</a></li>
+                        <li><a style="background-color: blue;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="blue">&nbsp;</a></li>
+                      </ul>
+                      </div-->
+                     <a class="btn btn-default" data-wysihtml5-command="bold" title="CTRL+B"><i class="fas fa-fw fa-bold"></i></a>
+                    <a class="btn btn-default" data-wysihtml5-command="italic" title="CTRL+I"><i class="fas fa-fw fa-italic"></i></a>
+                    <a class="btn btn-default" data-wysihtml5-command="createLink"><i class="fas fa-fw fa-link"></i></a>
+                    <a class="btn btn-default" data-wysihtml5-command="insertImage"><i class="fas fa-fw fa-image"></i></a>
+                    <div class="btn btn-group">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fas fa-fw fa-paragraph"></i>
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1">
+                        Heading 1
+                    </a></li>
+                        <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2">
+                        Heading 2
+                    </a></li>
+                      </ul>
+                    </div>
+                    <a class="btn btn-default" data-wysihtml5-command="insertUnorderedList"><i class="fas fa-fw fa-list"></i></a>
+                    <a class="btn btn-default" data-wysihtml5-command="insertOrderedList"><i class="fas fa-fw fa-list-ol"></i></a>
+
+                    <a class="btn btn-default" data-wysihtml5-command="justifyLeft" data-wysihtml5-command-value="justifyLeft">
+                        <i class="fas fa-fw fa-align-left"></i>
+                    </a>
+                    <a class="btn btn-default" data-wysihtml5-command="justifyCenter" data-wysihtml5-command-value="justifyCenter">
+                        <i class="fas fa-fw fa-align-center"></i>
+                    </a>
+                    <a class="btn btn-default" data-wysihtml5-command="justifyRight" data-wysihtml5-command-value="justifyRight">
+                        <i class="fas fa-fw fa-align-right"></i>
+                    </a>
+                    <a class="btn btn-default" data-wysihtml5-command="justifyFull" data-wysihtml5-command-value="justifyFull">
+                        <i class="fas fa-fw fa-align-justify"></i>
+                    </a>
+                    </div>
+
+                    <div data-wysihtml5-dialog="createLink" style="display: none;">
+                      <label>
+                        Link:
+                        <input data-wysihtml5-dialog-field="href" value="http://">
+                      </label>
+                      <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+                    </div>
+
+                    <div data-wysihtml5-dialog="insertImage" style="display: none;">
+                      <label>
+                        Image:
+                        <input data-wysihtml5-dialog-field="src" value="http://">
+                      </label>
+                      <label>
+                        Align:
+                        <select data-wysihtml5-dialog-field="className">
+                          <option value="">default</option>
+                          <option value="wysiwyg-float-left">left</option>
+                          <option value="wysiwyg-float-right">right</option>
+                        </select>
+                      </label>
+                      <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+                    </div>
+
+                  </div>
+                    <textarea name="comm_desc_short" rows="3" class="form-control" id="editor_short">
+                      {{comm.short_desc}}
+                    </textarea>
+                </div>
+                <strong>Long Description (max. 5000 characters):</strong><br />
+                <div>
+
+                  <div id="wysihtml5-toolbar" style="display: none;">
+                    <div class="btn btn-group">
+                    <!--div class="btn btn-group">
+                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fas fa-fw fa-paint-brush"></i>
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a style="background-color: red;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="red">&nbsp;</a></li>
+                        <li><a style="background-color: green;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="green">&nbsp;</a></li>
+                        <li><a style="background-color: blue;" data-wysihtml5-command="foreColor" data-wysihtml5-command-value="blue">&nbsp;</a></li>
+                      </ul>
+                      </div-->
+                     <a class="btn btn-default" data-wysihtml5-command="bold" title="CTRL+B"><i class="fas fa-fw fa-bold"></i></a>
+                    <a class="btn btn-default" data-wysihtml5-command="italic" title="CTRL+I"><i class="fas fa-fw fa-italic"></i></a>
+                    <a class="btn btn-default" data-wysihtml5-command="createLink"><i class="fas fa-fw fa-link"></i></a>
+                    <a class="btn btn-default" data-wysihtml5-command="insertImage"><i class="fas fa-fw fa-image"></i></a>
+                    <div class="btn btn-group">
+                    <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        <i class="fas fa-fw fa-paragraph"></i>
+                        <span class="caret"></span>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1">
+                        Heading 1
+                    </a></li>
+                        <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2">
+                        Heading 2
+                    </a></li>
+                      </ul>
+                    </div>
+                    <a class="btn btn-default" data-wysihtml5-command="insertUnorderedList"><i class="fas fa-fw fa-list"></i></a>
+                    <a class="btn btn-default" data-wysihtml5-command="insertOrderedList"><i class="fas fa-fw fa-list-ol"></i></a>
+
+                    <a class="btn btn-default" data-wysihtml5-command="justifyLeft" data-wysihtml5-command-value="justifyLeft">
+                        <i class="fas fa-fw fa-align-left"></i>
+                    </a>
+                    <a class="btn btn-default" data-wysihtml5-command="justifyCenter" data-wysihtml5-command-value="justifyCenter">
+                        <i class="fas fa-fw fa-align-center"></i>
+                    </a>
+                    <a class="btn btn-default" data-wysihtml5-command="justifyRight" data-wysihtml5-command-value="justifyRight">
+                        <i class="fas fa-fw fa-align-right"></i>
+                    </a>
+                    <a class="btn btn-default" data-wysihtml5-command="justifyFull" data-wysihtml5-command-value="justifyFull">
+                        <i class="fas fa-fw fa-align-justify"></i>
+                    </a>
+                    </div>
+
+                    <div data-wysihtml5-dialog="createLink" style="display: none;">
+                      <label>
+                        Link:
+                        <input data-wysihtml5-dialog-field="href" value="http://">
+                      </label>
+                      <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+                    </div>
+
+                    <div data-wysihtml5-dialog="insertImage" style="display: none;">
+                      <label>
+                        Image:
+                        <input data-wysihtml5-dialog-field="src" value="http://">
+                      </label>
+                      <label>
+                        Align:
+                        <select data-wysihtml5-dialog-field="className">
+                          <option value="">default</option>
+                          <option value="wysiwyg-float-left">left</option>
+                          <option value="wysiwyg-float-right">right</option>
+                        </select>
+                      </label>
+                      <a data-wysihtml5-dialog-action="save">OK</a>&nbsp;<a data-wysihtml5-dialog-action="cancel">Cancel</a>
+                    </div>
+
+                  </div>
+                    <textarea name="comm_desc" rows="10" class="form-control" id="editor">
+                      {{comm.description}}
+                    </textarea>
+                </div>
+                <button type="submit" class="btn btn-block btn-success"><i class="fas fa-fw fa-save"></i> Save</button>
+                </form>
+                </div>
+            </div>
+        </div>
+
+{% endblock %}
+
+{% block scriptextra %}
+
+{% endblock %}

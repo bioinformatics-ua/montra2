@@ -1,0 +1,293 @@
+/*-------------------------------------------
+Community fingerprint listing classes
+-------------------------------------------*/
+.center-content-container {
+    display: flex;
+    justify-content: center;
+}
+
+.draft-align-right {
+    position: absolute;
+    right: 22px;  /* (20 padding + 2 border) of .card-pf */
+}
+
+.cursor-pointer{
+    cursor:pointer;
+}
+
+.sort-values-margin{
+    margin-top:1em;
+}
+
+.no-results-top-margin{
+    margin-top: 60px;
+}
+
+.toolbar-icon {
+    color: #252525;
+    padding: 0.2em;
+}
+
+.active-toolbar-icon {
+    color: #428bca;
+}
+
+.active-line {
+    color: #555;
+    background-color: #def3ff;
+    background-clip: border-box;
+    border-color: #39a5dc transparent transparent;
+        border-top-color: rgb(57, 165, 220);
+        border-right-color: transparent;
+        border-left-color: transparent;
+    z-index: auto;
+}
+
+.active-line:hover {
+    background-color: rgb(57, 165, 220, 0.25) !important;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+}
+
+.js-excerpt {
+  vertical-align: top;
+}
+
+.js-show-more {
+  font-size: 12px;
+  color: rgb(24, 26, 39);
+  vertical-align: top;
+  width: 100%;
+} 
+
+.centered-list {
+  list-style-position: inside;
+}
+
+.filter-box{
+  max-height: 40em;
+  overflow: hidden;
+}
+
+.opentext-mid {
+  width: 425px;
+}
+
+.mid-text {
+  width: 350px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  display: inline-block;
+  margin: 0;
+}
+
+.opentext-list {
+  line-height: 1.8rem;
+}
+
+.expandable-text {
+  box-shadow: 0px 2px 2px -2px grey ;
+}
+
+.expandable-text:hover {
+  background: linear-gradient(to bottom, transparent 95%, lightgrey);
+}
+
+.list-text {
+  width: 100%;
+  max-height: 54px;
+  overflow: hidden;
+  display: inline-block;
+  margin: 0;
+}
+
+.opentext-large { 
+  line-height: 2.2rem;
+}
+
+.large-text {
+  width: 100%;
+  max-height: 110px;
+  overflow: hidden;
+  display: inline-block;
+  margin: 0;
+}
+
+/* ------------------------------------------
+Filter panel
+https://github.com/CodyHouse/content-filter
+--------------------------------------------*/
+.cd-main-content {
+  position: relative;
+  min-height: 100vh;
+}
+.cd-gallery {
+  width: 100%;
+}
+.cd-bottom-btn {
+  padding: 0.5em;
+  border-radius: 0;
+  border: 0;
+}
+
+#cd-filter {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 280px;
+  background: #ffffff;
+  box-shadow: 4px 4px 20px transparent;
+  z-index: 2;
+  /* Force Hardware Acceleration in WebKit */
+  -webkit-transform: translateZ(0);
+  -moz-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  -o-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  -webkit-transform: translateX(110%);
+  -moz-transform: translateX(110%);
+  -ms-transform: translateX(110%);
+  -o-transform: translateX(110%);
+  transform: translateX(110%);
+  -webkit-transition: -webkit-transform 0.3s, box-shadow 0.3s;
+  -moz-transition: -moz-transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+#cd-filter::before {
+  /* top colored bar */
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 50px;
+  width: 100%;
+  background-color: #2b2f3e;
+  z-index: 2;
+}
+#cd-filter form {
+  padding: 70px 20px 20px 20px;
+}
+#cd-filter .cd-close {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 50px;
+  line-height: 50px;
+  width: 60px;
+  color: #ffffff;
+  font-size: 1.3rem;
+  text-align: center;
+  background: #343641;
+  opacity: 0;
+  -webkit-transition: opacity 0.3s;
+  -moz-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+  z-index: 3;
+}
+.no-touch #cd-filter .cd-close:hover {
+  background: #424347;
+}
+#cd-filter.filter-is-visible {
+  -webkit-transform: translateX(0);
+  -moz-transform: translateX(0);
+  -ms-transform: translateX(0);
+  -o-transform: translateX(0);
+  transform: translateX(0);
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.2);
+}
+#cd-filter.filter-is-visible .cd-close {
+  opacity: 1;
+}
+@media only screen and (min-width: 1170px) {
+  #cd-filter {
+    min-width: 30em;
+    /* width: 25%; */
+  }
+  #cd-filter form {
+    padding: 70px 10% 20px 10%;
+  }
+}
+.cd-filter-trigger.filter-is-visible {
+  pointer-events: none;
+}
+@media only screen and (min-width: 1170px) {
+  .cd-filter-trigger {
+    width: auto;
+    left: 2%;
+    text-indent: 0;
+    color: #9a9a9a;
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    font-weight: 700;
+    padding-left: 24px;
+    background-position: left center;
+    -webkit-transition: color 0.3s;
+    -moz-transition: color 0.3s;
+    transition: color 0.3s;
+  }
+  .no-touch .cd-filter-trigger:hover {
+    color: #002a68;
+  }
+  .cd-filter-trigger.filter-is-visible,
+  .cd-filter-trigger.filter-is-visible:hover {
+    color: #ffffff;
+  }
+}
+
+/* classes to apply css for date specific filters */
+.input-group-addon.date-to {
+  width: auto;
+  display: flex;
+  align-items: center;
+}
+.input-group.filter-date-group {
+  display: flex;
+}
+input.filter-date::-webkit-calendar-picker-indicator{
+  margin-left: 0;
+}
+
+
+.filters-sorters-divider {
+  border-top-width: 2px ;  /* override bootstrap default (1px) */
+}
+
+
+/* list logo */
+.database-logo-container-listings-list {
+  width: 10em;
+  margin-right: 20px;
+  height: 8em;
+  position: relative
+}
+
+.database-logo-listings-list {
+  max-width:10em;
+  max-height:8em;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top:0
+}
+
+/* card logo */
+.database-logo-container-listings-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.database-logo-listings-card {
+  max-width: 100px;
+  max-height: 100px;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top:0
+}

@@ -1,0 +1,3 @@
+{% for url, name in idps %}
+    <li><a href="{% url 'saml2_login' %}?idp={{ url }}&next={{base}}">{{ name }}</a></li>
+{% endfor %}

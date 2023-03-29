@@ -1,0 +1,115 @@
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+
+<script type="text/javascript">
+    {% block scriptextra %}
+    function add_triggers() {
+
+            {% for trigger in triggers %}
+                addtrigger("{{trigger}}");
+            {% endfor %}
+
+            {% for k,v in qvalues.items %}
+                qvalues['question_{{ k|escapejs }}'] = '{{ v|escapejs }}';
+            {% endfor %}
+
+            for(key in qvalues) {
+                initialvalchanged(key, qvalues[key], this);
+            }
+
+    }
+
+    $(function(){
+        tabindexer();
+
+        $(".panel").on("shown",".collapse",function() {
+            $(this).css("overflow","visible");
+        });
+        $(".panel").on("hidden",".collapse",function() {
+            $(this).css("overflow","hidden");
+        });
+    });
+
+    function tabindexer(){
+    var index=1;
+    $('input').each(function(){
+        $(this).attr('tabindex',index++);
+    });
+    }
+
+    function toggle_comments(question_number)
+    {
+    console.log("q + "+ question_number);
+    $("#comments_"+question_number).toggle();
+    }
+
+    function validate(question_number)
+    {
+    //console.log($('#'+question_number).val());
+    question_number = question_number + "";
+    question_number = question_number.replace(".","\\.");
+    $.getJSON('api/validate?name='+$('#'+question_number).val(), function(data) {
+        const warning = $(`#warning_${question_number}`);
+        const success = $(`#success_${question_number}`);
+
+        if ("invalid_characters" in data) {
+            warning.addClass("show");
+            warning.removeClass("hide");
+            success.addClass("hide");
+            success.removeClass("show");
+            return;
+        }
+
+        if (data['contains'] == true) {
+            warning.addClass("show");
+            warning.removeClass("hide");
+            success.addClass("hide");
+            success.removeClass("show");
+        } else {
+            warning.addClass("hide");
+            warning.removeClass("show");
+            success.addClass("show");
+            success.removeClass("hide");
+        }
+    });
+
+    }
+
+    help_text_popover();
+
+    {% for k, qlist in questions_list %}
+        {% if k.sortid != 0 and k.sortid != 99 %}
+    $("#collapseall_qs_{{ k.sortid }}").bind('click', function (e) {
+    //        console.log('Collapse all');
+        e.preventDefault();
+        e.stopPropagation();
+
+       var div_id = 'accordion_{{ k.sortid }}';
+
+       collapseAll($("#collapseall_qs_{{ k.sortid }}"), div_id);
+
+       });
+
+        {% endif %}
+        {% endfor %}
+
+    add_triggers();
+
+    {% endblock %}
+    $(function() {
+        setTimeout(function(){
+                  $(".nano").nanoScroller({
+                    iOSNativeScrolling: true,
+                    preventPageScrolling: true
+                  });
+      }, 1000);
+
+    $('.checkbox-label').click(function(){
+        $(this).parent().find('input[type="checkbox"]').click();
+    });
+    $('.radiobox-label').click(function(){
+        $(this).parent().find('input[type="radio"]').click();
+    });
+
+    });
+</script>

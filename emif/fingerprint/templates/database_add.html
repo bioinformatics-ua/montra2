@@ -1,0 +1,247 @@
+{% extends "base.html" %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+  {% if comm %}
+    {{ block.super }}
+    {% breadcrumb "Personal" "c/"|add:comm.slug|add:"/databases" %}
+    {% breadcrumb "Add" "" %}
+  {% else %}
+    {{ block.super }}
+    {% breadcrumb "Personal" "databases" %}
+    {% breadcrumb "Add" "" %}
+  {% endif %}
+{% endblock %}
+
+{% block styleextra %}
+
+button {
+    border: 1px #AAA solid;
+    padding: 4px 10px;
+}
+.hide {
+    display: none;
+}
+
+.accordion-inner {
+    padding: 9px 15px;
+    border-top: 0px solid #e5e5e5;
+}
+.accordion-heading .accordion-toggle {
+display: block;
+padding: 5px 15px;
+}
+
+.accordion-heading a {
+color: #333;
+text-decoration: none;
+}
+{% endblock %}
+
+
+{% block toolbar %}
+
+{% include "reusable_blocks/menu_toolbar.html" %}
+
+{% endblock %}
+
+{% block styleinclude %}
+  <link rel="stylesheet" href="{% static 'progressbar.css' %}" />
+  {% for x in cssinclude %}
+    <link rel="stylesheet" href="{{ x }}" type="text/css" />
+  {% endfor %}
+
+{% endblock %}
+
+{% block headextra %}
+<!-- this was a duplicate import. may cause conflicts -->
+<!--script type="text/javascript" src="{% static 'jquery.min.js' %}"></script-->
+<script type="text/javascript" src="{% static 'questionset.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.errornavigator.js' %}"></script>
+<script src="{% static 'js/jquery.simplePagination.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.bootstrap-matrix-input.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'js/fingerprint_edit.js' %}"></script>
+
+{% for x in jsinclude %}
+<script type="text/javascript" src="{{ x }}"></script>
+{% endfor %}
+
+    {% if async_progress %}
+<script type="text/javascript">var progress_url = "{{ async_url }}";</script>
+<script type="text/javascript" src="{% static 'progress.js' %}"></script>
+{% endif %}
+{% endblock %}
+
+{% block language %}
+    {% for lang in LANGUAGES %}{% if not forloop.first %} |{% endif %}
+<a href="{{request.path}}?lang={{ lang.0 }}">{{ lang.1 }}</a>
+{% endfor %}
+{% endblock %}
+
+{% block content %}
+
+<div style="display: none;" id="errornavigator"></div>
+
+<div style="display: none; z-index: 2000; position:fixed; bottom:80px; right: 20px;" class="alert alert-info" id="loading-message">
+Saving... please don't close this questionnary yet.</div>
+
+<div style="display: none; z-index: 2000; position:fixed; bottom:80px; right: 20px;" class="alert alert-success" id="success-message">Saved with success.</div>
+
+<div style="display: none; z-index: 2000; position:fixed; bottom:80px; right: 20px;" class="alert alert-danger" id="loading-error-message">
+It was not possible to save this questionnary. Please try again in a few seconds.</div>
+
+<div class="cleared_separator"></div>
+<hr style="margin-bottom: 0px;">
+<div id="globalprogress" style="margin-top: -1px; background-color: #8CCC72; height: 5px; width: {{globalprogress}}%;">&nbsp;</div>
+<br /><div class="row">
+<div class="col-md-9" id="set_container" style="overflow-y: auto"></div>
+<div id="det_view" class="col-md-3">
+  <div class="qslist well" style="max-width: 340px; padding: 8px 0;">
+
+    <ul class="nav nav-list nav-pills nav-stacked ">
+      {% for qs, answered, total_count, percentage, _ in questionsets %}
+
+      <li{% if questionset.text == qs.text %} class="active" {% endif %} id="li_qs_{{qs.sortid}}">
+        <!--<a href="q2/{{runinfo.random}}/{{ qs.sortid }}">
+        -->
+
+
+        <a href="add/{{qs.questionnaire.pk}}/{{ qs.sortid }}" onclick="questionsets_handle('qs_{{ qs.sortid }}', '{{fingerprint_id}}', '{{q_id}}', QsType.ADD); return false;">
+          <table class="fullwidth">
+            <tr>
+              <td style="width: 80%; font-size: 93%;">
+              {% if qs.sortid != 0 and qs.sortid != 99 %}{{ qs.sortid }}. {% endif %}{{ qs.text|removeh1 }}
+              {% if qs.sortid != 0 and qs.sortid != 99 %}
+                <span id="counter0_{{ qs.sortid }}"> ({{answered}}/{{total_count}})</span>
+              {%endif%}
+              </td>
+              <td style="width: 10%; text-align: right;">
+              {% if qs.sortid != 0 and qs.sortid != 99 %}
+               <span id="counter1_{{ qs.sortid }}" class="counter_badge">{{percentage}}%</span>
+               {%endif%}
+
+            </td>
+          </tr>
+        </table>
+      </a>
+
+    </li>
+
+    {% endfor %}
+  </ul>
+
+</div>
+</div>
+
+</div>
+
+{% endblock %}
+
+{% block scriptextraincludes %}
+<script src="{% static 'js/emif.fingerprint.counter.js' %}"></script>
+
+<!-- Fix later -->
+<script src="{% static 'js/vendor/bootstrap-tooltip.js' %}"></script>
+<script src="{% static 'js/vendor/bootstrap-popover.js' %}"></script>
+<script src="{% static 'js/fingerprint_validation.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.inputmask.bundle.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/fingerprint.js' %}"></script>
+{% endblock %}
+
+
+<script type="text/javascript">
+{% block scriptextra %}
+{% if comm %}
+var community = "{{comm.slug}}";
+{% endif %}
+this_mode = QsType.ADD;
+
+$('#li_workspace').addClass("active");
+
+function generateStub(){
+          var containers = [];
+
+        // We build the qs containers in memory and just do dom op, on the end, for speed
+        // on ie joins are significantly faster than concatenation
+        {% for qs in questionset.questionnaire.questionsets %}
+            containers.push('<div id="qs_{{ qs.sortid }}" class="{% if qs.sortid == questionset.sortid %} {% else %} hide {% endif %} questionset"><h4 class="loadingindicator pull-center">Loading...</h4></div>\n');
+        {% endfor %}
+
+        var sc = $('#set_container').append('<div class="nano">\
+          <div class="nano-content">'+containers.join('')+'</div></div>');
+        sc.find('.nano').height(($(window).height() - sc.offset().top)-10);
+}
+
+$(function(){
+  initQsEnv("{{fingerprint_id}}","{{q_id}}","{{questionset.sortid}}", QsType.ADD);
+
+  setTimeout(function(){
+              $(".nano").nanoScroller({
+                iOSNativeScrolling: true,
+                preventPageScrolling: true
+              });
+  }, 2000);
+
+  var isw = $.cookie('ignore_share_warning');
+
+  console.log(isw);
+  if(!isw){
+    bootbox.dialog({
+      title: 'Database ownership',
+      message: 'Even though you are creating this database, database ownership can be shared with other users. <br />\
+      <center><i class="fa-4x fa fa-users"></i></center>\
+      <br /> \
+       After creating your database, to add new users as owners, simply go to your database page, and on the topside right toolbar do "Manage > Share with other user"<br /> <br />\
+       <div class="checkbox">\
+       <label><input style="margin-top: 4px;" id="ignore_share" type="checkbox"/> Do not show this again</label>\
+       </div>\
+       ',
+       buttons: {
+        confirm: {
+          label: "Close",
+          className: "btn-default",
+          callback: function(e){
+            if(document.getElementById('ignore_share').checked) {
+              $.cookie('ignore_share_warning', true);
+            }
+          }
+        }
+       }
+    });
+  }
+
+
+});
+
+function initialCounterSetup(){
+  {% for qs, answered, total_count, percentage, _ in questionsets %}
+    questionSetsCounters["{{qs.sortid}}"] = { filledQuestions: {{answered}}, count: {{total_count}} };
+
+  {% endfor %}
+}
+{% endblock %}
+
+
+
+</script>

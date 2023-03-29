@@ -1,0 +1,49 @@
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+
+<div id="modal-batch" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <a href="#" onclick="$('#modal-batch').modal('hide'); return false;" class="close">&times;</a>
+         <h3>Add List of Pubmed Publications</h3>
+    </div>
+    <div class="modal-body">
+        <textarea id="batch{{ question.number|removedots }}_ignoreme_" class="form-control fullwidth" rows="10" placeholder="Input List of Pubmed Publications, separated by line breaks."></textarea>
+
+        <div class="fullwidth"><strong>Status:</strong> <span id="batchstatus{{ question.number|removedots }}">---</span></div>
+    </div>
+    <div class="modal-footer">
+        <button id="addbatch{{ question.number|removedots }}" class="btn btn-success">Add Publications List</button>
+        <a href="#" onclick="$('#modal-batch').modal('hide'); return false;" class="btn btn-default">Cancel</a>
+    </div>
+    </div>
+  </div>
+
+</div>
+<script src="{% static 'js/publications.batch.js' %}"></script>
+<script type="text/javascript">
+  $('#addbatch{{ question.number|removedots }}').click(function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    processBatch({{ question.number|removedots }}, pw{{ question.number|removedots }});
+  });
+</script>
+

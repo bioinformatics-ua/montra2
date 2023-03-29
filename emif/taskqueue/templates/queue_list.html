@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    {% breadcrumb "My Job Queue" "" %}
+{% endblock %}
+
+{% block toolbar %}
+
+{% include "reusable_blocks/menu_toolbar.html" %}
+
+{% endblock %}
+
+{% block styleinclude %}
+
+{% endblock %}
+
+
+{% block content %}
+
+<h3>Job Queue</h3>
+
+<table class="table table-bordered table-striped">
+    <thead>
+        <tr>
+            <th>Task</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Progress</th>
+            <th>Status</th>
+            <th>Output</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for job in taskqueue %}
+        <tr>
+            <td>{{job.title}}</td>
+            <td>{{job.start_date}}</td>
+            <td>{{job.end_date}}</td>
+            <td><center>{{job.progress|floatformat:2}} %</center></td>
+            <td>
+            {% if job.status == -1 %}
+                <i title="Job has failed" class="fas fa-fw fa-times"></i>
+            {% elif job.status == 0 %}
+                <i title="Job is waiting to start" class="fas fa-fw fa-hourglass-start"></i>
+            {% elif job.status == 1 %}
+                <i title="Job is being executed" class="fas fa-fw fa-clock"></i>
+            {% elif job.status == 2 %}
+                <i title="Job has finished" class="fas fa-fw fa-check"></i>
+            {% endif %}
+            </td>
+            <td>
+                {% if job.status == 2 and job.output %}
+                <a class="btn btn-blue" href="{{job.output.url}}">Download</a>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+{% block scriptextraincludes %}
+
+{% endblock %}
+
+
+{% block scriptextra %}
+{% endblock %}

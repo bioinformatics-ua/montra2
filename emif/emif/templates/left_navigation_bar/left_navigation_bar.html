@@ -1,0 +1,41 @@
+{% load compress %}
+{% load left_menu_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+<aside class="left-panel">
+    <!-- Navigation arrows to collapse navigation bar-->
+    <div>
+        <div class="col-md-12">
+        <button type="button" class="text-center navbar-toggle" id="button_toggle_navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="fas fa-angle-double-right" style="color: white; display: none" id="double_right_span"></span>
+            <span class="fas fa-angle-double-left" style="color: white" id="double_left_span"></span>
+        </button>
+        </div>
+    </div>
+    <!-- Username and image -->
+    <div class="user text-center" id="user_name_div">
+          <img class="img-circle" alt="..." src="{% static '/img/user.png' %}" id="user_image"/>
+          <h5 class="user-name" id="user_name_text">
+                {% if user.is_authenticated %}
+                    {% if not user.first_name and not user.last_name %}
+                        {{ user.username|truncatechars:30 }} &nbsp;
+                    {% else %}
+                        {{ user.first_name|add:" "|add:user.last_name|truncatechars:30 }}
+                    {% endif %}
+                {% else %}
+                    Anonymous
+                {% endif %}
+          </h5>
+    </div>
+
+    <input id="communityindicator" type="hidden" value="{{comm.slug}}" /> <!-- TODO (Manu) Isto pode ser apagado? -->
+
+    <!-- Navigation -->
+    <nav class="navigation">
+        {% for menu_entry in displayed_menus %}
+            {% menu_entry menu_entry %}
+        {% endfor %}
+    </nav>
+</aside>

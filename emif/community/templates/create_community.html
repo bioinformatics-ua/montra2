@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block headextra %}
+    <script src="{% static 'js/emif.create_community.js' %}"></script>
+{% endblock %}
+
+{% block breadcrumbs %}
+        {% breadcrumb "Home" "" %}
+        {% breadcrumb "Create Community" "" %}
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <h3>Request a new community</h3>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <p>If you want to coordinate a group of databases regarding a specific field or disease you can use this page to request a new community that, if accepted, will be added to this platform. After fulfilling this form, an email will be sent to the {{config.brand}} administrators and feedback will be given shortly.</p>
+                    <hr />
+
+                    <form id="create_community" class="form-horizontal" method="POST">
+                        {% csrf_token %}
+                        <fieldset>
+                        {%if requested %}
+                        <div class="alert alert-success alert-dismissible" role="alert">
+                          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                          <strong>Community Creation Requested</strong> You will be contacted shortly with feedback regarding the community creation.
+                        </div>
+                        {% endif %}
+                        <!-- Text input-->
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="name">Name</label>
+                          <div class="col-md-6">
+                          <input id="name" name="name" type="text" placeholder="Community Name" class="form-control input-md">
+                          </div>
+                        </div>
+
+                        <!-- Textarea -->
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="description">Description</label>
+                          <div class="col-md-6">
+                            <textarea rows="5" class="form-control" id="description" placeholder="Brief description of the community" name="description"></textarea>
+                          </div>
+                        </div>
+
+                        <!-- Text input-->
+                        <div class="form-group">
+                          <label class="col-md-4 control-label" for="motivation">Motivation</label>
+                          <div class="col-md-6">
+                            <textarea rows="5" class="form-control" id="motivation" placeholder="Motivation for the community creation" name="motivation"></textarea>
+                          </div>
+                        </div>
+
+                        </fieldset>
+                        <button type="submit" id="community-create-button" class="col-sm-12 col-md-offset-4 col-md-6 btn btn-success">Request community creation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+{% for k,qs in qset.ordered_items %}
+			<table id="t2_{{qs.sortid}}" class="table table-bordered table-hover">
+				<thead>
+					<tr>
+						<th style="width:65px;">Nr.</th>
+						<th>Question</th>
+						<th>Answer</th>
+						<!--th class="commented"><i class="icon-comment"></i></th-->
+					</tr>
+				</thead>
+				<tbody>
+					{% for t in qs.list_ordered_tags %}
+					<tr>
+						{% if t.ttype == 'comment' %}
+							<td class="selected-sorter tooltipped" title="{{ t.number|removehs }}"><small>{{ t.number|removehs }}</small></td>
+
+							<td colspan="2" class="selected-sorter tooltipped" title="{{ t.tag|removehs|safe }}">
+								<div class="pull-left"><strong><small> {{ t.tag|removehs|safe }}</small></strong></div>
+						{% else %}
+							<td class="tooltipped" title="{{ t.number|removehs }}"><center><small>{{ t.number|removehs }}</small></center></td>
+
+							<td class="tooltipped" title="{{ t.tag|removehs|safe }}">
+								{{ t.tag|removehs|safe }}
+							</td>
+							{% if t.ttype|captioned %}
+							<td class="value_content captioned_content" style="white-space: normal;" data-title="{{ t.value|force_escape }}">
+							{% else %}
+							<td class="value_content" style="white-space: normal;">
+							{% endif %}
+						{% endif %}
+						<span class="summary_content">
+						{% if config.Request_Answer and t.value|trim == "" and user.is_authenticated and t.ttype != 'comment' %}
+						    <div class="requestanswerbtn empty" data-question="{{t.id}}">
+						    	<button style="margin-top: -6px;margin-bottom: -6px;" class="btn btn-default btn-block requestlabel depon_class">Request Answer</button>
+						    </div>
+						{% else %}
+							{{ t.value|safe }} {{t.meta.unit}}
+						{% endif %}
+						</span>
+
+						{% if not t.comment|safe == None and not t.comment.strip|safe == "" %}
+						<div class="pull-right">
+							<i class="comment_button fa fa-comment" data-container="body" data-toggle="popover" data-placement="left" data-title="Comment" data-content="{{ t.comment.strip|safe }}"></i>
+						</div>
+						<div class="comment-print">
+							<strong>Comment: </strong>{{ t.comment.strip|safe }}
+						</div>
+						{% endif %}
+
+						</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+<script type="text/javascript">
+	initializeQset({{qs.sortid}});
+</script>
+{% endfor %}

@@ -1,0 +1,406 @@
+<!-- # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-->
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load flatpages %}
+{% load compress %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+{% get_flatpages for user as flatpages %}
+
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js ns lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ns lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ns lt-ie9 gt-ie7"> <![endif]-->
+<!--[if IE 9 ]>    <html class="no-js ie9 gt-ie7"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" class="no-js">
+    <!--<![endif]-->
+    <head>
+        <!-- This is WRONG and just for testing, on deploy it must be changed to static base url -->
+        <base id="base_link" href="{{ BASE_URL }}">
+        <!--<base id="base_link" href="{{ request.get_host }}">-->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>{% block title %}{{config.brand}}{% endblock title %}</title>
+        <meta name="description" content="{{config.brand}}">
+        <meta name="viewport" content="width=device-width">
+        <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+
+        {% compress css %}
+        <link href="{% static 'css/opensans.css' %}" rel='stylesheet' type='text/css'>
+        <link href="{% static 'css/abel.css' %}" rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'css/vendor/jquery-ui-1.10.4.custom.min.css' %}">
+
+
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'css/bootstrap-theme.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.vertical-tabs.css' %}">
+
+        <link href="{% static 'css/vendor/roboto.css' %}" rel='stylesheet' type='text/css'>
+
+        <!-- IE 7 doesnt recognize awesome icons correctly... -->
+        <!--[if IE]>
+        <link rel="stylesheet" media="all" href="{% static 'font-awesome/css/font-awesome-ie7.min.css' %}" />
+        <script src="{% static 'js/ie7_fixes.js' %}"></script>
+        <![endif]-->
+
+        <!--link rel="stylesheet" href="{% static 'css/bootstrap-responsive.min.css' %}"-->
+        <link rel="stylesheet" media="screen" href="{% static 'css/main.css' %}" />
+        <link rel="stylesheet" media="screen" href="{% static 'css/app.v1.css' %}">
+        <link rel="stylesheet" media="print" href="{% static 'css/print.css' %}">
+
+        
+        <style media="screen" type="text/css">
+        {% block styleextra %}
+        {% endblock %}
+        </style>
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-datetimepicker.min.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/jquery.nanoscroller.css' %}" />
+        {% endcompress %}
+
+
+        {% compress js %}
+        <script src="{% static 'js/vendor/jquery-1.9.1.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/inheritance.js' %}"></script>
+        <script src="{% static 'js/vendor/modernizr-2.6.2.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery-1.9.1.min.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.bifrost.min.js' %}"></script>
+
+
+        <script src="{% static 'js/vendor/bootstrap.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery-ui-1.10.4.custom.min.js' %}"></script>
+       
+
+        <script src="{% static 'js/vendor/promise-6.1.0.min.js' %}"></script>
+        <script src="{% static 'js/vendor/promise-done-6.1.0.min.js' %}"></script>
+        <script src="{% static 'js/emif.proxies.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery.cookie.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.canclear.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.highlight.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.history.js' %}"></script>
+
+        <script src="{% static 'js/vendor/bootbox.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/typeahead.jquery.min.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery-scrolltofixed.js' %}"></script>
+
+        <script src="{% static 'js/vendor/moment.min.js' %}"></script>
+        <script src="{% static 'js/vendor/bootstrap-datetimepicker.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.nanoscroller.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery.hotkeys.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.localize.js' %}"></script>
+        <script src="{% static 'js/montra.api.js' %}"></script>
+        <script type="application/javascript">
+            // We need to configure this to be able to send requests by json with the csrftoken
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+        </script>
+        <!--[if lt IE 9]>
+        <script src="{% static 'js/vendor/respond.min.js' %}"></script>
+        <link rel="stylesheet" href="bootstrap_ie_compatibility" />
+        <![endif]-->
+        
+        {% endcompress %}
+    </head>
+    <body>
+
+
+{% block styleinclude %}
+
+<!-- Generic page styles -->
+<link rel="stylesheet" href="{% static 'css/vendor/style.css' %}">
+<!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
+<link rel="stylesheet" href="{% static 'css/vendor/jquery.fileupload-ui.css' %}">
+<link rel="stylesheet" href="{% static 'css/c3.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery.dyndropdown.css' %}">
+<link rel="stylesheet" href="{% static 'css/pc.css' %}">
+
+
+{% endblock %}
+
+
+{% block headextra %}
+
+<script src="{% static 'js/emif.community.documents.js' %}"></script>
+
+<!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
+<script src="{% static 'js/vendor/jquery.ui.widget.js' %}"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="{% static 'js/vendor/load-image.min.js' %}"></script>
+<!-- The basic File Upload plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload.js' %}"></script>
+<!-- The File Upload processing plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-process.js' %}"></script>
+<!-- The File Upload image preview & resize plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-image.js' %}"></script>
+<!-- The File Upload validation plugin -->
+<script src="{% static 'js/vendor/jquery.fileupload-validate.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.cookie.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.boolrelwidget.js' %}"></script>
+<!--[if gte IE 9]><!-->
+
+{% endblock %}
+
+
+{%block content%}
+
+<input hidden id="community_slug" value="{{community_slug}}" >
+<input hidden id="folder_name" value="{{folder_name}}" >
+
+
+{% if community_manager or request.user.is_superuser %}
+
+<button class = "btn btn-primary" data-toggle="tooltip" data-placement="top" title="Upload new file" onclick="divDisplayFunction('','','','',true)" id="uploadfilesbutton" style="float:right; margin:5px;" >Upload Files</button>
+<button class = "btn btn-primary" data-toggle="tooltip" data-placement="top" title="Create new folder" id="createfolder" onclick="divDisplayFolderCreation()" style="float:right; margin:5px;" >New Folder</button>
+<br><br>
+{% endif %}
+
+<div id="dependency_list" >
+        
+   <a href="docsmanager/list_community_folders/{{community_slug}}/" >
+       <span class="glyphicon glyphicon-folder-open" ></span>
+       Documentation/ </span> </a>
+   
+   </div> 
+
+
+<div id="uploaddiv" style="display:none">
+   <form id="uploadform" cols="200" method="post" action="docsmanager/uploadcommunityfile/{{community_slug}}/" enctype="multipart/form-data">
+        {% csrf_token %}
+
+            <table role="presentation" style="background-color:rgba(0, 0, 0, 0);"><tbody class="filesPopup" id="filesPopup">
+            <td id='upload_file_name' style="display:none" ><i class='fas fa-fw fa-paperclip'></i>
+
+            </tbody>
+            </table>
+            <!--div class="form-group">
+            <input placeholder="Name" class="form-control" size="255" type="text" cols="100" name="cd_name" id = "cd_name" required>
+            </div-->
+
+            <div style="display:none">
+            <textarea placeholder="File id" class="form-control input-block-level" rows="4" name="cd_id" id = "cd_id"></textarea>            
+            </div>      
+
+            <div class="form-group">
+            <textarea placeholder="Description" class="form-control input-block-level" rows="4" name="cd_comments" id = "cd_comments" required></textarea>            
+            </div>
+                
+            <input hidden name="folder_name_upload" id="folder_name_upload" value="{{folder_name}}" >
+            
+            <input type="file" name="file" id="choose_file" multiple required="true">
+            <input type="submit" class = "btn btn-success fileinput-button" value="Add Files" id="add_files">
+            <button type="cancel" class = "btn btn-cancel" onclick="return closePopup('uploaddiv');">Cancel</button>
+
+        </form>
+
+
+
+</div>
+
+
+<div id="newfolder" style="display:none">
+   <form id="newfolder" cols="200" method="post" action="docsmanager/create_community_folder/{{community_slug}}/" enctype="multipart/form-data">
+        {% csrf_token %}
+
+            <div class="form-group">
+                <input placeholder="Name" class="form-control" size="255" type="text" cols="100" name="folder_name" id = "folder_name_input" value="" required>
+            </div>
+
+            <div class="form-group">
+            <textarea placeholder="Description" class="form-control input-block-level" rows="4" name="folder_description" id = "folder_description" value="" required></textarea>            
+            </div>
+
+            <div style="display:none">
+            <textarea placeholder="Folder id" class="form-control input-block-level" rows="4" name="folder_id" id = "folder_id"></textarea>            
+            </div>         
+
+             <div class="form-group" style="display:none">
+            <input placeholder="Folder dependency" class="form-control input-block-level" rows="4" name="folder_dependency" id = "{{folder_id}}" value="{{folder_id}}">            
+            </div>         
+
+            <input type="submit" class = "btn btn-success fileinput-button" value="Save" id="add_folder">
+            <button type="cancel" class = "btn btn-cancel" onclick="return closePopup('newfolder');">Cancel</button>
+    </form>
+</div>
+
+{% if community_folders or community_files %}
+
+<table class="table table-bordered table-hover fingerprint_table table-striped">
+
+{% if community_manager or request.user.is_superuser %}    
+<td> Name </td> <td> Description </td> <td> Date </td> <td></td> <td></td>
+
+{% else %}
+
+<td> Name </td> <td> Description </td> <td> Date </td>
+
+{%endif%}
+
+
+
+{% if show_parent %}
+
+{% if parent %}
+
+<tr data-toggle="tooltip" data-placement="top" title="{{parent}}" id="row_{{parent_id}}" draggable="true" ondrop="drop(event, '{{community_slug}}')" ondragover="allowDrop(event)" ondragstart="drag(event)" id="{{parent_id}}"> <td style="border:0" id="{{parent_id}}"> <a  href="docsmanager/list_community_folder_documents/{{community_slug}}/{{parent}}/" id="{{parent_id}}"> .. </a> </td>  </tr>
+
+{% else %}
+
+<tr  data-toggle="tooltip" data-placement="top" title="Documentation" id="row_{{parent_id}}" draggable="true" ondrop="drop(event, '{{community_slug}}')" ondragover="allowDrop(event)" ondragstart="drag(event)" id="{{parent_id}}"> <td style="border:0" id="{{parent_id}}"> <a  href="docsmanager/list_community_folders/{{community_slug}}/" id="{{parent_id}}"> .. </a> </td>  </tr>
+
+
+{% endif %}
+
+{% endif %}
+
+    {% for f in community_folders %}
+     <tr id="row_{{f.id}}">
+         <th data-toggle="tooltip" data-placement="top" title="{{f.name}}" style="width: 350px">
+             <a href="docsmanager/list_community_folder_documents/{{community_slug}}/{{f.name}}/" >
+             <div draggable="true" ondrop="drop(event, '{{community_slug}}')" ondragover="allowDrop(event)" ondragstart="drag(event)" id="{{f.id}}">
+             <p style="width: 350px; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;" id="{{f.id}}" > <span class="glyphicon glyphicon-folder-close" id="{{f.id}}" > </span>  {{f.name}} </p>
+            </div>
+             </a>
+     </th>
+
+    <td data-toggle="tooltip" data-placement="top" title="{{f.description}}" style="width: 450px">   <p style="width: 450px; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;"> {{f.description}} </p> </td>
+    <td> {{f.latest_date.date}} </td>
+
+     {% if community_manager or request.user.is_superuser %}
+
+      <td><a><span class="glyphicon glyphicon-edit" style="cursor: pointer;" title ="Edit folder" onclick="divDisplayFolderEdition('{{f.name}}','{{f.description}}','{{f.id}}','{{community_slug}}')"></a></span></td>
+      <td><a><span class="glyphicon glyphicon-remove-sign" style="cursor: pointer;" title ="Delete folder" onclick="divDisplayFolderDeletion('{{f.name}}', '{{community_slug}}')"></a></span></td>
+     
+     {% endif %}
+
+     </tr>
+     {%endfor%}
+  
+     {% for f in community_files %}
+     <tr id="rowfile_{{f.id}}" >
+          <th data-toggle="tooltip" data-placement="top" title="{{f.name}}" style="width: 350px">
+             <a href="docsmanager/get_community_file/{{f.file_name}}/{{f.revision}}/" style="color:dimgrey">
+             <div draggable="true" ondragover="allowDrop(event)" ondragstart="drag(event)" id="{{f.id}}">
+              <p style="width: 350px; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;" id="{{f.id}}"  > <span class="fas fa-fw fa-file" id="{{f.id}}" ></span>  {{f.file_name}} </p>
+                 
+            </div>
+             </a>
+     </th>
+
+     <td data-toggle="tooltip" data-placement="top" title="{{f.description}}" style="width: 450px">   <p style="width: 450px; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;"> {{f.description}} </p> </td>
+      <td> {{f.latest_date.date}} </td>
+
+       {% if community_manager or request.user.is_superuser %}
+
+      <td><a><span class="glyphicon glyphicon-edit" style="cursor: pointer;" title ="Edit document" onclick="divDisplayFunction( '{{f.id}}', '{{f.name}}', '{{f.description}}', '{{f.file_name}}', false)"></a></span></td>
+      <td><a><span class="glyphicon glyphicon-remove-sign" style="cursor: pointer;" title ="Delete document" onclick="deleteCommunityFile('{{f.file_name}}', '{{f.revision}}', '{{community_slug}}', false)"></a></span></td>
+
+      {% endif %}
+
+     </tr>
+     <tbody class="files" id="filesComm"></tbody>
+  
+     {% endfor %}
+     
+ </table>
+
+ {% else %}
+
+ {% if community_manager or request.user.is_superuser %}
+ <h4 class="pull-center">No documents in this folder.</h4><p class="pull-center"></p>
+ {% else %}
+     <h4 class="pull-center">No documents in this folder.</h4><p class="pull-center">Please contact the Community Manager to get more information.</p>
+ {% endif %}
+{%endif%}
+
+{% if dependencies %}
+<script>
+    {% for dependency in dependencies %}
+
+        var url = 'docsmanager/list_community_folder_documents/{{community_slug}}/{{dependency}}/';
+        var text = '{{dependency}}/';
+
+        $("#dependency_list").append('<a href="' + url + '">' + text + '</a>');
+    {%endfor%}
+
+    var folder_url = "docsmanager/list_community_folder_documents/{{community_slug}}/{{folder_name}}/" ;
+    var folder_text = '{{folder_name}}/';
+
+    $("#dependency_list").append('<a style="width: 20px; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;" href="' + folder_url + '">' + folder_text + '</a>');
+
+</script>
+
+{% else %}
+
+<script>
+
+
+    {% if folder_name %}
+
+
+    var folder_url = "docsmanager/list_community_folder_documents/{{community_slug}}/{{folder_name}}/" ;
+    var folder_text = '{{folder_name}}/';
+
+    $("#dependency_list").append('<a style="width: 20px; white-space: nowrap; overflow: hidden; text-overflow:ellipsis;" href="' + folder_url + '">' + folder_text + '</a>');
+
+    {%endif%}
+
+</script>
+
+{% endif %}
+
+{% endblock %}
+
+</body>
+</html>

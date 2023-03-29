@@ -1,0 +1,647 @@
+{% comment %} # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# {% endcomment %}
+
+<!-- **********************************************************************
+***** Model to delete the fingerprint. It will show a window to confirm the
+***** deletion of the fingerprint
+ ***************************************************************************-->
+
+<div id="modal-from-dom" class="modal fade">
+  <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+        <a href="#" onclick="$('#modal-from-dom').modal('hide'); return false;" class="close">&times;</a>
+         <h3>Delete Fingerprint</h3>
+    </div>
+    <div class="modal-body">
+        <p>You are removing the database fingerprint <strong>'<span id="db-name">{{breadcrumb_name}}</span>'</strong>. This procedure is irreversible.</p>
+        <p>Do you want to proceed?</p>
+        <p id="debug-url"></p>
+    </div>
+    <div class="modal-footer">
+        <a id="delete_fingerprint" href="rm/ref/{{comm.slug}}" class="btn btn-danger">Yes</a>
+        <!-- <a href="delete.php?some=param&ref=" class="btn danger">Yes 2</a> -->
+        <a href="#" onclick="$('#modal-from-dom').modal('hide'); return false;" class="btn btn-default">Cancel</a>
+    </div>
+    </div>
+    </div>
+</div>
+
+
+
+
+<!-- **********************************************************************
+***** Model to share the fingerprint. It will show a window to share the
+***** the fingerprint. A list of email addresses should entered.
+ ***************************************************************************-->
+
+
+<div id="modal-from-dom-share" class="modal fade" >
+  <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+        <a href="#" onclick="$('#modal-from-dom-share').modal('hide'); return false;" class="close">&times;</a>
+         <h3>Share with other user</h3>
+    </div>
+    <div class="modal-body">
+        <p id="debug-url"></p>
+        <p>This page allows current owners of this database, to share the database ownership with other registered users.</p>
+        <div class="col-md-12">
+          <p>What is the email address of your team member? (must be a registered user)</p>
+            <div class="form-horizontal">
+              <div class="form-group">
+                <label class="control-label col-md-2" for="inputEmail">Email: </label>
+                <div class="col-md-10">
+                    <div class="input-group">
+                      <input class="form-control" type="text" id="share_email"/>
+                      <div class="input-group-addon">
+                        <span id="share_indicator">&nbsp;</span>
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <div style="padding: 5px;" id="share_message"></div>
+        <div class="clearfix share_m" style="display:block;">
+          <div style="" class="form-group col-md-12">
+          <h4 class="share_m">Message to be sent to user</h4>
+
+           <textarea rows="6" class="form-control" style="margin-top:5px;" type="text" id="share_mess">Dear colleague,
+
+This is an invitation sent by {{request.user.first_name }} {{request.user.last_name}} to share with you the fingerprint of the database "{{breadcrumb_name}}", which is currently described in the {{config.brand}}: {{BASE_URL}}.
+           </textarea>
+          </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default sharedb2_shadow" disabled>Share</button>
+        <!--a style="display:none;" href="#" class="btn sharedb2">Share</a-->
+        <button style="display:none;" class="btn btn-default sharedb2">Share</button>
+        <button style="display:none;" class="btn btn-default sharedb_invite">Invite</button>
+        <a href="#" onclick="$('#modal-from-dom-share').modal('hide'); return false;" class="btn btn-default">Cancel</a>
+    </div>
+    </div>
+    </div>
+</div>
+
+<div id="modal-from-dom-publiclink" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <a href="#" onclick="$('#modal-from-dom-publiclink').modal('hide'); return false;" class="close">&times;</a>
+         <h3>Create a private link to share this Database</h3>
+    </div>
+    <div class="modal-body">
+        <p>It's possible to share your database through a private link.</p>
+
+        <legend>Existing Private links <small>
+          {% if comm %}
+            <a class="pull-right" href="c/{{comm.slug}}/public/fingerprint">Manage Private Links</a>
+          {% else %}
+            <a class="pull-right" href="public/fingerprint">Manage Private Links</a>
+          {% endif %}
+        </small></legend>
+        <div class="publiclink_container">
+            <table class="table table-bordered table-stripped">
+              <thead>
+                <tr>
+                  <th>Description</th>
+                  <th style="width: 210px;"></th>
+                </tr>
+              </thead>
+              <tbody id="public_links_table">
+                {% if public_link %}
+                  {% for link in public_link %}
+                    <tr id="publink_{{link.id}}">
+                      <td>{% if link.description %} {{link.description}} {% endif %}</td>
+                      <td>
+                      <div class="btn-group">
+                        <a style="border: 1px solid #dddddd; background-color: white; box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2) inset, 0px 1px 2px rgba(0, 0, 0, 0.05);" class="btn btn-link btn-xs pub_link" href="public/c/{{comm.slug}}/fingerprint/{{link.hash}}">Private Link</a>
+                        <button id="cbtn{{link.id}}" class="copy-button btn btn-default btn-xs" data-clipboard-text="public/c/{{comm.slug}}/fingerprint/{{link.hash}}" title="Click to copy to clipboard."><i class="fas fa-fw fa-clipboard"></i></button>
+                        <button title="Send by email" onclick="shareByEmail({{link.id}},community)" class="tooltippable btn btn-default btn-xs"><i class="fas fa-fw fa-share"></i></button>
+                    </div>
+
+                      <button onclick="deletePublicLink({{link.id}});" class="btn btn-link privatedelete"><img src="static/img/glyphicons_192_circle_remove.png" alt="Delete" /></button>
+                      </td>
+                    </tr>
+                  {% endfor %}
+                {% else %}
+                  <tr id="no_fingerprint"><td colspan="2">
+                    There's no private link yet. Click below on "Create Private Link", to generate a private link for this database. Optionally, you can leave a decription for the private link below.
+                  </td></tr>
+                {% endif %}
+
+              </tbody>
+            </table>
+            <legend>Create new Private Link </legend>
+              <div style="display: table-cell; padding: 5px;" class="col-md-12 controls">
+             <textarea rows="4" class="form-control" style="margin-top:5px;" type="text" id="public_link_description" placeholder="Description for public link (optional)"></textarea>
+            </div>
+
+        </div>
+      </div>
+    <div class="modal-footer">
+        <button id="createpubliclink" class="btn btn-default">Create Private Link</button>
+
+        <a href="#" onclick="$('#modal-from-dom-publiclink').modal('hide'); return false;" class="btn btn-default">Cancel</a>
+    </div>
+    </div>
+    </div>
+</div>
+
+{% load extra_tags %}
+
+<div id="modal-permissions" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <a href="#" onclick="$('#modal-permissions').modal('hide'); return false;" class="close">&times;</a>
+         <h3>Ownership Information</h3>
+    </div>
+    <div class="modal-body">
+        {% if owner_fingerprint or request.user.is_superuser or comm|community_owner:request.user %}
+        <legend>Database Owner</legend>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>User</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td id="permissions_owner">{{owner_obj.get_full_name}}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <legend>Members with Ownership</legend>
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th style="width: 220px;"></th>
+            </tr>
+          </thead>
+          <tbody id="permissions_tab">
+            {% for this_user in shared_obj.all %}
+            <tr id="permissions_{{this_user.id}}">
+              <td>{{this_user.get_full_name}}</td>
+              <td>
+
+
+                {#%if request.user == owner_obj or request.user.is_staff %#}
+                <button onclick="passOwnership({{this_user.id}}, '{{this_user.get_full_name}}');"
+              class="pownership btn btn-sm btn-default">Transfer Ownership</button> {#% endif %#}
+ <button onclick="removeShared({{this_user.id}});" class="btn btn-sm btn-default">Remove</button></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <!--
+        <legend>Plugin/Group Permissions</legend>
+        <table class="table table-bordered">
+                  {% if ugroup|length > 0 %}
+                  <form method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="medit" value="test" />
+                    <table class="table table-bordered table-stripped">
+                      {% for line in matrix %}
+                        <tr>
+                        {% if forloop.counter == 1 %}
+                          {% for elem in line %}
+                            <th>{{elem}}</th>
+                          {% endfor %}
+                        {% else %}
+                          {% for elem in line %}
+                            {% if not elem.plugin%}
+                              <td>{{elem}}</td>
+                            {% else %}
+                              <td><center><input name="elem_{{elem.id}}" type="checkbox" {% if elem.allow %}checked{% endif %} /></center></td>
+                            {% endif %}
+                          {% endfor %}
+                        {% endif %}
+                        </tr>
+                      {% endfor %}
+                    </table>
+                  <hr />
+                  <button class="btn btn-block btn-success">
+                    <i class="fas fa-fw fa-save"></i> Save
+                  </button>
+                  </form>
+                  {% else %}
+                    There are no community groups yet.
+                  {% endif %}
+        </table>
+        -->
+        {% endif %}
+    </div>
+    <div class="modal-footer">
+        <a href="#" onclick="$('#modal-permissions').modal('hide'); return false;" class="btn btn-default">Cancel</a>
+    </div>
+    </div>
+    </div>
+</div>
+
+<form id="send" method="POST" > {% csrf_token %}
+</form>
+
+<form id="senddatatablemodel" method="POST" >
+{% csrf_token %}
+</form>
+<form id="senddatatable" action="export_datatable" method="POST" >
+{% csrf_token %}
+</form>
+
+<script>
+
+
+/***************************************************************
+************** Delete Fingerprint ******************************
+****************************************************************/
+$('#modal-from-dom').bind('shown.bs.modal', function() {
+    var id = $(this).data('id'),
+        removeBtn = $(this).find('.btn-danger'),
+
+        href = removeBtn.attr('href');
+    console.log('id' + id);
+
+    removeBtn.attr('href', href.replace('ref', '' + id));
+});
+
+
+$('.confirm-delete').click(function(e) {
+    e.preventDefault();
+
+    var id = $(this).data('id');
+    $('#modal-from-dom').data('id', id).modal('show');
+});
+
+/***************************************************************
+************** Delete Group ************************************
+****************************************************************/
+
+$(document).ready(function() {
+$('.delete_group_x').click(function(e) {
+    e.preventDefault();
+    
+    var id = $(this).data('id');
+    $("#gdel_button").val(id);
+    var name = $(this).data('name');
+    $("#id-group-name").html(name);
+    $('#modal-from-dom-deletegroup').data('id', id).modal('show');
+});
+})
+
+
+/***************************************************************
+************** Auxiliar method to post
+****************************************************************/
+
+function post_to_url(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    //var form = document.createElement("form");
+    var form = document.getElementById("send");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+};
+
+/***************************************************************
+************** Shared ******************************************
+****************************************************************/
+$('#modal-from-dom-share').bind('show', function() {
+    var id = $(this).data('id'),
+        removeBtn = $(this).find('.sharedb2');
+        //href = removeBtn.attr('href');
+
+    //removeBtn.attr('href', href.replace('ref', '' + id));
+});
+
+// This bind is handle the click in share button
+$(".sharedb" ).click(function(e)
+{
+  console.log("Share DB ");
+  e.preventDefault();
+  var id = "{{fingerprint_id}}";
+
+  $('#modal-from-dom-share').data('id', id).modal('show');
+
+});
+
+$('#editpermissions').click(function(e){
+  $('#modal-permissions').modal('show');
+});
+
+$(".publiclink" ).click(function(e)
+{
+  e.preventDefault();
+  var id = "{{fingerprint_id}}";
+
+  $('#modal-from-dom-publiclink').data('id', id).modal('show');
+
+});
+$("#share_email" ).change(function(e)
+{
+  checkIfEmailExists();
+});
+
+$("#createpubliclink").click(function(){
+  createPublicLink();
+});
+
+// This bind will share the email.
+$(".sharedb2" ).click(function(e)
+{
+  e.preventDefault();
+
+  //post_to_url($(this).attr('href'), {"email": $("#share_email").val(), "csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').prop('value')});
+  shareDatabase();
+
+});
+
+$(".sharedb_invite" ).click(function(e)
+{
+  e.preventDefault();
+
+  //post_to_url($(this).attr('href'), {"email": $("#share_email").val(), "csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').prop('value')});
+  inviteDatabase();
+
+});
+
+// This bind will share the email.
+$("#dbsubscription" ).click(function(e)
+{
+  e.preventDefault();
+
+  //post_to_url($(this).attr('href'), {"email": $("#share_email").val(), "csrfmiddlewaretoken": $('input[name="csrfmiddlewaretoken"]').prop('value')});
+  toggleSubscription(this);
+
+});
+
+function checkIfEmailExists(){
+  $('#share_indicator').html('<i class="icon-refresh"></i>');
+  $('#share_message').html('<p class="text-info">Checking if email is valid for share invitation.</p>');
+  $.post("api/emailcheck", { email: $("#share_email").val() })
+  .done(function(response) {
+    if(response.valid){
+      console.log('Email valid');
+      $('.sharedb2_shadow').hide();
+      $('.sharedb2').show();
+      $('.sharedb_invite').hide();
+       $('.share_m').show();
+
+      $('#share_indicator').html('<i class="icon-ok text-success"></i>');
+        $('#share_message').html('<p class="text-success">Email is valid and belongs to '+response.username+'.</p>');
+    } else {
+      console.log('Email invalid');
+      $('.sharedb2').hide();
+      $('.sharedb2_shadow').hide();
+      $('.sharedb_invite').show();
+      //$('.share_m').hide();
+      //$('.sharedb2_shadow').show();
+      $('#share_indicator').html('<i class="icon-remove text-warning"></i>');
+        $('#share_message').html('<p class="text-warning">Email doesn\'t belong to any registered user. Do you want to invite?</p>');
+
+    }
+
+  })
+  .fail(function(){
+        $('#share_indicator').html('<i class="icon-remove text-error"></i>');
+        $('#share_message').html('<p class="text-error">Look up failed, maybe the internet connection is down.</p>');
+  });
+}
+
+function createPublicLink(){
+  var fingerprint = "{{fingerprint_id}}";
+  var description = $('#public_link_description').val();
+
+  $.post("api/addpubliclink", { fingerprint_id: fingerprint, description: description })
+  .done(function(response) {
+
+    $('#no_fingerprint').remove();
+    if(response.id){
+      $('#public_links_table').prepend('<tr id="publink_'+response.id+'"><td>'+response.description+'</td><td><div class="btn-group"><a style="border: 1px solid #dddddd; background-color: white; box-shadow: 0px 1px 0px rgba(255, 255, 255, 0.2) inset, 0px 1px 2px rgba(0, 0, 0, 0.05);" class="btn btn-link btn-xs pub_link" href="public/c/'+community+'/fingerprint/'+response.hash+'">Private Link</a><button id="cbtn'+response.id+'" class="copy-button btn btn-default btn-xs" data-clipboard-text="public/fingerprint/'+response.hash+'" title="Click to copy to clipboard."><i class="fas fa-fw fa-clipboard"></i></button><button title="Send by email" onclick="shareByEmail('+response.id+',community);" class="tooltippable btn btn-default btn-xs"><i class="fas fa-fw fa-share"></i></button></div><button onclick="deletePublicLink('+response.id+');" class="btn btn-link"><img src="static/img/glyphicons_192_circle_remove.png" alt="Delete" /></button></td></tr>');
+
+        addClipboard(document.getElementById('cbtn'+response.id));
+
+    } else {
+      console.log('Error');
+    }
+
+  })
+  .fail(function(){
+    console.log('Failed creating public link');
+  });
+}
+function deletePublicLink(share_id){
+
+  $.post("api/deletepubliclink", { share_id: share_id })
+  .done(function(response) {
+    if(response.deleted){
+      $('#publink_'+share_id).remove();
+    } else {
+      console.log('Error');
+    }
+  })
+  .fail(function(){
+    console.log('Failed creating public link');
+  });
+}
+
+function shareDatabase(){
+  $('#share_indicator').html('<i class="icon-refresh"></i>');
+  $('#share_message').html('<p class="text-info">Trying to share.</p>');
+  $.post("share/{{fingerprint_id}}", { email: $("#share_email").val(), message: $('#share_mess').val() })
+  .done(function(response) {
+
+    $('#share_message').html('<p class="text-info">'+response+'.</p>');
+
+  })
+  .fail(function(){
+        $('#share_indicator').html('<i class="icon-remove text-error"></i>');
+        $('#share_message').html('<p class="text-error">Request failed, maybe the internet connection is down.</p>');
+  });
+}
+function inviteDatabase(){
+  $('#share_indicator').html('<i class="icon-refresh"></i>');
+  $('#share_message').html('<p class="text-info">Trying to invite.</p>');
+  $.post("invite/{{fingerprint_id}}", { email: $("#share_email").val(), message: $('#share_mess').val() })
+  .done(function(response) {
+
+    $('#share_message').html('<p class="text-info">'+response+'.</p>');
+
+  })
+  .fail(function(){
+        $('#share_indicator').html('<i class="icon-remove text-error"></i>');
+        $('#share_message').html('<p class="text-error">Request failed, maybe the internet connection is down.</p>');
+  });
+}
+function removeShared(ident){
+  var ident = parseInt(ident);
+  if(ident){
+
+    var success = bootbox.confirm(
+      "Are you sure you want to remove the permissions from this user to the database ?", function(result){
+        if(result === true){
+        $.post("api/removePermissions", { id: ident, hash: '{{fingerprint}}'})
+          .done(function(response) {
+
+            $('#permissions_'+ident).remove();
+
+          })
+          .fail(function(){
+            bootbox.alert('Removing failed, please try again.');
+          });
+        }
+      });
+
+
+  }
+}
+{% if owner_obj %}
+var owner = '{{owner_obj.get_full_name}}';
+var owner_id = {{owner_obj.id}};
+{% endif %}
+function passOwnership(ident, name){
+  var ident = parseInt(ident);
+  if(ident){
+
+    var success = bootbox.confirm(
+
+      "Are you sure you want to transfer ownership of this database to "+name+"?\n", function(result){
+
+        if(result === true){
+        $.post("api/passOwnership", { id: ident, community: community, hash: '{{fingerprint}}'})
+          .done(function(response) {
+
+            if(response.success == true){
+            
+              $('#permissions_'+ident).remove();
+              $('#permissions_tab').append('<tr id="permissions_'+owner_id+'"><td>'+owner+'</td><td>{%if request.user.is_staff %}<button onclick="passOwnership('+owner_id+', \''+owner+'\');" class="pownership btn btn-default">Pass Ownership</button>{% endif %} <button onclick="removeShared('+owner_id+');" class="btn btn-default">Remove</button></td></tr>');
+            
+              owner = name;
+              owner_id = ident;
+
+              $('#permissions_owner').html(name);
+
+              {%if not request.user.is_staff %}
+              $('.pownership').remove();
+              {% endif %}
+
+            }
+
+
+          })
+          .fail(function(){
+            bootbox.alert('Passing ownership failed, please try again.');
+          });
+        }
+      });
+
+
+  }
+}
+function toggleSubscription(context){
+        var subs = $(context);
+        var status = !($.parseJSON(subs.data('subscribed')));
+
+        $.post("api/togglesubscription", { set: status, hash: '{{fingerprint}}'})
+          .done(function(response) {
+
+            if(status){
+              subs.html('<i class="fas fa-fw fa-at"></i> Unsubscribe');
+              bootbox.alert('Subscribed successfully');
+              subs.data('subscribed', ''+status)
+            } else {
+              subs.html('<i class="fas fa-fw fa-at"></i> Subscribe');
+              bootbox.alert('Unsubscribed successfully');
+              subs.data('subscribed', ''+status)
+
+            }
+
+          })
+          .fail(function(){
+            bootbox.alert('Failed to update subscription.');
+          });
+}
+</script>
+
+<!-- **********************************************************************
+***** Model to delete the fingerprint. It will show a window to confirm the
+***** deletion of the fingerprint
+ ***************************************************************************-->
+
+
+<div id="modal-from-dom" class="modal hide fade" style="display:none"  >
+    <div class="modal-header">
+        <a href="#" onclick="$('#modal-from-dom').modal('hide'); return false;" class="close">&times;</a>
+         <h3>Delete Fingerprint</h3>
+    </div>
+    <div class="modal-body">
+        <p>You are removing the database fingerprint <strong>'<span id="db-name">{{breadcrumb_name}}</span>'</strong>. This procedure is irreversible.</p>
+        <p>Do you want to proceed?</p>
+        <p id="debug-url"></p>
+    </div>
+    <div class="modal-footer">
+        <a id="delete_fingerprint" href="rm/ref" class="btn btn-danger">Yes</a>
+        <!-- <a href="delete.php?some=param&ref=" class="btn danger">Yes 2</a> -->
+        <a href="#" onclick="$('#modal-from-dom').modal('hide'); return false;" class="btn btn-secondary">Cancel</a>
+    </div>
+</div>
+  
+
+
+<div id="modal-from-dom-deletegroup" class="modal fade">
+  <div class="modal-dialog">
+  <div class="modal-content">
+    <div class="modal-header">
+        <a href="#" onclick="$('#modal-from-dom-deletegroup').modal('hide'); return false;" class="close">&times;</a>
+         <h3>Delete group</h3>
+    </div>
+    <div class="modal-body">
+        <p>You are removing the group <strong>'<span id="id-group-name"> {% comment %} Group name here {% endcomment %} </span>'</strong>. This procedure is irreversible.</p>
+        
+        <p>Do you want to proceed?</p>
+        <p id="debug-url-deletegroup"></p>
+    </div>
+    <div class="modal-footer">
+        <form method="POST">{% csrf_token %}
+          <!--<a id="delete_group" href="rm/ref/{{comm.slug}}" class="btn btn-danger">Yes</a>-->
+          <a href="#" onclick="$('#modal-from-dom-deletegroup').modal('hide'); return false;" class="btn btn-default">Cancel</a>
+          <button type="submit" name="gdel" id="gdel_button" value=""  class="btn btn-danger pull-right">Delete</button>
+        </form>
+    </div>
+    </div>
+    </div>
+</div>

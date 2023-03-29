@@ -1,0 +1,49 @@
+{% extends 'common_email.html' %}
+<!-- # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-->
+{% load i18n %}{% autoescape off %}
+{% load extra_tags %}
+
+{% block BRAND_LOGO %}
+    <a title="{{site.name}} logo" href="" class="TitleIndex"><span>{{site.name|splitfirst}}</span> {{site.name|ignorefirst}}</a>
+{% endblock %}
+{% block email_content %}
+
+{% blocktrans with site.name as site %}A new user has been registered at {{ site }}.{% endblocktrans %}<br /><br />
+
+{% blocktrans with user.email as email %} Username: {{ email }} {% endblocktrans %}<br />
+
+Name: {% blocktrans with user.first_name as fname %} {{ fname }} {% endblocktrans %} {% blocktrans with user.last_name as lname %} {{ lname }} {% endblocktrans %}<br />
+Organization: {{ organization }}<br /><br />
+{% trans "To activate his account you should click on the link below:" %}<br />
+
+{{ protocol }}://{{ site.domain }}{% url 'userena_activate' activation_key %}<br /><br />
+
+{% blocktrans with user.email as email %}An email has been sent to {{ email }}! {% endblocktrans %}<br /><br />
+
+{% trans "Sincerely" %},<br />
+{{ site.name }}
+
+<div style="text-align: right;">
+    <small >To reject this request, click <a href="{{ protocol }}://{{ site.domain }}{% url 'userena_reject' activation_key %}">here</a>.</small>
+</div>
+
+{% endblock %}
+{% block FOOTER_BRAND %}
+    © {{site.name}} - {% now "d/m/Y H:i:s" %}
+{% endblock FOOTER_BRAND %}
+{% endautoescape %}

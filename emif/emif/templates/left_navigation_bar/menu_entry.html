@@ -1,0 +1,40 @@
+{% load compress %}
+{% load left_menu_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+
+<ul class="list-unstyled">
+    <!-- Menu entries that contain a submenu -->
+    {% if menu_entry.menu_entry_submenu %}
+        <li class="has-submenu{% if activemenu == menu_entry.id %} active{% endif %}">
+            <a>
+                {% autoescape off %}
+                    <i style="max-width: 1em; max-height: 1em; margin-right: 6px;" class="{{menu_entry.icon}}"></i>
+                {% endautoescape %}
+                <span id={{ menu_entry.id }} class="nav-label"> {{ menu_entry.text }}</span>
+            </a>
+            <!-- Sub menu entries -->
+            <ul class="list-unstyled">
+                <span style="display: none" class="collapsed-span">
+                    {{ menu_entry.text }}
+                    <hr class="menu-hr" />
+                </span>
+                {% for submenu_entry in menu_entry.menu_entry_submenu %}
+                    {% include submenu_entry.template with submenu_entry=submenu_entry%}
+                {% endfor %}
+            </ul>
+
+            <i class="fas fa-angle-right menu-expand-icon"></i>
+        </li>
+    <!-- Menu entries that do not have a submenu entry -->
+    {% else %}
+        <li {% if activemenu == menu_entry.id %} class="active" {% endif %}>
+            <a href={{ menu_entry.url }}>
+                {% autoescape off %}
+                    <i class="{{menu_entry.icon}}"></i>
+                {% endautoescape %}
+                <span id={{ menu_entry.id }} class="nav-label"> {{ menu_entry.text }}</span>
+            </a>
+        </li>
+    {% endif %}
+</ul>

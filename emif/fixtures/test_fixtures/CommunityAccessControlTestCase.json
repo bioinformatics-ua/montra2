@@ -1,0 +1,3897 @@
+[
+{
+    "model": "auth.group",
+    "pk": 1,
+    "fields": {
+        "name": "api",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 2,
+    "fields": {
+        "name": "importers",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 3,
+    "fields": {
+        "name": "developers",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.group",
+    "pk": 4,
+    "fields": {
+        "name": "exporters",
+        "permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "!kadoQy5KXoTir0SuX1gxDdrIx0iiTwTJCrPDXPJu",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "AnonymousUser",
+        "first_name": "",
+        "last_name": "",
+        "email": "",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-25T12:36:09.573Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 2,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+        "last_login": "2020-09-25T12:36:35.746Z",
+        "is_superuser": false,
+        "username": "user1",
+        "first_name": "user1Fname",
+        "last_name": "user1Lname",
+        "email": "user1@emiftest.pt",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-25T12:36:12.145Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 3,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+        "last_login": "2020-09-25T12:36:42.551Z",
+        "is_superuser": true,
+        "username": "user2",
+        "first_name": "user2Fname",
+        "last_name": "user2Lname",
+        "email": "user2@emiftest.pt",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2020-09-25T12:36:12.148Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "auth.user",
+    "pk": 4,
+    "fields": {
+        "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+        "last_login": null,
+        "is_superuser": false,
+        "username": "user3",
+        "first_name": "user3Fname",
+        "last_name": "user3Lname",
+        "email": "user3@emiftest.pt",
+        "is_staff": false,
+        "is_active": true,
+        "date_joined": "2020-09-25T12:36:12.149Z",
+        "groups": [],
+        "user_permissions": []
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "87dq0a7co5rmq256aj77kbsxikx71rpi",
+    "fields": {
+        "session_data": "N2FiZmZmYWFiMzQxNGY5NmVhN2JjNWNiZTg1MGZmMTM2M2RjYTQ5Mjp7Il9zZXNzaW9uX2V4cGlyeSI6MCwiX2F1dGhfdXNlcl9oYXNoIjoiMzNlZmVhMTRjY2NkOWVhMTRiNzZkYWUwY2NkZTdjNGZjZDNlM2ZlMCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6InVzZXJlbmEuYmFja2VuZHMuVXNlcmVuYUF1dGhlbnRpY2F0aW9uQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIyIn0=",
+        "expire_date": "2020-10-09T12:36:30.738Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "9e3railgrw91rsrphyvx6yn8ts8crvct",
+    "fields": {
+        "session_data": "N2FiZmZmYWFiMzQxNGY5NmVhN2JjNWNiZTg1MGZmMTM2M2RjYTQ5Mjp7Il9zZXNzaW9uX2V4cGlyeSI6MCwiX2F1dGhfdXNlcl9oYXNoIjoiMzNlZmVhMTRjY2NkOWVhMTRiNzZkYWUwY2NkZTdjNGZjZDNlM2ZlMCIsIl9hdXRoX3VzZXJfYmFja2VuZCI6InVzZXJlbmEuYmFja2VuZHMuVXNlcmVuYUF1dGhlbnRpY2F0aW9uQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiIyIn0=",
+        "expire_date": "2020-10-09T12:36:36.785Z"
+    }
+},
+{
+    "model": "sessions.session",
+    "pk": "ai2hsr1o05x5nkxuwwi2mqjggaen724x",
+    "fields": {
+        "session_data": "YmJkOGYxODljODljOWQzZmZkZDI3YjVjYTVjMmZjZDkyM2Y2YzU1ZDp7Il9zZXNzaW9uX2V4cGlyeSI6MCwiX2F1dGhfdXNlcl9iYWNrZW5kIjoidXNlcmVuYS5iYWNrZW5kcy5Vc2VyZW5hQXV0aGVudGljYXRpb25CYWNrZW5kIiwiX2F1dGhfdXNlcl9oYXNoIjoiMzNlZmVhMTRjY2NkOWVhMTRiNzZkYWUwY2NkZTdjNGZjZDNlM2ZlMCIsIl9hdXRoX3VzZXJfaWQiOiIzIiwibGlzdF9vcmlnaW4iOiJhbGwifQ==",
+        "expire_date": "2020-10-09T12:36:49.479Z"
+    }
+},
+{
+    "model": "sites.site",
+    "pk": 1,
+    "fields": {
+        "domain": "localhost",
+        "name": "localhost"
+    }
+},
+{
+    "model": "flatpages.flatpage",
+    "pk": 1,
+    "fields": {
+        "url": "/about/",
+        "title": "<i class='fa fa-bookmark-o'></i> About",
+        "content": "<h2>&nbsp;Disclaimer</h2>\r\n<p>The EMIF Catalogue is an on-going work of the IMI-funded research project EMIF (European Medical Information Framework). This system is continuously under development and we welcome your ideas and suggestions for improving this catalogue.&nbsp;<br />All provided data are still provisional. We make no warranty and cannot be held responsible for any information retrieved and displayed in this catalogue.&nbsp;<br /><br />Jos&eacute; Luis Oliveira (jlo@ua.pt)<br />University of Aveiro, Dept. Electronics, Telecommunications and Informatics (DETI / IEETA)</p>\r\n<hr />\r\n<h2>Available features:</h2>\r\n<h3>Regular user</h3>\r\n<ul>\r\n<li>Accounting management (users, databases, workspaces)</li>\r\n<li>Database management</li>\r\n<li>Submission and edition (with the former questionary)</li>\r\n<li>Inclusion of two distinct templates</li>\r\n<li>Observational data (Unfinished template)</li>\r\n<li>Cohorts (Dummy template)</li>\r\n<li>Simple search</li>\r\n<li>Advanced search</li>\r\n<li>Results comparison</li>\r\n</ul>\r\n<h3>Admin</h3>\r\n<ul>\r\n<li>Questions/fingerprints</li>\r\n<li>User</li>\r\n<li>Templates</li>\r\n</ul>\r\n<h2>Near term planned features:</h2>\r\n<ul>\r\n<li>Templates definition</li>\r\n<li>Enhance searching</li>\r\n</ul>\r\n<h2>Tutorial video:</h2>\r\n<p><iframe src='http://www.youtube.com/embed/gN0j3aP5vSk' width='560' height='315' allowfullscreen='' frameborder='0'></iframe></p>",
+        "enable_comments": false,
+        "template_name": "",
+        "registration_required": false,
+        "sites": [
+            [
+                "localhost"
+            ]
+        ]
+    }
+},
+{
+    "model": "flatpages.flatpage",
+    "pk": 2,
+    "fields": {
+        "url": "/test/",
+        "title": "Test",
+        "content": "Teste",
+        "enable_comments": false,
+        "template_name": "",
+        "registration_required": false,
+        "sites": [
+            [
+                "localhost"
+            ]
+        ]
+    }
+},
+{
+    "model": "admin.logentry",
+    "pk": 1,
+    "fields": {
+        "action_time": "2020-09-25T12:36:47.923Z",
+        "user": [
+            "user2"
+        ],
+        "content_type": [
+            "community",
+            "community"
+        ],
+        "object_id": "1",
+        "object_repr": "test_community",
+        "action_flag": 2,
+        "change_message": "[{\"changed\": {\"fields\": [\"questionnaires\"]}}]"
+    }
+},
+{
+    "model": "questionnaire.questionnaire",
+    "pk": 1,
+    "fields": {
+        "name": "EHDEN_final",
+        "short_description": "",
+        "long_description": "",
+        "logo": "",
+        "redirect_url": "/",
+        "slug": "ehden_final",
+        "disable": "False",
+        "in_preview": false,
+        "preview_fingerprint": 1,
+        "qsets": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+        ]
+    }
+},
+{
+    "model": "questionnaire.questionset",
+    "pk": 1,
+    "fields": {
+        "questionnaire": 1,
+        "sortid": 0,
+        "heading": "EHDEN_Questionnaire_Database",
+        "checks": "required",
+        "text_en": "h1. EHDEN Questionnaire Database",
+        "help_text": "",
+        "tooltip": false,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.questionset",
+    "pk": 2,
+    "fields": {
+        "questionnaire": 1,
+        "sortid": 1,
+        "heading": "general_information",
+        "checks": "required",
+        "text_en": "h1. Database General Information",
+        "help_text": "Provide general information about a database, such as the name, acronym, institution details and main responsibles",
+        "tooltip": true,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.questionset",
+    "pk": 3,
+    "fields": {
+        "questionnaire": 1,
+        "sortid": 2,
+        "heading": "observationaldatasources_Data_set_description_metadata",
+        "checks": "required",
+        "text_en": "h1. Database Description",
+        "help_text": "",
+        "tooltip": false,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.questionset",
+    "pk": 4,
+    "fields": {
+        "questionnaire": 1,
+        "sortid": 4,
+        "heading": "ehden_test2_technical-details",
+        "checks": "required",
+        "text_en": "h1. Technical Details",
+        "help_text": "",
+        "tooltip": false,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.questionset",
+    "pk": 5,
+    "fields": {
+        "questionnaire": 1,
+        "sortid": 5,
+        "heading": "governance_slug",
+        "checks": "required",
+        "text_en": "h1. Data Governance and Ethics",
+        "help_text": "",
+        "tooltip": false,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.questionset",
+    "pk": 6,
+    "fields": {
+        "questionnaire": 1,
+        "sortid": 6,
+        "heading": "publications_slug",
+        "checks": "required",
+        "text_en": "h1. Publications",
+        "help_text": "",
+        "tooltip": false,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.questionsetpermissions",
+    "pk": 1,
+    "fields": {
+        "fingerprint_id": 1,
+        "qs": 2,
+        "visibility": 0,
+        "allow_indexing": true,
+        "allow_exporting": true
+    }
+},
+{
+    "model": "questionnaire.questionsetpermissions",
+    "pk": 2,
+    "fields": {
+        "fingerprint_id": 1,
+        "qs": 3,
+        "visibility": 0,
+        "allow_indexing": true,
+        "allow_exporting": true
+    }
+},
+{
+    "model": "questionnaire.questionsetpermissions",
+    "pk": 3,
+    "fields": {
+        "fingerprint_id": 1,
+        "qs": 4,
+        "visibility": 0,
+        "allow_indexing": true,
+        "allow_exporting": true
+    }
+},
+{
+    "model": "questionnaire.questionsetpermissions",
+    "pk": 4,
+    "fields": {
+        "fingerprint_id": 1,
+        "qs": 5,
+        "visibility": 0,
+        "allow_indexing": true,
+        "allow_exporting": true
+    }
+},
+{
+    "model": "questionnaire.questionsetpermissions",
+    "pk": 5,
+    "fields": {
+        "fingerprint_id": 1,
+        "qs": 6,
+        "visibility": 0,
+        "allow_indexing": true,
+        "allow_exporting": true
+    }
+},
+{
+    "model": "questionnaire.questionsetpermissions",
+    "pk": 6,
+    "fields": {
+        "fingerprint_id": 1,
+        "qs": 1,
+        "visibility": 0,
+        "allow_indexing": true,
+        "allow_exporting": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 1,
+    "fields": {
+        "questionset": 2,
+        "number": "1.01",
+        "text_en": "h1. Acronym",
+        "type": "open-button",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "database_name",
+        "slug_fk": 1,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 2,
+    "fields": {
+        "questionset": 2,
+        "number": "1.02",
+        "text_en": "h1. Name",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "cohort_acronym",
+        "slug_fk": 2,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 3,
+    "fields": {
+        "questionset": 2,
+        "number": "1.03",
+        "text_en": "h1. Institution name",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "institution_name",
+        "slug_fk": 3,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 4,
+    "fields": {
+        "questionset": 2,
+        "number": "1.04",
+        "text_en": "h1. Department name",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "department_name",
+        "slug_fk": 4,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 5,
+    "fields": {
+        "questionset": 2,
+        "number": "1.05",
+        "text_en": "h1. URL of the database website (if available)",
+        "type": "url",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "website_study ",
+        "slug_fk": 5,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 6,
+    "fields": {
+        "questionset": 2,
+        "number": "1.06",
+        "text_en": "h1. Unit/centre website(if available)",
+        "type": "url",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "website_centre ",
+        "slug_fk": 6,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 7,
+    "fields": {
+        "questionset": 2,
+        "number": "1.07",
+        "text_en": "h1. Principal Investigator (PI)",
+        "type": "comment",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "PI_cat",
+        "slug_fk": 7,
+        "help_text": "",
+        "stats": false,
+        "category": true,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": false
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 8,
+    "fields": {
+        "questionset": 2,
+        "number": "1.07.01",
+        "text_en": "h2. PI: Name",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "name_PI",
+        "slug_fk": 8,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 9,
+    "fields": {
+        "questionset": 2,
+        "number": "1.07.02",
+        "text_en": "h2. PI: Address",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "PI__Address",
+        "slug_fk": 9,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 10,
+    "fields": {
+        "questionset": 2,
+        "number": "1.07.03",
+        "text_en": "h2. PI: Email",
+        "type": "email",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "email_PI",
+        "slug_fk": 10,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 11,
+    "fields": {
+        "questionset": 2,
+        "number": "1.07.04",
+        "text_en": "h2. PI: Phone",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "PI__phone",
+        "slug_fk": 11,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 12,
+    "fields": {
+        "questionset": 2,
+        "number": "1.08",
+        "text_en": "h1. Scientific Contact (SC)",
+        "type": "comment",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "SC_cat",
+        "slug_fk": 12,
+        "help_text": "",
+        "stats": false,
+        "category": true,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": false
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 13,
+    "fields": {
+        "questionset": 2,
+        "number": "1.08.01",
+        "text_en": "h2. SC: Name",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "Scientific_Contact__SC___Name",
+        "slug_fk": 13,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 14,
+    "fields": {
+        "questionset": 2,
+        "number": "1.08.02",
+        "text_en": "h2. SC: Address",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "SC__Address",
+        "slug_fk": 14,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 15,
+    "fields": {
+        "questionset": 2,
+        "number": "1.08.03",
+        "text_en": "h2. SC: Email",
+        "type": "email",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "SC__email",
+        "slug_fk": 15,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 16,
+    "fields": {
+        "questionset": 2,
+        "number": "1.08.04",
+        "text_en": "h2. SC: Phone",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "SC__phone",
+        "slug_fk": 16,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 17,
+    "fields": {
+        "questionset": 2,
+        "number": "1.09",
+        "text_en": "h1. Administrative Contact (AC)",
+        "type": "comment",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "AC_cat",
+        "slug_fk": 17,
+        "help_text": "",
+        "stats": false,
+        "category": true,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": false
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 18,
+    "fields": {
+        "questionset": 2,
+        "number": "1.09.01",
+        "text_en": "h2. AC : Name",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "Administrative_Contact__AC___Name",
+        "slug_fk": 18,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 19,
+    "fields": {
+        "questionset": 2,
+        "number": "1.09.02",
+        "text_en": "h2. AC: Address",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "AC__Address",
+        "slug_fk": 19,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 20,
+    "fields": {
+        "questionset": 2,
+        "number": "1.09.03",
+        "text_en": "h2. AC: Email",
+        "type": "email",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "AC__email",
+        "slug_fk": 20,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 21,
+    "fields": {
+        "questionset": 2,
+        "number": "1.09.04",
+        "text_en": "h2. AC: Phone",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "AC__phone",
+        "slug_fk": 21,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 22,
+    "fields": {
+        "questionset": 2,
+        "number": "1.10",
+        "text_en": "h1. Technical Contact/Data manager (TC)",
+        "type": "comment",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "TC_cat",
+        "slug_fk": 22,
+        "help_text": "",
+        "stats": false,
+        "category": true,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": false
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 23,
+    "fields": {
+        "questionset": 2,
+        "number": "1.10.01",
+        "text_en": "h2. TC: Name",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "Technical_Contact_Data_manager__TC___Name",
+        "slug_fk": 23,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 24,
+    "fields": {
+        "questionset": 2,
+        "number": "1.10.02",
+        "text_en": "h2. TC: Address",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "TC__Address",
+        "slug_fk": 24,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 25,
+    "fields": {
+        "questionset": 2,
+        "number": "1.10.03",
+        "text_en": "h2. TC: Email",
+        "type": "email",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "TC__email",
+        "slug_fk": 25,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 26,
+    "fields": {
+        "questionset": 2,
+        "number": "1.10.04",
+        "text_en": "h2. TC: Phone",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "TC__phone",
+        "slug_fk": 26,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 27,
+    "fields": {
+        "questionset": 3,
+        "number": "2.01",
+        "text_en": "h1. Summary",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "database_description",
+        "slug_fk": 27,
+        "help_text": "Please provide a brief description of the database",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 28,
+    "fields": {
+        "questionset": 3,
+        "number": "2.02",
+        "text_en": "h1. What is the database type?",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "How_would_you_characterize_your_database",
+        "slug_fk": 28,
+        "help_text": "Please indicate which of the statements would apply to your data base. More than one statement may apply and can be selected. If your data base is a disease (e.g., a diabetes cohort) or event (e.g., birth) registry, also please identify the disease or event.If your data base is a study-specific registry (e.g., a cohort of subjects using a specific medication), please describe the inclusion criteria.If you feel an important characteristic is missing, please select \u201cother\u201d and specify that characteristic.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 29,
+    "fields": {
+        "questionset": 3,
+        "number": "2.03",
+        "text_en": "h1. Is patient-based linkage possible with other sources of information?",
+        "type": "choice-yesno",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "patient_linkage",
+        "slug_fk": 29,
+        "help_text": "Can subjects in your data base be linked to other data data bases? If linkage is possible, please specify the other data sources you have linked with in the past.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 30,
+    "fields": {
+        "questionset": 3,
+        "number": "2.04",
+        "text_en": "h1. Data continuity",
+        "type": "choice",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "data_continuity",
+        "slug_fk": 30,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 31,
+    "fields": {
+        "questionset": 3,
+        "number": "2.05",
+        "text_en": "h1. What data capture process(es) are used? ",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "what-data-capture-processes-are-used",
+        "slug_fk": 31,
+        "help_text": "Please indicate which of the types apply. More than one statement may apply and can be selected. You can also specify your own type by selecting \"other\".",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 32,
+    "fields": {
+        "questionset": 3,
+        "number": "2.06",
+        "text_en": "h1. From which country is the data originating?",
+        "type": "location",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "location",
+        "slug_fk": 32,
+        "help_text": "Specify the country.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": false
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 33,
+    "fields": {
+        "questionset": 3,
+        "number": "2.07",
+        "text_en": "h1. What is the geographic coverage?",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "location_coverage",
+        "slug_fk": 33,
+        "help_text": "Describe the geographic coverage of the patient population.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 34,
+    "fields": {
+        "questionset": 3,
+        "number": "2.08",
+        "text_en": "h1. Is the database containing patients with a specific socioeconomic status? If so, specify the population.",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "is-the-database-containing-patients-with-a-specifi",
+        "slug_fk": 34,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 35,
+    "fields": {
+        "questionset": 3,
+        "number": "2.09",
+        "text_en": "h1. Is the database containing patients from a specific insurance system?",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "is-the-database-containing-patients-from-a-specifi",
+        "slug_fk": 35,
+        "help_text": "Please indicate which of the types apply. More than one statement may apply and can be selected. You can also specify your own type by selecting \"other\".",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 36,
+    "fields": {
+        "questionset": 3,
+        "number": "2.10",
+        "text_en": "h1. What care setting(s) are covered?",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "what-care-settings-are-covered",
+        "slug_fk": 36,
+        "help_text": "Please indicate which of the types apply. More than one statement may apply and can be selected. You can also specify your own type by selecting \"other\".",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 37,
+    "fields": {
+        "questionset": 3,
+        "number": "2.11",
+        "text_en": "h1. What are the possible causes for a person to enter/exit your database?",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "What_are_the_possible_causes_for_a_person_to_enter",
+        "slug_fk": 37,
+        "help_text": "Please indicate the reasons for a subject to enter or leave your data base. ",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 38,
+    "fields": {
+        "questionset": 3,
+        "number": "2.12",
+        "text_en": "h1. What is the frequency of source data updates?",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "what-is-the-frequency-of-source-data-updates",
+        "slug_fk": 38,
+        "help_text": "For example monthly, yearly.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 39,
+    "fields": {
+        "questionset": 3,
+        "number": "2.13",
+        "text_en": "h1. Do you have a publically available database description?",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "If_you_have_a_documented_data_dictionary_are_you_",
+        "slug_fk": 39,
+        "help_text": "If you have a publically available database description please share the link",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 40,
+    "fields": {
+        "questionset": 4,
+        "number": "4.01",
+        "text_en": "h1. What is the source version ID?",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "what-is-the-source-version-id",
+        "slug_fk": 40,
+        "help_text": "Specify the version of the data that is mapped to the CDM",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 41,
+    "fields": {
+        "questionset": 4,
+        "number": "4.02",
+        "text_en": "h1. When was the source data released?",
+        "type": "datepicker",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "when-was-the-source-data-released",
+        "slug_fk": 41,
+        "help_text": "Release date of the source data version that was mapped to the CDM.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": false
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 42,
+    "fields": {
+        "questionset": 4,
+        "number": "4.03",
+        "text_en": "h1. When was the first CDM version created?",
+        "type": "datepicker",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "when-was-the-first-cdm-version-created",
+        "slug_fk": 42,
+        "help_text": "Date of first CDM version",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 43,
+    "fields": {
+        "questionset": 4,
+        "number": "4.04",
+        "text_en": "h1. What database management system is used for the CDM database?",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "what-database-management-system-is-used-for-the-cd",
+        "slug_fk": 43,
+        "help_text": "Please provide what data management system your database uses?",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 44,
+    "fields": {
+        "questionset": 4,
+        "number": "4.05",
+        "text_en": "h1. Provide a link to public ETL documentation if available.",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "provide-a-link-to-public-etl-documentation-if-avai",
+        "slug_fk": 44,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 45,
+    "fields": {
+        "questionset": 4,
+        "number": "4.06",
+        "text_en": "h1. Have there been previous efforts to convert the data set to the OMOP Common Data Model? If yes, by whom?",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "can-you-provide-information-about-the-whether-othe",
+        "slug_fk": 45,
+        "help_text": "Have there been previous efforts to convert the data set to the OMOP Common Data Model?",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 46,
+    "fields": {
+        "questionset": 4,
+        "number": "4.07",
+        "text_en": "h1. Are there any categories of data you have available in the source which cannot be stored in the CDM?",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "is-there-any-categories-of-data-you-have-available",
+        "slug_fk": 46,
+        "help_text": "If you have categories of data available that are not listed in the previous sections, please describe these categories in free text.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 47,
+    "fields": {
+        "questionset": 5,
+        "number": "5.01",
+        "text_en": "h1. Do you have an ethical committe/governance board?",
+        "type": "choice-yesno",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "do-you-have-an-ethical-committegovernance-board",
+        "slug_fk": 47,
+        "help_text": "Do you have an ethical committe/governance board?",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 48,
+    "fields": {
+        "questionset": 5,
+        "number": "5.02",
+        "text_en": "h1. Do you have a publically available document that details the procedure by which approval can be requested?",
+        "type": "choice-yesno",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "do-you-have-a-publically-available-document-that-d",
+        "slug_fk": 48,
+        "help_text": "Do you have a publically available document that details the procedure for obtaining approval for a study. ",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 49,
+    "fields": {
+        "questionset": 5,
+        "number": "5.03",
+        "text_en": "h1. Describe briefly the process of obtaining approval",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "describe-briefly-the-process-of-obtaining-approval",
+        "slug_fk": 49,
+        "help_text": "Please describe in text the process by which approval for a study can be obtained. Please add a link to the document if possible.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 50,
+    "fields": {
+        "questionset": 5,
+        "number": "5.04",
+        "text_en": "h1. What is the average duration of the approval process in weeks?",
+        "type": "numeric",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "what-is-the-average-duration-of-the-approval-proce",
+        "slug_fk": 50,
+        "help_text": "Provide the average duration of the process to get governance board approval. In weeks.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 51,
+    "fields": {
+        "questionset": 5,
+        "number": "5.05",
+        "text_en": "h1. Which studies have to be registered to ENCePP?",
+        "type": "open",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "which-studies-have-to-be-registered-to-encepp",
+        "slug_fk": 51,
+        "help_text": "Provide insight which type of studies need to be registered according to the governance rules.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 52,
+    "fields": {
+        "questionset": 5,
+        "number": "5.06",
+        "text_en": "h1. Are there any areas of use or research that have been explicitly barred by approval bodies or participants?",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "are-there-any-areas-of-use-or-research-that-have-b",
+        "slug_fk": 52,
+        "help_text": "Please describe in text if there are there any areas of use or topics of research that have been explicitly barred by approval bodies or participants?",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 53,
+    "fields": {
+        "questionset": 5,
+        "number": "5.07",
+        "text_en": "h1. Are you authorized to share aggregated analysis results for research purposes? ",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "are-you-authorized-to-share-aggregated-analysis-re",
+        "slug_fk": 53,
+        "help_text": "Please describe if or under which conditions you are allowed to share aggregated (non patient-level) analysis results for research purposes.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 54,
+    "fields": {
+        "questionset": 5,
+        "number": "5.08",
+        "text_en": "h1. Are you able to contact the health care provider to obtain additional information about the patient?",
+        "type": "choice-yesno",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "are-you-able-to-contact-the-health-care-provider-t",
+        "slug_fk": 54,
+        "help_text": "Are you able to contact the care provider to obtain additional information about the patient (e.g., request discharge letters).",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 55,
+    "fields": {
+        "questionset": 5,
+        "number": "5.09",
+        "text_en": "h1. Are you able to contact the patient to obtain additional information?",
+        "type": "choice-yesno",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "are-you-able-to-contact-the-patient-to-obtain-addi",
+        "slug_fk": 55,
+        "help_text": "Are you able to contact the patient to obtain additional information directly from the patient.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 56,
+    "fields": {
+        "questionset": 5,
+        "number": "5.10",
+        "text_en": "h1. Are you able to obtain bio samples from the patient?",
+        "type": "choice-yesno",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "are-you-able-to-obtain-bio-samples-from-the-patien",
+        "slug_fk": 56,
+        "help_text": "Are you able to obtain bio samples (e.g. blood) from the patient.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 57,
+    "fields": {
+        "questionset": 5,
+        "number": "5.11",
+        "text_en": "h1. Describe if additional information can be obtained from the patients (for example information about air pollution).",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "are-you-able-to-gather-additional-information-abou",
+        "slug_fk": 57,
+        "help_text": "Are you able to provide additional information about the setting of the patient. The information might, for example, include levels of air pollution, or whether the patient lives in a rural or urban setting. Please provide this information in free text.",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 58,
+    "fields": {
+        "questionset": 6,
+        "number": "6.01",
+        "text_en": "h1. List of peer-reviewed papers based on your data base covering the last 5 years",
+        "type": "publication",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "list-of-peer-reviewed-papers-based-on-your-data-ba",
+        "slug_fk": 58,
+        "help_text": "Please provide a list (preferable open-textfield) of peer-reviewed publications from your data base that have appeared in the literature in the past 5 years year).",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 59,
+    "fields": {
+        "questionset": 6,
+        "number": "6.02",
+        "text_en": "h1. For each of the following types of documents, check those that you would accept to share with other members of the PIONEER community and specify how to obtain them, by email or Web site (please use the last box).",
+        "type": "choice-multiple-freeform",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "for-each-of-the-following-types-of-documents-chec",
+        "slug_fk": 59,
+        "help_text": "For each of the specified classes of documents (Patient Information, Access Policies, Data Access Agreement, Governance/ethics documentation, Data Dictionary, Data Model), please indicate if you are willing to share the documents with other users of the EMIF catalogue. If you are willing to share, please indicate how others could obtain the documentation (download form web site or request by email).",
+        "stats": true,
+        "category": false,
+        "tooltip": true,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.question",
+    "pk": 60,
+    "fields": {
+        "questionset": 6,
+        "number": "6.03",
+        "text_en": "h1. Any other documents to share? Please add URLs, one for each line.",
+        "type": "open-textfield",
+        "extra_en": null,
+        "checks": "",
+        "footer_en": "",
+        "slug": "any-other-documents-to-share-please-add-urls-one",
+        "slug_fk": 60,
+        "help_text": "",
+        "stats": true,
+        "category": false,
+        "tooltip": false,
+        "visible_default": false,
+        "mlt_ignore": false,
+        "disposition": 0,
+        "metadata": null,
+        "show_advanced": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 1,
+    "fields": {
+        "question": 28,
+        "sortid": 1,
+        "value": "the source of data is primary care records maintained by GP or pediatrician",
+        "text_en": "the source of data is primary care records maintained by GP or pediatrician",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 2,
+    "fields": {
+        "question": 28,
+        "sortid": 2,
+        "value": "the source of data is care provided by specialist in an outpatient setting",
+        "text_en": "the source of data is care provided by specialist in an outpatient setting",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 3,
+    "fields": {
+        "question": 28,
+        "sortid": 3,
+        "value": "the source of data is the hospital where the patient is admitted",
+        "text_en": "the source of data is the hospital where the patient is admitted",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 4,
+    "fields": {
+        "question": 28,
+        "sortid": 4,
+        "value": "the source of data is the general pharmacy that issues medication",
+        "text_en": "the source of data is the general pharmacy that issues medication",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 5,
+    "fields": {
+        "question": 28,
+        "sortid": 5,
+        "value": "the source of data is an emergency ward",
+        "text_en": "the source of data is an emergency ward",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 6,
+    "fields": {
+        "question": 28,
+        "sortid": 6,
+        "value": "the source of data is administrative/ billing data",
+        "text_en": "the source of data is administrative/ billing data",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 7,
+    "fields": {
+        "question": 28,
+        "sortid": 7,
+        "value": "it is a disease or event specific registry,  please specify disease or event",
+        "text_en": "it is a disease or event specific registry,  please specify disease or event",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 8,
+    "fields": {
+        "question": 28,
+        "sortid": 8,
+        "value": "it is a study-specific registry (e.g., a cohort meeting certain criteria), please also specify the registry",
+        "text_en": "it is a study-specific registry (e.g., a cohort meeting certain criteria), please also specify the registry",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 9,
+    "fields": {
+        "question": 28,
+        "sortid": 9,
+        "value": "it is a biobank and has material/DNA stored",
+        "text_en": "it is a biobank and has material/DNA stored",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 10,
+    "fields": {
+        "question": 28,
+        "sortid": 10,
+        "value": "it is a record-linkage system",
+        "text_en": "it is a record-linkage system",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 11,
+    "fields": {
+        "question": 28,
+        "sortid": 11,
+        "value": "other",
+        "text_en": "other",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 12,
+    "fields": {
+        "question": 30,
+        "sortid": 1,
+        "value": "longitudinal",
+        "text_en": "longitudinal",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 13,
+    "fields": {
+        "question": 30,
+        "sortid": 2,
+        "value": "cross-sectional",
+        "text_en": "cross-sectional",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 14,
+    "fields": {
+        "question": 31,
+        "sortid": 1,
+        "value": "Insurance/administrative claims",
+        "text_en": "Insurance/administrative claims",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 15,
+    "fields": {
+        "question": 31,
+        "sortid": 2,
+        "value": "Outpatient electronic health records",
+        "text_en": "Outpatient electronic health records",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 16,
+    "fields": {
+        "question": 31,
+        "sortid": 3,
+        "value": "Inpatient hospital electronic health records",
+        "text_en": "Inpatient hospital electronic health records",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 17,
+    "fields": {
+        "question": 31,
+        "sortid": 4,
+        "value": "Inpatient hospital billing systems",
+        "text_en": "Inpatient hospital billing systems",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 18,
+    "fields": {
+        "question": 31,
+        "sortid": 5,
+        "value": "Registry",
+        "text_en": "Registry",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 19,
+    "fields": {
+        "question": 31,
+        "sortid": 6,
+        "value": "Biobank",
+        "text_en": "Biobank",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 20,
+    "fields": {
+        "question": 31,
+        "sortid": 7,
+        "value": "Other",
+        "text_en": "Other",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 21,
+    "fields": {
+        "question": 33,
+        "sortid": 1,
+        "value": "one hospital",
+        "text_en": "one hospital",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 22,
+    "fields": {
+        "question": 33,
+        "sortid": 2,
+        "value": "city",
+        "text_en": "city",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 23,
+    "fields": {
+        "question": 33,
+        "sortid": 3,
+        "value": "regional",
+        "text_en": "regional",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 24,
+    "fields": {
+        "question": 33,
+        "sortid": 4,
+        "value": "national",
+        "text_en": "national",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 25,
+    "fields": {
+        "question": 33,
+        "sortid": 5,
+        "value": "multiple countries",
+        "text_en": "multiple countries",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 26,
+    "fields": {
+        "question": 33,
+        "sortid": 6,
+        "value": "other",
+        "text_en": "other",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 27,
+    "fields": {
+        "question": 35,
+        "sortid": 1,
+        "value": "insured",
+        "text_en": "insured",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 28,
+    "fields": {
+        "question": 35,
+        "sortid": 2,
+        "value": "uninsured",
+        "text_en": "uninsured",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 29,
+    "fields": {
+        "question": 35,
+        "sortid": 3,
+        "value": "public",
+        "text_en": "public",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 30,
+    "fields": {
+        "question": 35,
+        "sortid": 4,
+        "value": "private",
+        "text_en": "private",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 31,
+    "fields": {
+        "question": 35,
+        "sortid": 5,
+        "value": "other",
+        "text_en": "other",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 32,
+    "fields": {
+        "question": 36,
+        "sortid": 1,
+        "value": "Inpatient (hospital) care",
+        "text_en": "Inpatient (hospital) care",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 33,
+    "fields": {
+        "question": 36,
+        "sortid": 2,
+        "value": "Outpatient general practitioner care",
+        "text_en": "Outpatient general practitioner care",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 34,
+    "fields": {
+        "question": 36,
+        "sortid": 3,
+        "value": "Outpatient specialist care",
+        "text_en": "Outpatient specialist care",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 35,
+    "fields": {
+        "question": 36,
+        "sortid": 4,
+        "value": "Long term/ skill nursing facility care",
+        "text_en": "Long term/ skill nursing facility care",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 36,
+    "fields": {
+        "question": 36,
+        "sortid": 5,
+        "value": "Pharmacy care",
+        "text_en": "Pharmacy care",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 37,
+    "fields": {
+        "question": 36,
+        "sortid": 6,
+        "value": "Other",
+        "text_en": "Other",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 38,
+    "fields": {
+        "question": 37,
+        "sortid": 1,
+        "value": "the subject enters or leaves the practice of a general practitioner",
+        "text_en": "the subject enters or leaves the practice of a general practitioner",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 39,
+    "fields": {
+        "question": 37,
+        "sortid": 2,
+        "value": "the subject enters or leaves the practice of a paediatrician in primary care",
+        "text_en": "the subject enters or leaves the practice of a paediatrician in primary care",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 40,
+    "fields": {
+        "question": 37,
+        "sortid": 3,
+        "value": "the subject enters or leaves the practice of a pharmacist",
+        "text_en": "the subject enters or leaves the practice of a pharmacist",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 41,
+    "fields": {
+        "question": 37,
+        "sortid": 4,
+        "value": "the subject is admitted to or discharged from an specialist outpatient clinic",
+        "text_en": "the subject is admitted to or discharged from an specialist outpatient clinic",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 42,
+    "fields": {
+        "question": 37,
+        "sortid": 5,
+        "value": "the subject  is admitted to or discharged from a hospital",
+        "text_en": "the subject  is admitted to or discharged from a hospital",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 43,
+    "fields": {
+        "question": 37,
+        "sortid": 6,
+        "value": "the subject moves in or out a specific geographical area (e.g., a city or region)",
+        "text_en": "the subject moves in or out a specific geographical area (e.g., a city or region)",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 44,
+    "fields": {
+        "question": 37,
+        "sortid": 7,
+        "value": "the subject enters or leaves a health insurance company of benefit plan",
+        "text_en": "the subject enters or leaves a health insurance company of benefit plan",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 45,
+    "fields": {
+        "question": 37,
+        "sortid": 8,
+        "value": "the subject has a specific disease and is included in a cohort",
+        "text_en": "the subject has a specific disease and is included in a cohort",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 46,
+    "fields": {
+        "question": 37,
+        "sortid": 9,
+        "value": "the subject underwent a specific therapy/intervention and is included in a cohort",
+        "text_en": "the subject underwent a specific therapy/intervention and is included in a cohort",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 47,
+    "fields": {
+        "question": 37,
+        "sortid": 10,
+        "value": "other",
+        "text_en": "other",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 48,
+    "fields": {
+        "question": 38,
+        "sortid": 1,
+        "value": "daily",
+        "text_en": "daily",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 49,
+    "fields": {
+        "question": 38,
+        "sortid": 2,
+        "value": "weekly",
+        "text_en": "weekly",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 50,
+    "fields": {
+        "question": 38,
+        "sortid": 3,
+        "value": "monthly",
+        "text_en": "monthly",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 51,
+    "fields": {
+        "question": 38,
+        "sortid": 4,
+        "value": "half-yearly",
+        "text_en": "half-yearly",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 52,
+    "fields": {
+        "question": 38,
+        "sortid": 5,
+        "value": "yearly",
+        "text_en": "yearly",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 53,
+    "fields": {
+        "question": 38,
+        "sortid": 6,
+        "value": "other",
+        "text_en": "other",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 54,
+    "fields": {
+        "question": 43,
+        "sortid": 1,
+        "value": "MSSQL",
+        "text_en": "MSSQL",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 55,
+    "fields": {
+        "question": 43,
+        "sortid": 2,
+        "value": "Postgresql ",
+        "text_en": "Postgresql ",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 56,
+    "fields": {
+        "question": 43,
+        "sortid": 3,
+        "value": "Amazon Redshift",
+        "text_en": "Amazon Redshift",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 57,
+    "fields": {
+        "question": 43,
+        "sortid": 4,
+        "value": "Google BigQuery",
+        "text_en": "Google BigQuery",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 58,
+    "fields": {
+        "question": 43,
+        "sortid": 5,
+        "value": "Apache Impala",
+        "text_en": "Apache Impala",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 59,
+    "fields": {
+        "question": 43,
+        "sortid": 6,
+        "value": "IBM Netezza",
+        "text_en": "IBM Netezza",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 60,
+    "fields": {
+        "question": 43,
+        "sortid": 7,
+        "value": "SQLite",
+        "text_en": "SQLite",
+        "opt": false
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 61,
+    "fields": {
+        "question": 43,
+        "sortid": 8,
+        "value": "Oracle ",
+        "text_en": "Oracle ",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 62,
+    "fields": {
+        "question": 43,
+        "sortid": 9,
+        "value": " Microsoft Parallel Data Warehouse",
+        "text_en": " Microsoft Parallel Data Warehouse",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 63,
+    "fields": {
+        "question": 43,
+        "sortid": 10,
+        "value": "Other management system, please specify",
+        "text_en": "Other management system, please specify",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 64,
+    "fields": {
+        "question": 59,
+        "sortid": 1,
+        "value": "Patient information regarding secondary use of their data (information brochure, invitation letter, letter to withdraw, etc.): Can be obtained  on the study Web site, or by emailing",
+        "text_en": "Patient information regarding secondary use of their data (information brochure, invitation letter, letter to withdraw, etc.): Can be obtained  on the study Web site, or by emailing",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 65,
+    "fields": {
+        "question": 59,
+        "sortid": 2,
+        "value": "Access policy: Can be obtained  on the study Web site, or by emailing",
+        "text_en": "Access policy: Can be obtained  on the study Web site, or by emailing",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 66,
+    "fields": {
+        "question": 59,
+        "sortid": 3,
+        "value": "Consent forms of obtaining additional information: Can be obtained  on the study Web site, or by emailing",
+        "text_en": "Consent forms of obtaining additional information: Can be obtained  on the study Web site, or by emailing",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 67,
+    "fields": {
+        "question": 59,
+        "sortid": 4,
+        "value": "Data access agreement: Can be obtained  on the study Web site, or by emailing",
+        "text_en": "Data access agreement: Can be obtained  on the study Web site, or by emailing",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 68,
+    "fields": {
+        "question": 59,
+        "sortid": 5,
+        "value": "Governance/ethics documentation: Can be obtained  on the study Web site, or by emailing",
+        "text_en": "Governance/ethics documentation: Can be obtained  on the study Web site, or by emailing",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.choice",
+    "pk": 69,
+    "fields": {
+        "question": 59,
+        "sortid": 6,
+        "value": "Data dictionary: Can be obtained on the study Web site, or by emailing: Data model: Can be obtained on the study Web site, or by emailing",
+        "text_en": "Data dictionary: Can be obtained on the study Web site, or by emailing: Data model: Can be obtained on the study Web site, or by emailing",
+        "opt": true
+    }
+},
+{
+    "model": "questionnaire.questionnareimportfile",
+    "pk": 1,
+    "fields": {
+        "file": "media/qimports/None_bd1Z93R",
+        "filename": "EHDEN_final.xlsx",
+        "uploader": [
+            "user2"
+        ],
+        "status": 2,
+        "error_message": null,
+        "questionnaire": 1
+    }
+},
+{
+    "model": "accounts.emifprofile",
+    "pk": 1,
+    "fields": {
+        "mugshot": "",
+        "privacy": "registered",
+        "user": [
+            "user1"
+        ],
+        "country": "PT",
+        "organization": "UA",
+        "paginator": 10,
+        "search_type": "all",
+        "mail_news": true,
+        "mail_not": false,
+        "restricted": false
+    }
+},
+{
+    "model": "accounts.emifprofile",
+    "pk": 2,
+    "fields": {
+        "mugshot": "",
+        "privacy": "registered",
+        "user": [
+            "user2"
+        ],
+        "country": "PT",
+        "organization": "UA",
+        "paginator": 10,
+        "search_type": "all",
+        "mail_news": true,
+        "mail_not": false,
+        "restricted": false
+    }
+},
+{
+    "model": "accounts.emifprofile",
+    "pk": 3,
+    "fields": {
+        "mugshot": "",
+        "privacy": "registered",
+        "user": [
+            "user3"
+        ],
+        "country": "PT",
+        "organization": "UA",
+        "paginator": 10,
+        "search_type": "all",
+        "mail_news": true,
+        "mail_not": false,
+        "restricted": false
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 1,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "index",
+        "date": "2020-09-25T12:36:30.382Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 2,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:30.656Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 3,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "index",
+        "date": "2020-09-25T12:36:35.899Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 4,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:36.194Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 5,
+    "fields": {
+        "user": [
+            "user1"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:36.718Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 6,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "index",
+        "date": "2020-09-25T12:36:42.693Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 7,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:42.974Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 8,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "questionnaire/import",
+        "date": "2020-09-25T12:36:43.447Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 9,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:43.599Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 10,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "questionnaire/preview-loading/1",
+        "date": "2020-09-25T12:36:43.991Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 11,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:44.122Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 12,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "fingerprint/c07cab4473f545c1a03bde49d4d24592/0/",
+        "date": "2020-09-25T12:36:45.061Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 13,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:45.325Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 14,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "questionnaire/import",
+        "date": "2020-09-25T12:36:45.780Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 15,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:45.913Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 16,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "index",
+        "date": "2020-09-25T12:36:46.203Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 17,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:46.333Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 18,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "admin/",
+        "date": "2020-09-25T12:36:46.855Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 19,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "admin/community/",
+        "date": "2020-09-25T12:36:47.137Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 20,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "admin/community/community/",
+        "date": "2020-09-25T12:36:47.357Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 21,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "admin/community/community/1/change/",
+        "date": "2020-09-25T12:36:47.680Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 22,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "admin/community/community/",
+        "date": "2020-09-25T12:36:48.098Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 23,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "index",
+        "date": "2020-09-25T12:36:48.297Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 24,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:48.575Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 25,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "c/testcommunity/q/ehden_final/",
+        "date": "2020-09-25T12:36:49.158Z"
+    }
+},
+{
+    "model": "accounts.navigationhistory",
+    "pk": 26,
+    "fields": {
+        "user": [
+            "user2"
+        ],
+        "path": "developer/api/getCommunities/",
+        "date": "2020-09-25T12:36:49.393Z"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 1,
+    "fields": {
+        "slug1": "database_name",
+        "description": "h1. Acronym"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 2,
+    "fields": {
+        "slug1": "cohort_acronym",
+        "description": "h1. Name"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 3,
+    "fields": {
+        "slug1": "institution_name",
+        "description": "h1. Institution name"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 4,
+    "fields": {
+        "slug1": "department_name",
+        "description": "h1. Department name"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 5,
+    "fields": {
+        "slug1": "website_study ",
+        "description": "h1. URL of the database website (if available)"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 6,
+    "fields": {
+        "slug1": "website_centre ",
+        "description": "h1. Unit/centre website(if available)"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 7,
+    "fields": {
+        "slug1": "PI_cat",
+        "description": "h1. Principal Investigator (PI)"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 8,
+    "fields": {
+        "slug1": "name_PI",
+        "description": "h2. PI: Name"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 9,
+    "fields": {
+        "slug1": "PI__Address",
+        "description": "h2. PI: Address"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 10,
+    "fields": {
+        "slug1": "email_PI",
+        "description": "h2. PI: Email"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 11,
+    "fields": {
+        "slug1": "PI__phone",
+        "description": "h2. PI: Phone"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 12,
+    "fields": {
+        "slug1": "SC_cat",
+        "description": "h1. Scientific Contact (SC)"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 13,
+    "fields": {
+        "slug1": "Scientific_Contact__SC___Name",
+        "description": "h2. SC: Name"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 14,
+    "fields": {
+        "slug1": "SC__Address",
+        "description": "h2. SC: Address"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 15,
+    "fields": {
+        "slug1": "SC__email",
+        "description": "h2. SC: Email"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 16,
+    "fields": {
+        "slug1": "SC__phone",
+        "description": "h2. SC: Phone"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 17,
+    "fields": {
+        "slug1": "AC_cat",
+        "description": "h1. Administrative Contact (AC)"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 18,
+    "fields": {
+        "slug1": "Administrative_Contact__AC___Name",
+        "description": "h2. AC : Name"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 19,
+    "fields": {
+        "slug1": "AC__Address",
+        "description": "h2. AC: Address"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 20,
+    "fields": {
+        "slug1": "AC__email",
+        "description": "h2. AC: Email"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 21,
+    "fields": {
+        "slug1": "AC__phone",
+        "description": "h2. AC: Phone"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 22,
+    "fields": {
+        "slug1": "TC_cat",
+        "description": "h1. Technical Contact/Data manager (TC)"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 23,
+    "fields": {
+        "slug1": "Technical_Contact_Data_manager__TC___Name",
+        "description": "h2. TC: Name"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 24,
+    "fields": {
+        "slug1": "TC__Address",
+        "description": "h2. TC: Address"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 25,
+    "fields": {
+        "slug1": "TC__email",
+        "description": "h2. TC: Email"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 26,
+    "fields": {
+        "slug1": "TC__phone",
+        "description": "h2. TC: Phone"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 27,
+    "fields": {
+        "slug1": "database_description",
+        "description": "h1. Summary"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 28,
+    "fields": {
+        "slug1": "How_would_you_characterize_your_database",
+        "description": "h1. What is the database type?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 29,
+    "fields": {
+        "slug1": "patient_linkage",
+        "description": "h1. Is patient-based linkage possible with other sources of information?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 30,
+    "fields": {
+        "slug1": "data_continuity",
+        "description": "h1. Data continuity"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 31,
+    "fields": {
+        "slug1": "what-data-capture-processes-are-used",
+        "description": "h1. What data capture process(es) are used? "
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 32,
+    "fields": {
+        "slug1": "location",
+        "description": "h1. From which country is the data originating?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 33,
+    "fields": {
+        "slug1": "location_coverage",
+        "description": "h1. What is the geographic coverage?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 34,
+    "fields": {
+        "slug1": "is-the-database-containing-patients-with-a-specifi",
+        "description": "h1. Is the database containing patients with a specific socioeconomic status? If so, specify the population."
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 35,
+    "fields": {
+        "slug1": "is-the-database-containing-patients-from-a-specifi",
+        "description": "h1. Is the database containing patients from a specific insurance system?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 36,
+    "fields": {
+        "slug1": "what-care-settings-are-covered",
+        "description": "h1. What care setting(s) are covered?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 37,
+    "fields": {
+        "slug1": "What_are_the_possible_causes_for_a_person_to_enter",
+        "description": "h1. What are the possible causes for a person to enter/exit your database?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 38,
+    "fields": {
+        "slug1": "what-is-the-frequency-of-source-data-updates",
+        "description": "h1. What is the frequency of source data updates?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 39,
+    "fields": {
+        "slug1": "If_you_have_a_documented_data_dictionary_are_you_",
+        "description": "h1. Do you have a publically available database description?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 40,
+    "fields": {
+        "slug1": "what-is-the-source-version-id",
+        "description": "h1. What is the source version ID?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 41,
+    "fields": {
+        "slug1": "when-was-the-source-data-released",
+        "description": "h1. When was the source data released?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 42,
+    "fields": {
+        "slug1": "when-was-the-first-cdm-version-created",
+        "description": "h1. When was the first CDM version created?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 43,
+    "fields": {
+        "slug1": "what-database-management-system-is-used-for-the-cd",
+        "description": "h1. What database management system is used for the CDM database?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 44,
+    "fields": {
+        "slug1": "provide-a-link-to-public-etl-documentation-if-avai",
+        "description": "h1. Provide a link to public ETL documentation if available."
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 45,
+    "fields": {
+        "slug1": "can-you-provide-information-about-the-whether-othe",
+        "description": "h1. Have there been previous efforts to convert the data set to the OMOP Common Data Model? If yes, by whom?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 46,
+    "fields": {
+        "slug1": "is-there-any-categories-of-data-you-have-available",
+        "description": "h1. Are there any categories of data you have available in the source which cannot be stored in the CDM?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 47,
+    "fields": {
+        "slug1": "do-you-have-an-ethical-committegovernance-board",
+        "description": "h1. Do you have an ethical committe/governance board?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 48,
+    "fields": {
+        "slug1": "do-you-have-a-publically-available-document-that-d",
+        "description": "h1. Do you have a publically available document that details the procedure by which approval can be requested?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 49,
+    "fields": {
+        "slug1": "describe-briefly-the-process-of-obtaining-approval",
+        "description": "h1. Describe briefly the process of obtaining approval"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 50,
+    "fields": {
+        "slug1": "what-is-the-average-duration-of-the-approval-proce",
+        "description": "h1. What is the average duration of the approval process in weeks?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 51,
+    "fields": {
+        "slug1": "which-studies-have-to-be-registered-to-encepp",
+        "description": "h1. Which studies have to be registered to ENCePP?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 52,
+    "fields": {
+        "slug1": "are-there-any-areas-of-use-or-research-that-have-b",
+        "description": "h1. Are there any areas of use or research that have been explicitly barred by approval bodies or participants?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 53,
+    "fields": {
+        "slug1": "are-you-authorized-to-share-aggregated-analysis-re",
+        "description": "h1. Are you authorized to share aggregated analysis results for research purposes? "
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 54,
+    "fields": {
+        "slug1": "are-you-able-to-contact-the-health-care-provider-t",
+        "description": "h1. Are you able to contact the health care provider to obtain additional information about the patient?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 55,
+    "fields": {
+        "slug1": "are-you-able-to-contact-the-patient-to-obtain-addi",
+        "description": "h1. Are you able to contact the patient to obtain additional information?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 56,
+    "fields": {
+        "slug1": "are-you-able-to-obtain-bio-samples-from-the-patien",
+        "description": "h1. Are you able to obtain bio samples from the patient?"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 57,
+    "fields": {
+        "slug1": "are-you-able-to-gather-additional-information-abou",
+        "description": "h1. Describe if additional information can be obtained from the patients (for example information about air pollution)."
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 58,
+    "fields": {
+        "slug1": "list-of-peer-reviewed-papers-based-on-your-data-ba",
+        "description": "h1. List of peer-reviewed papers based on your data base covering the last 5 years"
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 59,
+    "fields": {
+        "slug1": "for-each-of-the-following-types-of-documents-chec",
+        "description": "h1. For each of the following types of documents, check those that you would accept to share with other members of the PIONEER community and specify how to obtain them, by email or Web site (please use the last box)."
+    }
+},
+{
+    "model": "searchengine.slugs",
+    "pk": 60,
+    "fields": {
+        "slug1": "any-other-documents-to-share-please-add-urls-one",
+        "description": "h1. Any other documents to share? Please add URLs, one for each line."
+    }
+},
+{
+    "model": "fingerprint.fingerprint",
+    "pk": 1,
+    "fields": {
+        "fingerprint_hash": "c07cab4473f545c1a03bde49d4d24592",
+        "description": "",
+        "questionnaire": 1,
+        "community": null,
+        "last_modification": "2020-09-25T12:36:44.547Z",
+        "created": "2020-09-25T12:36:44.548Z",
+        "owner": [
+            "user2"
+        ],
+        "hits": 0,
+        "removed": false,
+        "fill": 0.0,
+        "draft": true,
+        "shared": []
+    }
+},
+{
+    "model": "fingerprint.questionsetcompletion",
+    "pk": 1,
+    "fields": {
+        "fingerprint": 1,
+        "questionset": 1,
+        "latest_update": "2020-09-25T12:36:44.677Z",
+        "fill": 0.0,
+        "answered": 0,
+        "possible": 0
+    }
+},
+{
+    "model": "fingerprint.questionsetcompletion",
+    "pk": 2,
+    "fields": {
+        "fingerprint": 1,
+        "questionset": 2,
+        "latest_update": "2020-09-25T12:36:44.772Z",
+        "fill": 0.0,
+        "answered": 0,
+        "possible": 22
+    }
+},
+{
+    "model": "fingerprint.questionsetcompletion",
+    "pk": 3,
+    "fields": {
+        "fingerprint": 1,
+        "questionset": 3,
+        "latest_update": "2020-09-25T12:36:44.805Z",
+        "fill": 0.0,
+        "answered": 0,
+        "possible": 13
+    }
+},
+{
+    "model": "fingerprint.questionsetcompletion",
+    "pk": 4,
+    "fields": {
+        "fingerprint": 1,
+        "questionset": 4,
+        "latest_update": "2020-09-25T12:36:44.823Z",
+        "fill": 0.0,
+        "answered": 0,
+        "possible": 7
+    }
+},
+{
+    "model": "fingerprint.questionsetcompletion",
+    "pk": 5,
+    "fields": {
+        "fingerprint": 1,
+        "questionset": 5,
+        "latest_update": "2020-09-25T12:36:44.850Z",
+        "fill": 0.0,
+        "answered": 0,
+        "possible": 11
+    }
+},
+{
+    "model": "fingerprint.questionsetcompletion",
+    "pk": 6,
+    "fields": {
+        "fingerprint": 1,
+        "questionset": 6,
+        "latest_update": "2020-09-25T12:36:44.861Z",
+        "fill": 0.0,
+        "answered": 0,
+        "possible": 3
+    }
+},
+{
+    "model": "fingerprint.fingerprintsubscription",
+    "pk": 1,
+    "fields": {
+        "fingerprint": 1,
+        "user": [
+            "user2"
+        ],
+        "date": "2020-09-25T12:36:44.565Z",
+        "latest_update": "2020-09-25T12:36:44.565Z",
+        "removed": false
+    }
+},
+{
+    "model": "hitcount.hitcount",
+    "pk": 1,
+    "fields": {
+        "hits": 0,
+        "modified": "2020-09-25T12:36:45.022Z",
+        "content_type": [
+            "fingerprint",
+            "fingerprint"
+        ],
+        "object_pk": 1
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 1,
+    "fields": {
+        "key": "brand",
+        "value": "gAJVDkVNSUYgQ2F0YWxvZ3VlcQEu"
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 2,
+    "fields": {
+        "key": "copyrightsplash",
+        "value": "gAJVTjxhIHRhcmdldD0iX2JsYW5rIiBocmVmPSJodHRwOi8vYmlvaW5mb3JtYXRpY3MudWEucHQvIj5CaW9pbmZvcm1hdGljcywgVUEuPC9hPnEBLg=="
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 3,
+    "fields": {
+        "key": "aboutMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 4,
+    "fields": {
+        "key": "historyMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 5,
+    "fields": {
+        "key": "faqMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 6,
+    "fields": {
+        "key": "docMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 7,
+    "fields": {
+        "key": "contactMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 8,
+    "fields": {
+        "key": "notificationsMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 9,
+    "fields": {
+        "key": "jobQueueMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 10,
+    "fields": {
+        "key": "useCommunityList",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 11,
+    "fields": {
+        "key": "useFingerprintList",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 12,
+    "fields": {
+        "key": "project_name",
+        "value": "gAJVBEVNSUZxAS4="
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 13,
+    "fields": {
+        "key": "copyright",
+        "value": "gAJVGMKpIEJpb2luZm9ybWF0aWNzLlVBLCBVQXEBLg=="
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 14,
+    "fields": {
+        "key": "footer_extra",
+        "value": "gAJULgEAAAogICAgICAgICAgICAgICAgICAgIDwhLS0gRVhUUkEgSFRNTCBGT09URVIgQ09ERSBIRVJFIC0tPgogICAgICAgICAgICAgICAgICAgIDxzbWFsbCBpZD0ic3VwcG9ydGFiaWxpdHkiPlRoaXMgd2Vic2l0ZSBpcyBvcHRpbWlzZWQgdG8gU2FmYXJpLCBDaHJvbWUsIEZpcmVmb3gsIE9wZXJhIGFuZCBJRTkrLgogICAgICAgICAgICAgICAgICAgIDwhLS1JdCBydW5zIGluIElFNy1JRTgsIGJ1dCBpdCBoYXMgbG93IHBlcmZvcm1hbmNlIGFuZCBubyBlbmhhbmNlZCBmZWF0dXJlcy4tLT48L3NtYWxsPgogICAgICAgICAgICAgICAgICAgcQEu"
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 15,
+    "fields": {
+        "key": "useQuestionSetRBAC",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 16,
+    "fields": {
+        "key": "newsletter",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 17,
+    "fields": {
+        "key": "more_like_this",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 19,
+    "fields": {
+        "key": "documents",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 20,
+    "fields": {
+        "key": "Request_Answer",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 21,
+    "fields": {
+        "key": "table_view",
+        "value": "gAJVBVRhYmxlcQEu"
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 22,
+    "fields": {
+        "key": "searchMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 23,
+    "fields": {
+        "key": "customViewMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 24,
+    "fields": {
+        "key": "privateLinksMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 25,
+    "fields": {
+        "key": "portal_installation",
+        "value": false
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 26,
+    "fields": {
+        "key": "mapMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 27,
+    "fields": {
+        "key": "dashboardMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 28,
+    "fields": {
+        "key": "componentsMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 29,
+    "fields": {
+        "key": "communicationMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 30,
+    "fields": {
+        "key": "questionSetsMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 31,
+    "fields": {
+        "key": "apiMenu",
+        "value": true
+    }
+},
+{
+    "model": "database.constance",
+    "pk": 32,
+    "fields": {
+        "key": "compare_populations",
+        "value": true
+    }
+},
+{
+    "model": "community.community",
+    "pk": 1,
+    "fields": {
+        "name": "test_community",
+        "description": "some description",
+        "disclaimer": null,
+        "short_desc": "short desc.",
+        "public": false,
+        "auto_accept": false,
+        "membership": "moderated",
+        "slug": "testcommunity",
+        "icon": "icons/community/observational_1.jpg",
+        "thumbnail": "",
+        "sortid": 1,
+        "show_popchar": true,
+        "show_docs": true,
+        "popchar_sortid": 1,
+        "docs_sortid": 1,
+        "db_sortid": 1,
+        "dblist_sortid": 1,
+        "owners": [
+            [
+                "user2"
+            ]
+        ],
+        "invisible_owners": [],
+        "questionnaires": [
+            1
+        ],
+        "tags": []
+    }
+},
+{
+    "model": "community.communitypermissions",
+    "pk": 1,
+    "fields": {
+        "community": 1,
+        "export_dblist": true,
+        "export_fingerprint": true,
+        "export_datatable": true
+    }
+},
+{
+    "model": "community.communityuser",
+    "pk": 1,
+    "fields": {
+        "community": 1,
+        "user": [
+            "user1"
+        ],
+        "status": 1,
+        "updated_at": "2022-01-21T15:47:30.382Z"
+    }
+},
+{
+    "model": "community.communityuser",
+    "pk": 2,
+    "fields": {
+        "community": 1,
+        "user": [
+            "user2"
+        ],
+        "status": 1,
+        "updated_at": "2022-01-21T15:47:30.382Z"
+    }
+},
+{
+    "model": "community.communityactivation",
+    "pk": 1,
+    "fields": {
+        "community": 1,
+        "user": 2,
+        "commuser": 1,
+        "hash": "60f5b364849e11e590680242ac1100e7",
+        "used": true
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 1,
+    "fields": {
+        "community": 1,
+        "name": "test",
+        "description": null,
+        "removed": true,
+        "members": [
+            1
+        ]
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 2,
+    "fields": {
+        "community": 1,
+        "name": "editors",
+        "description": "editors",
+        "removed": false,
+        "members": []
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 3,
+    "fields": {
+        "community": 1,
+        "name": "study managers",
+        "description": "study managers",
+        "removed": false,
+        "members": []
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 4,
+    "fields": {
+        "community": 1,
+        "name": "API",
+        "description": "api group",
+        "removed": false,
+        "members": []
+    }
+},
+{
+    "model": "community.communitygroup",
+    "pk": 5,
+    "fields": {
+        "community": 1,
+        "name": "default",
+        "description": "default",
+        "removed": false,
+        "members": []
+    }
+}
+]

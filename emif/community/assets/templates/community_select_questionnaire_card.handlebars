@@ -1,0 +1,76 @@
+<div class="col-md-12 col-sm-12 col-lg-12">
+    <h3>Questionnaires</h3>
+</div>
+
+<!-- Cards -->
+<div class="row">
+    {{#each questionnaires}}
+    <div class="col-sm-6 col-md-3">
+        <div class="panel panel-default">
+            <div class="panel-body comm_container">
+                <div class="comm_header">
+                    <center>
+                        <h4 class="title-overflow">{{name}}</h4>
+                        {{#if logo.length}}
+                        <img src="{{logo}}" class="community_logo" style="height: 100px;">
+                        {{/if}}
+                    </center>
+                </div>
+
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6">
+                        <div class="text-center" style="padding-top: 1em">
+                            <h5><i class="fas fa-fw fa-list" style="font-size:1.5em;"></i></h5>
+                            <h5>{{fingerprints_count}}</h6>
+                        </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6">
+                        <div class="text-center" style="padding-top: 1em">
+                            <h5><i class="fas fa-fw fa-question" style="font-size:1.5em;"></i></h5>
+                            <h5>{{questions_count}}</h5>
+                        </div>
+                    </div>
+                </div>
+
+                {{#if logo.length}}
+                <h4 class="desc_container" style="height: 90px;">
+                    {{else}}
+                    <h4 class="desc_container" style="height: 180px;">
+                        {{/if}}
+                        <div class="community_description" style="word-break: break-word;">
+                            {{#if long_description.length}}
+                            {{long_description}}
+                            {{else}}
+                            There is no description for this questionnaire.
+                            {{/if}}
+                        </div>
+                        <a class="desc_shower pull-right">&nbsp;</a>
+
+                    </h4>
+                    <div class="comm_footer">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <a data-status="0"
+                                    onclick="bootbox.dialog({title: '{{community.name}}', message: '{{more_message}}', buttons: { close: { label: 'Close', className: 'btn-default', callback: function(){ this.modal('hide'); } }}})"
+                                    class=" pull-right" href="javascript:void(0)">More</a>
+                            </div>
+                        </div>
+
+                        <center> <a href="c/{{../community}}/q/{{slug}}" class="btn btn-blue btn-panel-body"><svg
+                                    class="svg-inline--fa fa-folder-open fa-w-18 fa-fw" aria-hidden="true"
+                                    focusable="false" data-prefix="fas" data-icon="folder-open" role="img"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" data-fa-i2svg="">
+                                    <path fill="currentColor"
+                                        d="M572.694 292.093L500.27 416.248A63.997 63.997 0 0 1 444.989 448H45.025c-18.523 0-30.064-20.093-20.731-36.093l72.424-124.155A64 64 0 0 1 152 256h399.964c18.523 0 30.064 20.093 20.73 36.093zM152 224h328v-48c0-26.51-21.49-48-48-48H272l-64-64H48C21.49 64 0 85.49 0 112v278.046l69.077-118.418C86.214 242.25 117.989 224 152 224z">
+                                    </path>
+                                </svg><!-- <i class="fas fa-fw fa-folder-open"></i> -->&nbsp; OPEN</a>
+
+                        </center>
+
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    {{/each}}
+</div>

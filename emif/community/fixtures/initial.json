@@ -1,0 +1,29 @@
+[
+   {
+      "pk":4,
+      "model":"community.community",
+      "fields":{
+         "owners":[
+            1
+         ],
+         "name":"RIA",
+         "show_docs":true,
+         "db_sortid":1,
+         "docs_sortid":2,
+         "description":"This community is only used for Catalogue experiences.",
+         "dblist_sortid":1,
+         "short_desc":"",
+         "slug":"ria",
+         "tags":[
+
+         ],
+         "questionnaires":[
+      
+         ],
+         "show_popchar":true,
+         "public":true,
+         "popchar_sortid":3,
+         "icon":""
+      }
+   }
+]

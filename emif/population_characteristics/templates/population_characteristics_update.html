@@ -1,0 +1,78 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+
+<div id="modal-updatepopchar" class="modal fade">
+    <div class="modal-dialog">
+    <div class="modal-content">
+    <div class="modal-header">
+        <a href="#" onclick="$('#modal-updatepopchar').modal('hide'); return false;" class="close">&times;</a>
+         <h3>Update Population Characteristics</h3>
+    </div>
+    <div class="modal-body">
+                <form style="margin-left: 0px;" id="jerboaupload" method="post" action="." enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <!-- Redirect browsers with JavaScript disabled to the origin page -->
+                    <!--<noscript><input type="hidden" name="redirect" value="http://blueimp.github.io/jQuery-File-Upload/"></noscript>-->
+                    <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+                    <div class="fileupload-buttonbar">
+                            <fieldset>
+                            <div class="form-group">
+                                <input placeholder="Name" size="255" class="form-control" type="text" cols="100" name="pc_name" />
+                            </div>
+                            <div class="form-group">
+                                <textarea placeholder="Description about extracted population characteristics" class="form-control  input-block-level" rows="4" name="pc_comments" ></textarea>
+                            </div>
+
+                            <!-- The fileinput-button span is used to style the file input field as button -->
+                            <div style="margin-left: 0px !important;" class="col-md-12 btn btn-success fileinput-button">
+                                <i class="glyphicon glyphicon-plus"></i>
+                                <span>Add files...</span>
+                                <input type="file" name="file" multiple>
+                            </div>
+
+
+                            <!-- The loading indicator is shown during file processing -->
+                            <span class="fileupload-loading"></span>
+                            </fieldset>
+                        <!-- The global progress information -->
+                        <div class="col-md-6 fileupload-progress fade">
+                            <!-- The global progress bar -->
+                            <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                            </div>
+                            <!-- The extended global progress information -->
+                            <div class="progress-extended">&nbsp;</div>
+                        </div>
+                    </div>
+                    <!-- The table listing the files available for upload/download -->
+
+                </form>
+                <table class="table table-striped">
+                  <tbody class="files" id="jerboafiles">
+
+
+                  </tbody>
+                </table>
+    </div>
+    <div class="modal-footer">
+        <a href="#" onclick="$('#modal-updatechar').modal('hide'); return false;" class="btn btn-default">Cancel</a>
+    </div>
+    </div>
+    </div>
+</div>

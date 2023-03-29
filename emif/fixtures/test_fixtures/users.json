@@ -1,0 +1,38 @@
+[
+    {
+        "pk": 2,
+        "model": "auth.user",
+        "fields": {
+            "username": "user1",
+            "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+            "email": "user1@emiftest.pt",
+            "first_name": "user1Fname",
+            "last_name": "user1Lname"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "auth.user",
+        "fields": {
+            "username": "user2",
+            "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+            "email": "user2@emiftest.pt",
+            "first_name": "user2Fname",
+            "last_name": "user2Lname",
+            "is_superuser": true,
+            "is_staff": true,
+            "is_active": true
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.user",
+        "fields": {
+            "username": "user3",
+            "password": "pbkdf2_sha256$36000$WauzpJOXCyWr$tIWKvitjYbc1TbTBA7AhOlT+MrwafeWaPENgVAQdH78=",
+            "email": "user3@emiftest.pt",
+            "first_name": "user3Fname",
+            "last_name": "user3Lname"
+        }
+    }
+]

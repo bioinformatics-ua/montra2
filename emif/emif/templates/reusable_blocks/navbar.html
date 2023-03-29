@@ -1,0 +1,223 @@
+{% load compress %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+<nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+            <a class="navbar-brand" href="">{{config.brand}}</a>
+        </div>
+            {% if not readOnly %}
+            <div id="main-navbar" class="ui-widget navbar-collapse collapse">
+
+                {% if user.is_authenticated and user.is_active %}
+                <ul class="nav navbar-nav navbar-form navbar-left">
+                    <li id="search_li">
+                        <form id="quicksearch" class="navbar-search pull-left" method="POST" action="resultsdiff/1">{% csrf_token %}
+                            {% if isAdvanced %}
+                            <input title="Enter the terms you wish to search for. The search function is explicit (literal) and does not use spelling similarities, specific spelling is required (e.g. 'haematology' and 'hematology')." class="form-control search-query span2_5 form-text" placeholder="Search" type="text" id="edit-search-block-form--3" name="query" value="" size="25" maxlength="256">
+                            {% else %}
+                            <input title="Enter the terms you wish to search for. The search function is explicit (literal) and does not use spelling similarities, specific spelling is required (e.g. 'haematology' and 'hematology')." class="form-control search-query span2_5 form-text" placeholder="Search" type="text" id="edit-search-block-form--3" name="query" value="{{search_old}}" size="25" maxlength="256">
+                            {% endif %}
+                            <input name='search_full' value='search_full' type='hidden'>
+                        </form>
+                    </li>
+                </ul>
+                {% endif %}
+                <div class="pull-right">
+                <ul id="usernav" class="nav navbar-nav navbar-right">
+
+                    {% if request.user.is_authenticated and user.is_active %}
+                    <li id="li_notifications" class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                        <i id="notification_env" class="fas fa-fw fa-envelope"></i>&nbsp;<span id="notification_badge" class="depon_class inlinebadge">99</span>
+
+                        </a>
+                        <ul style="width: 450px;" class="dropdown-menu dropdown-menu-form pull-right">
+                            <div class="notification_header lead">Latest Notifications</div>
+                            <div id="notification_center">
+                               <center> <div class="notification">There are currently no new notifications.</div>
+                               </center>
+                            </div>
+                            <hr class="notification_divider" />
+                            <center><a href="notifications">See All Notifications</a></center>
+                        </ul>
+                    </li>
+                    <li id="li_workspace" class="dropdown">
+                        <a href="" id="databases_menu" class="dropdown-toggle" data-toggle="dropdown">Databases
+                        <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="dropdown-submenu">
+                                <a href="" onclick="return false;">View</a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="databases">Personal</a>
+                                    </li>
+                                    <li>
+                                        <a href="alldatabases">All</a>
+                                    </li>
+                                    {% if config.privateLinksMenu %}
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a href="public/fingerprint">Private Links</a>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </li>
+
+                            <li class="divider"></li>
+                            {% if profiles|isDataCustodian %}
+                            <li class="dropdown-submenu">
+                                <a href="" id="add_menu" onclick="return false;">Add New</a>
+                                <ul class="dropdown-menu">
+                                    {% if user.emif_profile %}
+                                    {% show_fingerprints_interests user %}
+                                    {% else %}
+                                    {% show_fingerprints activesubmenu comm %}
+                                    {% endif %}
+                                </ul>
+                            </li>
+                            {% endif %}
+                            <li class="dropdown-submenu">
+                                <a href="" onclick="return false;">Search</a>
+                                <ul class="dropdown-menu">
+                                    {% show_fingerprints_for_search request.user %}
+                                    <li class="divider"></li>
+                                    <li><a tabindex="-1" href="advsearch/history">Search History</a></li>
+                                </ul>
+                            </li>
+                            {% if request.user|has_group:'importers' or request.user.is_superuser %}
+                            <li class="divider"></li>
+                            <li>
+                                <a href="questionnaire/import">Import Questionnaire</a>
+                            </li>
+                            {% endif %}
+
+                            {% if request.user|has_group:'importers' or request.user.is_superuser %}
+
+                            <li class="divider"></li>
+                            <li>
+                                <a href="questionnaire/export">Export Questionnaire</a>
+                            </li>
+                            {% endif %}
+
+                        </ul>
+                    </li>
+                    {% if thirdparty|length > 0 or globalwidgets|length > 0 %}
+                    <li id="li_notifications" class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown">
+                            <i id="notification_env" class="fas fa-fw fa-puzzle-piece"></i> <b class="caret"></b>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% if thirdparty|length > 0%}
+                                {%for tp in thirdparty %}
+                                    <li>
+
+
+                                        <a href="apps/tp/{{tp.plugin.slug}}">
+                                        {%if tp.plugin.icon %}
+                                            <img style="max-width: 14px; max-height: 14px;" src="{{tp.plugin.icon.url}}" />
+                                        {% else %}
+                                            <i class="fas fa-fw fa-image"></i>
+                                        {% endif %}&nbsp;
+                                        {{tp.plugin.name}}
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                            {% endif %}
+                            {% if globalwidgets|length > 0%}
+                                {% if thirdparty|length > 0 %}
+                                    <li class="divider"></li>
+                                {% endif %}
+                                {%for tp in globalwidgets %}
+                                <li>
+                                    <a href="apps/gp/{{tp.plugin.slug}}">
+                                    {%if tp.plugin.icon %}
+                                            <img style="max-width: 14px; max-height: 14px;" src="{{tp.plugin.icon.url}}" />
+                                        {% else %}
+                                            <i class="fas fa-fw fa-image"></i>
+                                        {% endif %}&nbsp;
+                                        {{tp.plugin.name}}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            {% endif %}
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                    {% endif %}
+                    {% block headerlogin %}
+                    {% if not user.is_authenticated %}
+                    <li>
+                        <form class="navbar-form pull-right" method="post" action="accounts/signin/">
+                            {% csrf_token %}
+                            <input name="identification" class="form-control signin-header-form-email" type="text" placeholder="Email">
+                            <input name="password" class="form-control signin-header-form-pass" type="password" placeholder="Password">
+                            <button type="submit" class="btn btn-success"><i class="fas fa-fw fa-sign-in"></i>&nbsp;Sign in</button>
+                        </form>
+                    </li>
+                    {% else %}
+                    <li>
+                        <div class="form-group navbar-form navbar-right">
+                        <div class="btn-group">
+                            <button class="btn btn-success dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+                            {% if not user.first_name and not user.last_name %}
+                            <i class="icon-user"></i><small>&nbsp; <span class="name_container">{{user.username|ellipsis:30}} &nbsp;</span></small><i class="icon-angle-down"></i>
+                            {% else %}
+                            <i class="icon-user"></i><small><span class="name_container">&nbsp; {{user.first_name|add:" "|add:user.last_name|ellipsis:30}} &nbsp;</span></small><i class="icon-angle-down"></i>
+                            {% endif %}
+                            </button>
+                            <ul class="dropdown-menu">
+                                {% show_profiles user %}
+                                {% show_fingerprints_interests_profile user %}
+                                <li class="divider"></li>
+                                <!--li>{% show_subscription user %}</li>
+                                <li class="divider"></li-->
+                                <li><a href="accounts/profile_edit/" class="navbar-link"><i class="icon-edit"></i>&nbsp;Edit Profile</a></li>
+                                <li><a href="accounts/signout/" class="navbar-link"><i class="icon-signout"></i>&nbsp;Sign out</a></li>
+                            </ul>
+                        </div>
+                        </div>
+                    </li>
+                    {% endif %}
+
+
+                    {% if not user.is_authenticated %}
+
+                    <li class="navbar-form navbar-right">
+                        <div class="btn-group">
+                            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown" style="margin-left: 2px;" tabindex="-1"><i class="icon-align-justify"></i></button>
+                            <ul class="dropdown-menu pull-right">
+
+                                <li id="li_signup">
+                                    <a href="accounts/signup/"><i class="fas fa-fw fa-sign-in"></i>&nbsp;Sign up</a>
+                                </li>
+                                <li id="li_reset_password">
+                                    <a href="accounts/password/reset/"><i class="fas fa-fw fa-question"></i>&nbsp;Forgot your password?</a>
+                                </li>
+
+                            </ul>
+
+                        </div>
+                    </li>
+                    {%endif%}
+                    {% endblock %}
+                </ul>
+                </div>
+            </div>
+
+            {% endif %}
+
+            <!--/.nav-collapse -->
+        </div>
+</nav>

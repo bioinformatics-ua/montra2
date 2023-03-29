@@ -1,0 +1,4 @@
+{% for k,v in questionnaires.items %}
+<li {%if activesubmenu == k %}class="active"{%endif%}><a href="community/manage/{{comm.slug}}/qsets/{{ k }}">{{ v }}</a>
+</li>
+{% endfor %}

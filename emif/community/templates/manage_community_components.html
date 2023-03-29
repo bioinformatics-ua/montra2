@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+{% endcomment %}
+
+{% block styleinclude %}
+    <link rel="stylesheet" href="{% static 'css/dataTables.bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/vendor/wysihtml5.css' %}">
+
+    <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-tagsinput.css' %}" />
+
+{% endblock %}
+
+{% block headextra %}
+    <script src="{% static 'js/vendor/bootstrap3-typeahead.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'js/vendor/wysihtml5x-toolbar.min.js' %}"></script>
+
+    <script src="{% static 'js/vendor/advanced_and_extended.js' %}"></script>
+    <script src="{% static 'js/vendor/multiselect.min.js' %}"></script>
+    <script src="{% static 'js/vendor/jquery.orderablemultiselect.js' %}"></script>
+    <script src="{% static 'js/vendor/bootstrap-tagsinput.js' %}"></script>
+
+{% endblock %}
+
+
+{% block breadcrumbs %}
+        {% breadcrumb "All" "c/"|add:comm.slug %}
+        {% breadcrumb "Manage Community" "" %}
+{% endblock %}
+
+{% block toolbar %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+    <div class="col-lg-12">
+
+    <h3>Manage {{comm.name}} - Components</h3>
+    </div>
+        <div class="row">
+        <div class="col-lg-12">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                          Database Plugins
+                        </div>
+                        <div class="panel-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input name="from[]" id="plugin_container"  type="hidden" value="">
+                                <div id="plugin_selector">
+                                <hr/>
+                                </div>
+                                <button class="btn btn-block btn-success" type="submit">
+                                    <i class="fas fa-fw fa-save"></i> &nbsp;Save
+                                </button>
+                            </form>
+                        </div>
+
+                    <div class="panel-heading">
+                          Community Plugins
+                        </div>
+                        <div class="panel-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <input name="fromc[]" id="plugin_community_container" type="hidden" value="">
+                                <div id="plugin_community_selector">
+                                <hr/>
+                                </div>
+                                <button class="btn btn-block btn-success" type="submit">
+                                    <i class="fas fa-fw fa-save"></i> &nbsp;Save
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+        </div>
+        </div>
+{% endblock %}
+
+{% block scriptextra %}
+  // Plugin list fields
+    var pinput = $('#plugin_container');
+    var sortFunction = function(a, b){
+      return a.sortid-b.sortid;
+    };
+    
+    var from = [
+            {id: 'db', name: 'Database', disabled: true, sortid: {{comm.db_sortid}}},
+            {% if comm.show_docs %}
+            {id: 'dcs', name: 'Documents', sortid: {{comm.docs_sortid}}},
+            {% endif %}
+            {% for plugin in db_plugins %}
+            {id: '{{plugin.plugin.id}}', name: '{{plugin.plugin.name}}', sortid: {{plugin.sortid}}},
+            {% endfor %}
+        ], to = [
+            {% if not comm.show_docs %}
+            {id: 'dcs', name: 'Documents'},
+            {% endif %}
+            {% for plugin in other_db_plugins %}
+            {id: '{{plugin.id}}', name: '{{plugin.name}}'},
+            {% endfor %}
+        ];
+
+
+    console.log(from.sort(sortFunction));
+
+    var pselector = $('#plugin_selector').orderablemultiselect({
+        fromtext: 'Selected Plugins',
+        totext: 'Available Plugins',
+        from: from.sort(sortFunction),
+        to: to.sort(sortFunction),
+        change: function(data){
+            pinput.val(JSON.stringify(data));
+        }
+    });
+
+    pinput.val(JSON.stringify(pselector.serialization()));
+
+  // Plugin list fields
+    var pcomminput = $('#plugin_community_container');
+    var sortcommFunction = function(a, b){
+      return a.sortid-b.sortid;
+    };
+    
+     fromc = [
+            {id: 'db', name: 'Community', disabled: true, sortid: {{comm.db_sortid}}},
+            {% for plugin in comm_plugins%}
+            {id: '{{plugin.plugin.id}}', name: '{{plugin.plugin.name}}', sortid: {{plugin.sortid}}},
+            {% endfor %}
+        ], toc = [
+            {% for plugin in other_comm_plugins %}
+            {id: '{{plugin.id}}', name: '{{plugin.name}}'},
+            {% endfor %}
+        ];
+
+    console.log(from.sort(sortFunction));
+
+    var pcommselector = $('#plugin_community_selector').orderablemultiselect({
+        fromtext: 'Selected Plugins',
+        totext: 'Available Plugins',
+        from: fromc.sort(sortcommFunction),
+        to: toc.sort(sortcommFunction),
+        change: function(data){
+            pcomminput.val(JSON.stringify(data));
+        }
+    });
+
+    pcomminput.val(JSON.stringify(pcommselector.serialization()));
+{% endblock %}
+

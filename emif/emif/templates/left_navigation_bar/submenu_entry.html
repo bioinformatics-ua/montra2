@@ -1,0 +1,11 @@
+{% load compress %}
+{% load django_bootstrap_breadcrumbs %}
+
+<li {%if activesubmenu == submenu_entry.id %}class="active"{%endif%}>
+    <a href={{ submenu_entry.url }}>
+        {% autoescape off %}
+            <i class="{{submenu_entry.icon}}"></i>
+        {% endautoescape %}
+        {{ submenu_entry.text }}
+    </a>
+</li>

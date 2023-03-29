@@ -1,0 +1,29 @@
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+
+<div class="answer qtext_{{question.text|geths}}" id="answer_{{ question.number }}">
+    {% if error %}
+        <div class="alert-message block-message text-error input">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    {% if not question.tooltip and question.help_text %}
+        <div class="input">
+            {{question.help_text|safe}}
+        </div>
+    {% endif %}
+
+    {% include qdict.template %}
+
+    <div class="row">
+        <div class="col-md-9" id="comments_{{question.number|removedots}}" style="display:none;margin-left:40px;">
+            <a href="" class="col-md-6" onclick="toggle_comments('{{question.number|removedots}}'); return false;">
+                <i class="icon-comment-alt">&nbsp;</i> Comments
+            </a>
+            <textarea style=" background-color:#EEE;color: #000;" class="form-control" name="comment_question_{{ question.number }}" cols="50" rows="5">
+                {{qdict.comment}}
+            </textarea>
+        </div>
+    </div>
+</div>

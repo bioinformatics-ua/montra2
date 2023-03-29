@@ -1,0 +1,489 @@
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+{% setglobal h1_already 0 %}
+{% setglobal h1_last 0 %}
+{% setglobal iteratorQ 0 %}
+
+
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+{% if not readonly %}
+<form name="qform{{ questions_list.0.0.sortid }}" id="qform{{ questions_list.0.0.sortid }}" 
+    action="{% if community %}c/{{community}}/{% endif %}addPost/{{questionset.questionnaire.pk}}/1/{{questions_list.0.0.sortid}}" 
+    method="POST" enctype="multipart/form-data">
+{% else %}
+<div name="qform{{ questions_list.0.0.sortid }}" id="qform{{ questions_list.0.0.sortid }}">
+{% endif %}
+    <input type="hidden" name="active_qs" id="active_qs" value="0" />
+    <input type="hidden" name="active_qs_sortid" id="active_qs_sortid" value="{{ questions_list.0.0.sortid }}" />
+    <input type="hidden" name="fingerprint_id" value="{{ fingerprint_id }}" />
+    <input type="hidden" name="_qs_perm" value="{{ questions_list.0.0.id }}" />
+    {% if questions_list.0.0.sortid != 0 and questions_list.0.0.sortid != 99 %}
+
+    <div class="pull-right btn-group">
+    {% if not readonly %}
+      <div class="btn-group">
+
+        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+        Show
+        <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+            <!-- dropdown menu links -->
+            <li><a id="hide_empty_{{ questions_list.0.0.sortid }}" href="javascript:void(0);">
+            <i class="fas fa-fw fa-check active"></i> Empty Questions</a></li>
+            <li><a id="hide_filled_{{ questions_list.0.0.sortid }}" href="javascript:void(0);"><i class="fas fa-fw fa-check active"></i> Filled Questions</a></li>
+          </ul>
+    </div>
+      <a id="collapseall_qs_{{ questions_list.0.0.sortid }}"  class="btn btn-default" href="#">Collapse all </a>
+
+      <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+        Permissions
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu dropdown-menu-form">
+        <table style="margin-bottom: 0px; table-layout: auto" class="table table-striped">
+            <tr>
+                <td>Visibility</td>
+                <td style="overflow:visible">
+                <label class="radio">
+                  <input class="qspreference" type="radio" name="_qs_visibility" value="0" {% if permissions.visibility == 0 or permissions == None %}checked{% endif %}>
+                  Public
+                </label>
+                <label class="radio">
+                  <input class="qspreference" type="radio" name="_qs_visibility" value="1" {% if permissions.visibility == 1 %}checked{% endif %}>
+                  Private
+                </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Allow indexing?</td>
+                <td style="overflow:visible">
+                <label class="radio">
+                    <input class="qspreference" type="radio" name="_qs_indexing" value="true" {% if permissions.allow_indexing or permissions == None %}checked{% endif %}>
+                    Yes
+                </label>
+                <label class="radio">
+                    <input class="qspreference" type="radio" name="_qs_indexing" value="false" {% if not permissions.allow_indexing and permissions != None %}checked{% endif %}>
+                    No
+                </label>
+                </td>
+            </tr>
+            <tr>
+                <td>Allow exporting?</td>
+                <td style="overflow:visible">
+                    <label class="radio">
+                        <input class="qspreference" type="radio" name="_qs_exporting" value="true" {% if permissions.allow_exporting or permissions == None %}checked{% endif %}>
+                        Yes
+                    </label>
+                    <label class="radio">
+                        <input class="qspreference" type="radio" name="_qs_exporting" value="false" {% if not permissions.allow_exporting and permissions != None %}checked{% endif %}>
+                        No
+                    </label>
+                </td>
+            </tr>
+        </table>
+      </ul>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="questionset-title" style="font-size:6px">
+        <h3>
+
+        {{ questions_list.0.0.text|removeh1 }}
+        <label></label>
+        </h3>
+    </div>
+    {% if questions_list.0.0.help_text != "" %}
+    <div class="clearfix qs-description">{{questions_list.0.0.help_text|safe}}</div>
+    {% endif %}
+
+    {% csrf_token %}
+    <input type="hidden" name="questionset_id" value="{{ questionset.id }}" />
+    <div class="panel-group" id="accordion_{{ questions_list.0.0.sortid }}">
+        {% for question, qdict in qlist %}
+        {% incrementglobal iteratorQ %}
+        {% with errors|dictget:question.number as error %}
+        {% if question.text|geths == 'h1' %}
+        <!-- If has already appear another h1 before close accordion-group -->
+        {% if h1_already.value == '1' %}
+    </div>
+</div>
+</div>
+        {% endif %}
+<!-- Set variable h1 to accordion -->
+{% setglobal h1_already 1 %}
+{% setglobal h1_last 1 %}
+<div class="panel panel-default {%if qdict.qtype == 'comment' %}dont_hide{% endif %} {{qdict.depon_class}}" id="acc_qc_{{ question.number }}" {{qdict.checkstring|safe}}>
+<div class="panel-body">
+        {% if request.user.is_staff and not readonly %}
+        <span class="pull-right"> <a style="color: black;" href="admin/questionnaire/question/{{ question.id }}/">
+        <i class="fas fa-fw fa-pen-square">&nbsp;</i>
+        </a></span>
+        {% endif %}
+        {% if config.Request_Answer and answer_requests|length > 0 %}
+            {% ans_requested question answer_requests %}
+        {% endif %}
+    {% endif %}
+    <div class="question type_{{ qdict.qtype }} {% if error %} error prepend-top{% endif %}{{ qdict.qnum_class }}{{ qdict.qalpha_class }} {{qdict.depon_class}}" id="qc_{{ question.number }}" {{qdict.checkstring|safe}} >
+        {% if question.text|geths == 'h1' %}
+        <!-- TODO: still a bug around the parent accordion-->
+        <a class="accordion-toggle dedit" data-toggle="collapse" data-parent="#accordion_{{ questionset.sortid }}" href="#div_{{ questionset.sortid }}_{{ iteratorQ.value }}">
+        {% endif %}
+        {% if qdict.custom %}
+            {% if error %}
+            <div class="error">
+                {{ error }}
+            </div>
+            {% endif %}
+            {% include qdict.template %}
+            {% else %}
+            <div class="question-text {% if qdict.required %}required{% endif %} {% if error %}text-error{% endif %} qtext_{{question.text|geths}}">
+                {% if config.show_fingerprint_number %}
+                    <span class="qnumber_{{question.text|geths}}">{% if question.display_number != '0' %}{{question.display_number }}.{% endif %}</span>
+                {% endif %}
+                <span class="qtext">
+                {% if question.type == 'comment' %}
+                    <strong>
+                        {% if  qdict.qhighlight %}
+                            {{ qdict.qhighlight|removehs|safe }}
+                        {% else %}
+                            {{ question.text|removehs|safe }}
+                        {% endif %}
+                    </strong>
+                {% else %}
+                    {% if  qdict.qhighlight %}
+                    {{ qdict.qhighlight|removehs|safe }}
+                    {% else %}
+                    {{ question.text|removehs|safe }}
+                    {% endif %}
+                {% endif %}
+
+
+                {% if question.tooltip and question.help_text %}
+                <div class="question-help-text" style="display: none;">
+                    <span>{{ question.help_text|safe }}</span>
+                </div>
+                {% endif %}
+                </span>
+                {% comment %}
+                {% if qdict.required %}<span title="This fields is required to be able to publish this database (and make it public)" class="reqfield lead text-error">*</span>
+                {% endif %}
+                {% endcomment %}
+                {% if question.text|geths != 'h1' %}
+                    {% if request.user.is_staff and not readonly %}
+                    <span class="pull-right">
+                    <a style="color: black;" href="admin/questionnaire/question/{{ question.id }}/">
+                    <i class="fas fa-fw fa-pen-square">&nbsp;</i>
+                    </a>
+                    </span>
+                    {% endif %}
+                    {% if config.Request_Answer and answer_requests|length > 0 %}
+                        {% ans_requested question answer_requests %}
+                    {% endif %}
+                {% endif %}
+
+            </div>
+                {% if question.text|geths == 'h1' %}
+            </a>
+        </div>
+        <div id="div_{{ questionset.sortid }}_{{ iteratorQ.value }}" class="panel-collapse in collapse">
+            <div class="panel-body {% if h1_last.value != '1' %}panel-no-bottom{% endif %}">
+                {% endif %}
+                <div class="answer qtext_{{question.text|geths}}" id="answer_{{ question.number }}">
+                    {% if error %}
+                    <div class="alert-message block-message text-error input">{{ error }}</div>
+                    {% endif %}
+                    {% if not question.tooltip and question.help_text %}
+                    <div class="input">{{question.help_text|safe}}</div>
+                    {% endif %}
+                    {% include qdict.template %}
+                    <div class="row do_not_print">
+                        <div class="col-md-9" id="comments_{{question.number|removedots}}" style="display:none;margin-left:40px;">
+                            <a href="#" class="col-md-6" onclick="toggle_comments('{{question.number|removedots}}'); return false;">
+                            <span id="commentary_{{question.id}}"><i class="far fa-comments">&nbsp;</i> Comments</a></span>
+                            <textarea style=" background-color:#EEE;color: #000;" data-qid="{{question.id}}" class="form-control commentary" id="comment_question_{{ question.number }}"  name="comment_question_{{ question.number }}" cols="50" rows="5" {% if readonly %}readonly{% endif %}>{{qdict.comment}}</textarea>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+            {% if question.footer %}
+            <div class="question-footer">
+                {{ question.footer|textile }}
+                <div class="clearfix"></div>
+            </div>
+            {% endif %}
+            </div> <!-- /question container -->
+        {% endwith %}
+
+            {% if question.visible_default %}
+                <script type="text/javascript">
+                    $(function(){
+                        toggle_comments('{{question.number|removedots}}');
+                    });
+
+                </script>
+            {% endif %}
+            {% if question.text|geths != 'h1' %}
+                <div class="spacer clearfix"></div>
+            {% endif %}
+            {% endfor %}
+            {% if h1_last.value == '1' %}
+        </div>
+    </div>
+</div>
+            {% endif %}
+
+</div>  <!-- div accordion2 -->
+<!--{% if questions_list.0.0.sortid != 99 and questions_list.0.0.sortid != 0%}-->
+<!--<span>* Required</span>-->
+<!--{% endif  %}-->
+<!--div style="height: 50px;">&nbsp;</div>
+<div data-clamp="#qform{{ questions_list.0.0.sortid }}" style="position: fixed; bottom: -15px" class="well well-small questionset-submit">-->
+<div data-clamp="#qform{{ questions_list.0.0.sortid }}" class="well well-sm questionset-submit">
+    <!-- Previous | Next buttons -->
+    <div class="row">
+    <div class="col-md-10 col-xs-10 text-center">
+        <!-- If Questionset is not the first (Introduction) or the final (Thank you) -->
+        {% if prevAccessibleQuestionSet %}
+        <a class="btn btn-default large primary" onclick="questionsets_handle('qs_{{ prevAccessibleQuestionSet.sortid }}', '{{fingerprint_id}}', '{{questionset.questionnaire.pk}}', this_mode);  return false;"><i class="fas fa-fw fa-chevron-left"></i> {% trans "Previous" %}</a>
+        {% endif %}
+        {% if nextAccessibleQuestionSet %}
+        <a class="btn btn-default large primary" onclick="questionsets_handle('qs_{{ nextAccessibleQuestionSet.sortid }}', '{{fingerprint_id}}', '{{questionset.questionnaire.pk}}', this_mode);  return false;">{% trans "Next" %} <i class="fas fa-fw fa-chevron-right"></i></a>
+        {% endif %}
+        <!-- First Questionset - Introduction -->
+    </div>
+    <div class="col-md-4 col-xs-4 pull-right">
+        {% if not readonly %}
+            <a id="cancel_link" href="" class="btn large btn-primary"><i class="fas fa-fw fa-times"></i> {% trans 'Cancel' %}</a>
+            <!--c/{{community.slug}}/fingerprint/{{fingerprint_id}}/1/-->
+            <script>
+                var community = "{{community}}";
+                var questionnaire =  "{{questionnaire.slug}}";
+                
+                if(window.location.href.includes("/dbEdit/")) {
+                    var str = window.location.href.replace("dbEdit", "fingerprint")
+                    var pos = str.lastIndexOf("/{{questionset.questionnaire.pk}}");
+                    document.getElementById("cancel_link").href = str.slice(0,pos)+"/{{questions_list.0.0.sortid}}/"
+                }
+                else {
+                    if(community && questionnaire)
+                        document.getElementById("cancel_link").href = "c/"+community+"/q/"+questionnaire;
+                    else
+                        document.getElementById("cancel_link").href = "/";
+                }
+            </script>
+
+            {% if questions_list.0.0.sortid != 0 and questions_list.0.0.sortid != 99 %}
+            <button class="btn large btn-primary" name="submit" type="submit"><i class="far fa-save"></i> {% trans 'Save' %}</button>
+            {% endif %}
+            {% if questions_list.0.0.sortid == 0 %}
+            {% endif %}
+            <!-- Last Questionset - Thank You -->
+            {% if questions_list.0.0.sortid == 99 %}
+            <!--<input class="btn large btn-primary" name="submit" type="submit" value="{% trans 'Save' %}" />-->
+            {% endif %}
+        {% endif %}
+    </div>
+    </div>
+</div>
+{% if not readonly %}
+</form>
+{%else %}
+</div>
+{% endif %}
+
+<script type="text/javascript">
+{% block scriptextra %}
+
+$.extend( depmaps, {{depmap|safe}} );
+
+function add_triggers{{ questions_list.0.0.sortid }}() {
+console.log('Adding triggers for qs {{ questions_list.0.0.sortid }}');
+{% for trigger in triggers %}
+addtrigger("{{trigger}}");
+{% endfor %}
+
+{% for k,v in qvalues.items %}
+qvalues['question_{{ k|escapejs }}'] = '{{ v|escapejs|striptags }}';
+{% endfor %}
+
+    /* qvalues is supposed to give us the parents that open the childs ??*/
+    for(key in qvalues) {
+        valchanged(key, qvalues[key], this);
+    }
+}
+
+$(function(){
+tabindexer();
+
+edit_db_option_enforce();
+
+});
+
+function validate(question_number)
+{
+    //console.log($('#'+question_number).val());
+    question_number = question_number + "";
+    question_number = question_number.replace(".","\\.");
+    $.getJSON('api/validate?name='+$('#'+question_number).val(), function(data) {
+        const warning = $(`#warning_${question_number}`);
+        const success = $(`#success_${question_number}`);
+
+        if ("invalid_characters" in data) {
+            warning.addClass("show");
+            warning.removeClass("hide");
+            success.addClass("hide");
+            success.removeClass("show");
+            return;
+        }
+
+        if (data['contains'] == true) {
+            warning.addClass("show");
+            warning.removeClass("hide");
+            success.addClass("hide");
+            success.removeClass("show");
+        } else {
+            warning.addClass("hide");
+            warning.removeClass("show");
+            success.addClass("show");
+            success.removeClass("hide");
+        }
+    });
+}
+help_text_popover();
+{% for k, qlist in questions_list %}
+{% if k.sortid != 0 and k.sortid != 99 %}
+$("#collapseall_qs_{{ k.sortid }}").bind('click', function (e) {
+//        console.log('Collapse all');
+e.preventDefault();
+e.stopPropagation();
+var div_id = 'accordion_{{ k.sortid }}';
+collapseAll($("#collapseall_qs_{{ k.sortid }}"), div_id);
+});
+
+{% endif %}
+{% endfor %}
+$(function(){
+    var context = $('#qs_{{questions_list.0.0.sortid}}');
+
+    add_triggers{{ questions_list.0.0.sortid }}();
+    setsaveqs("qform{{ questions_list.0.0.sortid }}", '{{fingerprint_id}}', '{{questionset.questionnaire.pk}}', this_mode);
+    $('.dropdown-menu').on('click', function(e) {
+        if($(this).hasClass('dropdown-menu-form')) {
+            e.stopPropagation();
+        }
+    });
+
+    $('.tooltippable', context).tooltip({container:'body'});
+
+    var showPopover = function () {
+        var isVisible = $(this).data('popover').tip().hasClass('in');
+        if (!isVisible)
+            $(this).popover('show');
+    }
+    , hidePopover = function () {
+        $(this).popover('hide');
+    };
+
+    $('.popoverable', context).popover(
+        {
+            placement: 'left',
+            container:'body',
+            html: 'true',
+            'template': '<div class="popover popover-medium"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
+        }
+    ).hover(showPopover, function(){})
+    .blur(hidePopover);
+
+        $('#hide_empty_{{questions_list.0.0.sortid}}').click(function(){
+            setupHideEmpties({{questions_list.0.0.sortid}}, 'empty');
+        });
+        $('#hide_filled_{{questions_list.0.0.sortid}}').click(function(){
+            setupHideEmpties({{questions_list.0.0.sortid}}, 'filled');
+        });
+
+    $('.answer input,.answer select,.answer textarea', context).each(function(index){
+        if($(this).attr('type') =='radio'){
+            $('[name="'+$(this).attr('name')+'"]').data('old', $('[name="'+$(this).attr('name')+'"]:checked').val());
+        } else {
+            $(this).data('old', $(this).val());
+        }
+    });
+
+    $('.questionset-submit', context).scrollToFixed( { bottom: -10, limit: $('.questionset-submit', context).offset().top } );
+
+    $('.requestlabel', context).click(function(e){
+            var answer = $(this).data("question");
+
+            askForAnswer(answer);
+
+    });
+
+    $('input[id$="_opt"]', context).keyup(function(){
+        var checkbox= $(this).parent().parent().siblings().find('[type="checkbox"]');
+        var checked = checkbox.is(':checked');
+
+        if($(this).val().length > 0){
+            checkbox.attr('checked', true);
+        }
+    });
+
+    {% if not readonly %}
+    $('.checkbox-label').click(function(){
+        $(this).parent().find('input[type="checkbox"]').click();
+    });
+    $('.radiobox-label').click(function(){
+        $(this).parent().find('input[type="radio"]').click();
+    });
+    {% endif %}
+
+    setTimeout(function(){
+              $(".nano").nanoScroller({
+                iOSNativeScrolling: true,
+                preventPageScrolling: true
+              });
+
+              $('[data-clamp]', context).resize();
+
+  }, 1000);
+
+    $('[data-clamp]', context).each(function () {
+        var elem = $(this);
+        var parentPanel = elem.data('clamp');
+
+        var resizeFn = function () {
+            var sideBarNavWidth = $(parentPanel).width();
+            elem.css('width', sideBarNavWidth);
+        };
+
+        resizeFn();
+        $(window).resize(resizeFn);
+    });
+
+});
+
+{% endblock %}
+</script>
+
+<script>
+    // This initializes the fingerprint answer validator. It must be called
+    // here, after the form has been inserted into the DOM, to have any effect.
+    advValidator.onInit();
+</script>

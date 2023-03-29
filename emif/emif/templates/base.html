@@ -1,0 +1,544 @@
+{% load extra_tags %}
+<!-- # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#-->
+{% load flatpages %}
+{% load compress %}
+{% load extra_tags %}
+{% load left_menu_tags %}
+{% load django_bootstrap_breadcrumbs %}
+{% load static %}
+{% load render_bundle from webpack_loader %}
+
+{% get_flatpages for user as flatpages %}
+
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js ns lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ns lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ns lt-ie9 gt-ie7"> <![endif]-->
+<!--[if IE 9 ]>    <html class="no-js ie9 gt-ie7"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!-->
+<html lang="en" class="no-js">
+    <!--<![endif]-->
+    <head>
+        <!-- This is WRONG and just for testing, on deploy it must be changed to static base url -->
+        <base id="base_link" href="{{ BASE_URL }}">
+        <!--<base id="base_link" href="{{ request.get_host }}">-->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>{% block title %}{{config.brand}}{% endblock title %}</title>
+        <meta name="description" content="{{config.brand}}">
+        <meta name="viewport" content="width=device-width">
+        <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon" />
+
+        {% compress css %}
+        <link href="{% static 'css/opensans.css' %}" rel='stylesheet' type='text/css'>
+        <link href="{% static 'css/abel.css' %}" rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="{% static 'css/vendor/jquery-ui-1.10.4.custom.min.css' %}">
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-select.min.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+        <link rel="stylesheet" href="{% static 'css/bootstrap-theme.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap.vertical-tabs.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap/tabulator_bootstrap.css' %}">
+
+        <link href="{% static 'css/vendor/roboto.css' %}" rel='stylesheet' type='text/css'>
+
+        <!--[if IE]>
+        <script src="{% static 'js/ie7_fixes.js' %}"></script>
+        <![endif]-->
+
+        <style>
+        body {}
+        .navbar .nav.pull-right {        margin-left: 5px;        }
+        .inactive {
+            pointer-events: none;
+            cursor: default;
+            color: dimgrey !important;
+        }
+        </style>
+        <!--link rel="stylesheet" href="{% static 'css/bootstrap-responsive.min.css' %}"-->
+        <link rel="stylesheet" media="screen" href="{% static 'css/main.css' %}" />
+        <link rel="stylesheet" media="screen" href="{% static 'css/app.v1.css' %}">
+        <link rel="stylesheet" media="print" href="{% static 'css/print.css' %}">
+
+        {% block styleinclude %}
+        {% endblock %}
+        <style media="screen">
+        {% block styleextra %}
+        {% endblock %}
+        </style>
+        <link rel="stylesheet" href="{% static 'css/vendor/bootstrap-datetimepicker.min.css' %}">
+
+        <link rel="stylesheet" href="{% static 'css/vendor/jquery.nanoscroller.css' %}" />
+        <link rel="stylesheet" href="{% static 'css/top-bar.css' %}">
+        {% endcompress %}
+
+
+        {% block uncompressed_css %}
+        {% endblock %}
+
+        {% compress js %}
+        <script src="{% static 'django_js_reverse/js/reverse.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery-1.9.1.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/inheritance.js' %}"></script>
+        <script src="{% static 'js/vendor/modernizr-2.6.2.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery-1.9.1.min.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.bifrost.min.js' %}"></script>
+
+
+        <script src="{% static 'js/vendor/jquery-ui-1.10.4.custom.min.js' %}"></script>
+        <script src="{% static 'js/vendor/bootstrap.js' %}"></script>
+
+        <script src="{% static 'js/vendor/promise-6.1.0.min.js' %}"></script>
+        <script src="{% static 'js/vendor/promise-done-6.1.0.min.js' %}"></script>
+        <script src="{% static 'js/emif.proxies.js' %}"></script>
+
+        <script src="{% static 'js/vendor/jquery.cookie.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.canclear.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.highlight.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.history.js' %}"></script>
+
+        <script src="{% static 'js/vendor/bootbox.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/typeahead.jquery.min.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery-scrolltofixed.js' %}"></script>
+
+        <script src="{% static 'js/vendor/moment.min.js'  %}"></script>
+        <script src="{% static 'js/vendor/moment-with-locales.js' %}"></script>
+        <script src="{% static 'js/vendor/bootstrap-datetimepicker.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.nanoscroller.min.js' %}"></script>
+
+        <script src="{% static 'js/vendor/bootstrap-datetimepicker.js'  %}"></script>
+        <script src="{% static 'js/vendor/jquery.nanoscroller.min.js'  %}"></script>
+        <script src="{% static 'js/vendor/handlebars-v4.1.2.js'  %}"></script>
+        <script src="{% static 'js/vendor/underscore.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.hotkeys.js' %}"></script>
+        <script src="{% static 'js/vendor/jquery.localize.js' %}"></script>
+        <script src="{% static 'js/vendor/tabulator.js' %}"></script>
+        <script src="{% static 'js/vendor/js.cookie.js' %}"></script>
+
+        <!-- Montra Framework -->
+        <script src="{% static 'js/montra.module.js'  %}"></script>
+        <script src="{% static 'js/montra.framework.js'  %}"></script>
+        <script src="{% static 'js/montra.api.js' %}"></script>
+        <script src="{% static 'js/montra.utils.js' %}"></script>
+
+        <script type="application/javascript">
+
+            //handlebars custom helpers
+            //save var on template
+            Handlebars.registerHelper("setVar", function(varName, varValue, options) {
+                options[varName] = varValue;
+            });
+
+            // We need to configure this to be able to send requests by json with the csrftoken
+            var csrftoken = $.cookie('csrftoken');
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+
+            $.ajaxSetup({
+                crossDomain: false, // obviates need for sameOrigin test
+                beforeSend: function(xhr, settings) {
+                    if (!csrfSafeMethod(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                }
+            });
+        </script>
+
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="{% static 'js/vendor/bootstrap-select.min.js' %}"></script>
+
+        <!--[if lt IE 9]>
+        <script src="{% static 'js/vendor/respond.min.js' %}"></script>
+        <link rel="stylesheet" href="bootstrap_ie_compatibility" />
+        <![endif]-->
+        {% block headextra %}
+        {% endblock %}
+        {% endcompress %}
+
+        {% render_bundle 'main' %}
+    </head>
+    <body>
+
+    <!-- Left Navigation Bar -->
+    {% left_navigation_bar %}
+
+    <!-- Page's main content -->
+    <section class="content do-not-print">
+        <div class="wrapper">
+        <div class="not-supported">
+        <header class="top-head container-fluid">
+            <button type="button" class="navbar-toggle pull-left invisible_ink">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <nav class=" navbar-default hidden-xs" role="navigation">
+                <ul class="nav navbar-nav">
+                    <li>
+                    <a href="" class="TitleIndex"><span>{{config.brand|splitfirst}}</span> {{config.brand|ignorefirst}}</a>
+                    </li>
+                </ul>
+            </nav>
+        </header><br />
+            <div class="clearfix col-md-12 do_not_print">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                    <center>
+                        <span style="font-size: 400%;" class="fa-stack fa-lg">
+                          <i class="fas fa-fw fa-ban fa-stack-2x text-danger"></i>
+                          <i class="fas fa-fw fa-internet-explorer text-info fa-stack-1x"></i>
+                        </span>
+                        <h3>You seem to be using an old version of Internet Explorer.</h3>
+                    </center><br />
+                    <div style="text-align: justify" class="lead">The Internet browser you are currently using is not supported by the {{config.brand}}. We currently only support IE9-IE11, Chrome, Safari, Firefox and Opera. To be able to use our webpage we recommend you to update your Internet Explorer, or use another modern browser from the supported list.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            <div style="display" class="supported">
+                {% comment %}
+                {% include "reusable_blocks/navbar.html" %}
+                {% endcomment %}
+
+                <div >
+    <!-- Preloader -->
+    <!--div class="loading-container">
+      <div class="loading"><img src="{% static 'img/loading.gif' %}" width="40px;"></div>
+    </div-->
+        <header class="top-head container-fluid">
+            <button type="button" class="navbar-toggle pull-left invisible_ink">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <nav class=" navbar-default hidden-xs" role="navigation">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="" class="TitleIndex"><span>{{config.brand|splitfirst}}</span> {{config.brand|ignorefirst}}</a>
+                    </li>
+
+                    {% if not singlecommunity %}
+                        <li class="navbar-community">
+                            {% if not config.useCommunityList %}
+                                <a class="TitleIndex" href="community/{{comm.slug}}/questionnaires">{{comm.name}}</a>
+                            {%else%}
+                                <select id="comm_bar" class="selectpicker selectWidth" data-header="Select a community" data-live-search="true" name="comm_bar" onchange="location = this.value;"></select>
+
+                                <script>
+                                    var gp = GlobalProxy.getInstance();
+                                    gp.getCommunities().then(
+                                        function(data) {
+                                            cname = $("select[name='comm_bar']");
+                                            dname = null;
+
+                                            $("<span><i class='fas fa-fw fa-home'></i><small>      Home</small></span>").appendTo(dname);
+                                            for(var i=0; i<data['communities'].length; i++){
+                                                if("{{comm.name}}" == data['communities'][i]['name'])
+                                                {
+                                                    $("<option selected='selected' name ='"+i+"' value='community/"+data['communities'][i]['slug']+"/questionnaires' data-thumbnail='{{MEDIA_URL}}"+data['communities'][i]['thumbnail']+"'></option>").appendTo(cname);
+                                                    dname = $("option[name='"+i+"']");
+                                                    if(data['communities'][i]['thumbnail']!="")
+                                                        $("<span><img src='{{MEDIA_URL}}"+data['communities'][i]['thumbnail']+"' style='width:15%;height:15%;'/><small>      "+data['communities'][i]['name']+"</small></span>").appendTo(dname);
+                                                    else $("<span><small>"+data['communities'][i]['name']+"</small></span>").appendTo(dname);
+                                                }
+                                                else
+                                                {
+                                                    $("<option name ='"+i+"' value='community/"+data['communities'][i]['slug']+"/questionnaires' data-thumbnail='{{MEDIA_URL}}"+data['communities'][i]['thumbnail']+"'> <img src='{{MEDIA_URL}}"+data['communities'][i]['thumbnail']+"'/></option>").appendTo(cname);
+                                                    dname = $("option[name='"+i+"']");
+                                                    if(data['communities'][i]['thumbnail']!="")
+                                                        $("<span><img src='{{MEDIA_URL}}"+data['communities'][i]['thumbnail']+"' style='width:15%;height:15%;' /><small>      "+data['communities'][i]['name']+"</small></span>").appendTo(dname);
+                                                    else $("<span><small>"+data['communities'][i]['name']+"</small></span>").appendTo(dname);
+                                                }
+                                            }
+
+                                            //refresh select
+                                            cname.selectpicker('refresh');
+                                        }
+                                    );
+                                </script>
+                            {%endif%}
+                        </li>
+
+                        {% if questionnaire and comm.questionnaires.all|length > 1 %}
+                            <li class="navbar-community">
+                                <a class="TitleIndex" href="c/{{comm.slug}}/q/{{questionnaire.slug}}">{{questionnaire.slug}}</a>
+                            </li>
+                        {% endif %}
+
+                    {%endif%}
+                </ul>
+            </nav>
+
+
+
+{#            <ul class="nav-toolbar" style="float:right !important">#}
+{#                {% if user.is_authenticated %}#}
+{#                <li class="dropdown">#}
+{#                    <a data-placement="left" class="tooltippable" title="See notifications" href="#" data-toggle="dropdown"><i class="fas fa-fw fa-comments"></i>#}
+{#                        <span id="notification_badge" class="badge bg-warning"></span>#}
+{#                    </a>#}
+{#                    <div class="dropdown-menu md arrows pull-right panel panel-default arrows-top-right messages-dropdown">#}
+{#                        <div class="panel-heading">#}
+{#                        Latest Notifications#}
+{#                        </div>#}
+{##}
+{#                        <div class="list-group">#}
+{#                            <div id="notification_center">#}
+{#                               <center> <div class="notification">There are currently no new notifications.</div>#}
+{#                               </center>#}
+{#                            </div>#}
+{#                            <a href="notifications" class="btn btn-info btn-flat btn-block">View All Messages</a>#}
+{#                        </div>#}
+{##}
+{#                    </div>#}
+{#                </li>#}
+{#                {% endif %}#}
+{##}
+{#                <li class="dropdown"><a data-placement="left" class="tooltippable" title="More" href="#" data-toggle="dropdown"><i class="fas fa-fw fa-ellipsis-v"></i></a>#}
+{#                    <div class="dropdown-menu lg pull-right arrows panel panel-default arrows-top-right">#}
+{#                        <div class="panel-heading">#}
+{#                            User Menu#}
+{#                        </div>#}
+{#                        <div class="panel-body text-center">#}
+{#                            <div class="row">#}
+{#                                {% if user.is_authenticated %}#}
+{##}
+{#                                    <div class="col-xs-6 col-sm-4"><a href="accounts/profile_edit/" class="text-info"><span class="h2"><i class="fas fa-fw fa-user"></i></span><p class="text-gray">Profile</p></a></div>#}
+{##}
+{#                                    <div class="col-xs-6 col-sm-4"><a href="jobs/list" class="text-info"><span class="h2"><i class="fas fa-fw fa-list-alt"></i></span><p class="text-gray">Job Queue</p></a></div>#}
+{##}
+{#                                    <div class="col-xs-12 visible-xs-block"><hr></div>#}
+{##}
+{#                                    <div class="col-xs-6 col-sm-4"><a href="accounts/signout/" class="text-info"><span class="h2"><i class="fas fa-fw fa-sign-out-alt"></i></span><p class="text-gray">Sign out</p></a></div>#}
+{#                                {% else %}#}
+{##}
+{#                                    <div class="col-xs-6 col-sm-4"><a href="" class="text-info"><span class="h2"><i class="fas fa-fw fa-sign-in"></i></span><p class="text-gray">Sign in</p></a></div>#}
+{#                                {% endif %}#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                </li>#}
+{#            </ul>#}
+            {% if user.is_authenticated %}
+            <form role="quicksearch"
+                class="navbar-left app-search pull-left hidden-xs"
+                style="width:40% !important; float:right !important" method="POST"
+                {% if comm %}
+                    action="c/{{comm.slug}}/resultsdiff/1"
+                {%else %}
+                    action="resultsdiff/1"
+                {% endif %}>
+                    <i class="fas fa-search app-search-icon"></i>
+                    {% csrf_token %}
+                    <input
+                      title="Enter the terms you wish to search for. The search function is explicit (literal) and does not use spelling similarities, specific spelling is required (e.g. 'haematology' and 'hematology')."
+                      placeholder="Free text search {{comm.name}}"
+                      class="form-control form-control-circle search-query span2_5 form-text"
+                      type="text"
+                      id="edit-search-block-form--3"
+                      name="query"
+                      size="25"
+                      maxlength="256"
+                      {% if isAdvanced %}
+                      value=""
+                      {% else %}
+                      value="{{search_old}}"
+                      {% endif %}
+                    >
+                    <input name='search_full' value='search_full' type='hidden'>
+            </form>
+            {% endif %}
+
+        </header>
+        <!-- Header Ends -->
+
+
+        <div class="warper container-fluid">
+
+                    {% if user.is_authenticated and user.is_active %}
+                    <div id="topnavigator">
+                        <div>
+                            <div class="pull-left">
+                                {% render_breadcrumbs "django_bootstrap_breadcrumbs/bootstrap3.html" %}
+                            </div>
+                            {% if config.useFingerprintList %}
+                                {% if fingerprint %}
+                                    <div class="pull-left">
+                                    <select id="fp_bar" class="selectpicker selectWidth" data-header="Select an entry" data-live-search="true" name="fp_bar" onchange="location = this.value+'/'+[$('#active_qs_sortid').val()].join('');"></select>
+                                    <script>
+                                        var gp2 = GlobalProxy.getInstance();
+                                        gp2.getFingerprintsOfCommunity('{{comm.slug}}').then(
+                                            function(data) {
+                                                cname = $("select[name='fp_bar']");
+
+                                                community_fingerprint_URLpart = findPath(this_mode);
+                                                questionnaireID_suffix = "";
+                                                //$('#active_qs_sortid').val()
+
+                                                // If its on fingerprint edit mode or advanced search, add questionnaire id
+                                                if ( community_fingerprint_URLpart.indexOf("dbEdit") !== -1 || community_fingerprint_URLpart.indexOf("advancedSearch") !== -1 )
+                                                    questionnaireID_suffix = "/{{questionset.questionnaire.pk}}";
+
+                                                for(var i=0; i<data['fingerprints'].length; i++){
+                                                    if("{{fingerprint_id}}" == data['fingerprints'][i]['fingerprint_hash']) {
+                                                        $("<option selected='selected' name ='fp"+i+"' value='"+community_fingerprint_URLpart+data['fingerprints'][i]['fingerprint_hash']+questionnaireID_suffix+"' ></option>").appendTo(cname);
+                                                    }
+                                                    else {
+                                                        $("<option name ='fp"+i+"' value='"+community_fingerprint_URLpart+data['fingerprints'][i]['fingerprint_hash']+questionnaireID_suffix+"' > </option>").appendTo(cname);
+                                                    }
+                                                    dname = $("option[name='fp"+i+"']");
+                                                    $("<span><small>"+data['fingerprints'][i]['name']+"</small></span>").appendTo(dname);
+                                                }
+                                                cname.selectpicker('refresh');
+                                            }
+                                        );
+                                    </script>
+                                    </div>
+                                {%endif%}
+                            {%endif%}
+
+                            <div class="toolbar pull-right">
+                                {% block toolbar %} {% endblock %}
+                            </div>
+                        </div>
+                    </div>
+                        {% include "reusable_blocks/modals.html" with collapse=collapseall %}
+                    {% endif %}
+
+                    <div style="display: none; z-index: 2000; position:fixed; bottom:20px; right: 20px;" class="alert alert-info" id="exporting-message">Databases of the current view are being exported, please wait.</div>
+
+                    {% if user.is_authenticated and not user.is_active %}
+                        <p class="lead" style="text-align:center;"><i class="fas fa-fw fa-lock fa-5x"></i></p>
+                        <p class="lead" style="text-align:center;">It seems your account is not active.</p>
+                        <p class="lead" style="text-align:center;">This may be due to a administrator block. Please contact the administration with any doubts.</p>
+                    {% else %}
+                      <div style="clear: both" id="main-reference">
+                        {% block content %}
+
+                        {% endblock %}
+                      </div>
+                    {% endif%}
+
+        </div>
+        <!-- Warper Ends Here (working area) -->
+                </div>
+            </div>
+            <!-- END OF SUPPORTED -->
+            <div class="push"></div>
+        </div>
+
+           <footer class="container-fluid footer">
+            <small>
+                {{config.copyright}}</small>
+                <a href="#" class="pull-right scrollToTop"><i class="fas fa-fw fa-chevron-up"></i></a>
+                {{config.footer_extra|safe}}
+            </footer>
+        {% if config.cookie_disclaimer and not user|cookies_consented %}
+            <div id="form_popup" class="cookie_disclaimer_footer">
+                <form class="row" id="cookies_form" action="/cookiesconsent" method="POST">
+                    {% csrf_token %}
+                    <small>
+                        <span style="color: whitesmoke; margin-left: 15px">
+                            <i class="fa fa-info-circle" aria-hidden="true" style="margin-right: 5px"></i>
+                            {{ config.cookie_disclaimer|safe }}
+                            {% if config.privacy_notice_url %}
+                                For further information, please read our <a href="{{ config.privacy_notice_url }}">privacy notice</a>.
+                            {% endif %}
+                        </span>
+                        <button id="form_submit_button" class="btn-small btn-grey" type="submit" style="margin-left: 10px">I Accept</button>
+                    </small>
+                </form>
+            </div>
+        {% endif %}
+    </section>
+
+
+        {% block uncompressed_js %}
+        {% endblock %}
+
+        {% compress js %}
+        <!-- container -->
+        <script src="{% static 'js/main.js' %}"></script>
+
+
+        {% block scriptextraincludes %}
+        {% endblock %}
+        <script type="text/javascript">
+
+        // onsubmit handler for cookie disclaimer
+        var cookieform = document.forms.cookies_form
+        if (typeof(cookieform) != 'undefined' && cookieform != null)
+            cookieform.onsubmit = function() {
+                document.getElementById("form_submit_button").disabled = true;
+                fetch(
+                    this.action,
+                    {
+                        "method": "POST",
+                        "body": new FormData(this),
+                    },
+                )
+                    .then((r) => {
+                        console.log("Cookie consent submitted, hiding popup...")
+                        document.getElementById("form_popup").style.display = "none";
+                    })
+                return false;
+            }
+
+
+        var _gaq = _gaq || [];
+
+        {% for attr in GOOGLE_ANALYTICS %}
+            _gaq.push({{attr|safe}});
+        {% endfor %}
+
+        (function() {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+        })();
+        </script>
+        {% endcompress %}
+
+        <script type="text/javascript">
+        if ($(".search-query").length > 0){
+            $('.search-query').canclear({
+                advanced: true,
+            });
+        }
+        {% block scriptextra %}
+        {% endblock %}
+        </script>
+
+    </body>
+</html>
+

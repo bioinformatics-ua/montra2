@@ -1,0 +1,135 @@
+<!-- # -*- coding: utf-8 -*-
+    # Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+    #
+    # This program is free software: you can redistribute it and/or modify
+    # it under the terms of the GNU General Public License as published by
+    # the Free Software Foundation, either version 3 of the License, or
+    # (at your option) any later version.
+    #
+    # This program is distributed in the hope that it will be useful,
+    # but WITHOUT ANY WARRANTY; without even the implied warranty of
+    # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    # GNU General Public License for more details.
+    #
+    # You should have received a copy of the GNU General Public License
+    # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    #-->
+{% load extra_tags %}
+{% load markup questionnaire i18n %}
+<!-- Set variable h1 to accordion -->
+{% setglobal h1_already 0 %}
+{% setglobal h1_last 0 %}
+
+
+{% include "advanced_search_paginator.html" %}
+
+{% if questions_list.0.0.sortid != 0 and questions_list.0.0.sortid != 99 %}
+    <div>
+        <a id="collapseall_qs_{{ questions_list.0.0.sortid }}"  class="btn btn-default pull-right" href="">Collapse all </a>
+    </div>
+{% endif %}
+
+<div class="questionset-title" style="font-size:6px">
+    <h3>
+        {{ questions_list.0.0.text|removeh1 }}
+    </h3>
+</div>
+
+{% if questions_list.0.0.help_text != "" %}
+    <div class="clearfix">
+        {{questions_list.0.0.help_text|safe}}
+    </div>
+{% endif %}
+
+{% csrf_token %}
+
+<input type="hidden" name="questionset_id" value="{{ questionset.id }}" />
+<div class="panel-group" id="accordion_{{ questionset.sortid }}">
+{% setglobal iteratorQ 0 %}
+{% for question, qdict in qlist %}
+    {% if question.show_advanced %}
+    {% incrementglobal iteratorQ %}
+
+    {% with errors|dictget:question.number as error %}
+    {% if question.text|geths == 'h1' %}
+    <!-- If has already appear another h1 before close accordion-group -->
+        {% if h1_already.value == '1' %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% setglobal h1_already 1 %}
+        {% setglobal h1_last 1 %}
+
+        <!-- missing accordio here -->
+        <div class="panel panel-default {{qdict.depon_class}}" id="acc_qc_{{ question.number }}" {{qdict.checkstring|safe}}>
+            <div class="panel-body">
+                {% include "reusable/question_toolbar.html" %}
+    {% endif %}
+    <div class="question type_{{ qdict.qtype }} {% if error %} error prepend-top{% endif %}{{ qdict.qnum_class }}{{ qdict.qalpha_class }} {{qdict.depon_class}}" id="qc_{{ question.number }}" {{qdict.checkstring|safe}}>
+        {% if question.text|geths == 'h1' %}
+            <a class="accordion-toggle dedit" data-toggle="collapse" data-parent="#accordion_{{ questionset.sortid }}" href="#div_{{ questionset.sortid }}_{{ iteratorQ.value }}">
+        {% endif %}
+
+        {% if qdict.custom %}
+            {% if error %}
+                <div class="error">
+                    {{ error }}
+                </div>
+            {% endif %}
+
+            {% include qdict.template %}
+
+        {% else %}
+            <div class="question-text {% if qdict.required %}required{% endif %} {% if error %}text-error{% endif %} qtext_{{question.text|geths}}">
+                <span id="question_nr_{{question.number|removedots}}" class="qnumber_{{question.text|geths}}">
+                    {{ question.display_number }}.
+                </span>
+                <span id="question_{{question.number|removedots}}" class="qtext">
+
+                    {{ question.text|removehs|safe}}
+
+                    {% if question.tooltip and question.help_text %}
+                        <div class="question-help-text" style="display: none;">
+                            <span>{{ question.help_text|safe }}</span>
+                        </div>
+                    {% endif %}
+                </span>
+                {% if question.text|geths != 'h1' %}
+                    {% include "reusable/question_toolbar.html" %}
+                {% endif %}
+            </div>
+
+            {% if question.text|geths == 'h1' %}
+                </a>
+                </div>
+                <div id="div_{{ questionset.sortid }}_{{ iteratorQ.value }}" class="panel-collapse in collapse">
+                    <div class="panel-body">
+            {% endif %}
+
+            {% include "reusable/question_answer.html" %}
+        {% endif %}
+
+        {% if question.footer %}
+            <div class="question-footer">
+                {{ question.footer|textile }}
+                <div class="clearfix"></div>
+            </div>
+        {% endif %}
+    </div>
+    <!-- /question container -->
+    {% endwith %}
+    {% endif %}
+{% endfor %}
+
+{% if h1_last.value == '1' %}
+        </div>
+    </div>
+</div>
+{% endif %}
+</div>
+
+{% include "advanced_search_paginator.html" %}
+
+{% include "reusable/adv_js.html" %}

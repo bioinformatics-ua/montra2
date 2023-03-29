@@ -1,0 +1,464 @@
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+
+    <script>
+        BASE_URL = "{{ BASE_URL }}";
+        var ENDPOINTS = {
+		    datasource: BASE_URL + 'achilles/ds/{{ fid }}',
+	        achilles  : "{% static 'achilles/achilles.html' %}"
+        };
+
+        {% if request.GET.publickey %}
+            var global_public_key = '{{request.GET.publickey}}';
+        {% endif %}
+    </script>
+
+	<script src="{% static 'achilles/js/jquery-1.10.2.js' %}"></script>
+	<script src="{% static 'js/vendor/jquery.cookie.js' %}"></script>
+
+    <script src="{% static 'js/vendor/iframeResizer.contentWindow.js' %}"></script>
+	<script src="{% static 'achilles/js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/vendor/bootbox.min.js' %}"></script>
+
+    <script src="{% static 'achilles/achilles_base.js' %}"></script>
+
+    <script src="{% static 'achilles/js/curl.config.js' %}"></script>
+	<script src="{% static 'achilles/js/curl.js' %}"></script>
+
+	<script src="{% static 'achilles/js/app/achilles.js' %}"></script>
+	<script src="{% static 'achilles/js/app/achillesWrapper.js' %}"></script>
+
+	<script src="{% static 'js/emif.proxies.js' %}"></script>
+
+    {% if contains_datasource %}
+    	{% if unzip_in_progress == 'processing' or unzip_in_progress == 'reverting' or unzip_in_progress == 'not_started' %}
+    <script>
+        function updateProgress(percentage){
+            if(percentage > 100) percentage = 100;
+            $('#progressBar').css('width', percentage+'%');
+
+        }
+        function loop(){
+            $.get(window.BASE_URL+'achilles/zip/status/{{ fid }}/')
+                .done(function(data){
+                    console.log("success")
+                    console.log(data);
+                    if(data.status === 'completed'){
+						setTimeout(function(){location.reload(true);}, 2000);
+
+						var fp = FingerprintProxy.getInstance('{{fid}}');
+						var store = fp.getStore();
+						store.setEmpty('{{pid}}',false);
+					}else if(data.status === 'error'){
+						$("#alertbox").toggleClass("alert-danger", true);
+						$("#alertbox").toggleClass("alert-info", false);
+						$("#alertbox").html("There was an error processing your data. Please wait while the problem is being fixed.");
+						setTimeout(function(){location.reload(true);}, 2000);
+
+						var fp = FingerprintProxy.getInstance('{{fid}}');
+						var store = fp.getStore();
+						store.setEmpty('{{pid}}',true);
+					}else{
+						$("#alertbox").toggleClass("alert-danger", false);
+						$("#alertbox").toggleClass("alert-info", false);
+						if(data.status === 'processing'){
+							$("#alertbox").toggleClass("alert-info", true);
+							$("#alertbox").html("A new data has been uploaded for this fingerprint, please wait while it is being prepared for you.");
+						}else{
+							$("#alertbox").toggleClass("alert-danger", true);
+							$("#alertbox").html("Rolling back your data to a previous revision. Please wait.");
+						}
+
+
+						updateProgress((data.partial/(data.total))*100);
+						setTimeout(loop, 2000);
+					}
+                })
+                .fail(function(data){
+
+                    console.log("fail");
+                    console.log(data);
+                });
+        }
+        loop();
+    </script>
+   		{% endif %}
+    {% endif %}
+
+
+	<title>Achilles Web Plugin - {{ fid }}</title>
+	<link href="{% static 'achilles/css/jquery.datatables.css' %}" rel='stylesheet' type='text/css'>
+	<link href="{% static 'achilles/css/jquery.datatables.tabletools.css' %}" rel='stylesheet' type='text/css'>
+	<link href="{% static 'achilles/css/jquery.datatables.colvis.css' %}" rel='stylesheet' type='text/css'>
+	<link href="{% static 'achilles/css/chart.css' %}" rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'css/bootstrap-theme.css' %}">
+    <link rel="stylesheet" href="{% static 'css/app.v1.css' %}">
+
+    <link href="{% static 'achilles/css/achilles.css' %}" rel="stylesheet">
+	<link href="{% static 'achilles/css/chart.css' %}" rel="stylesheet">
+
+</head>
+<body style="background-color: white">
+    <div id="playground" class="container-fluid">
+        {% if contains_datasource %}
+            {% if unzip_in_progress == 'processing' or unzip_in_progress == 'reverting' or unzip_in_progress == 'not_started' %}
+        <div class="alert alert-info" id="alertbox" role="alert">
+            A new data has been uploaded for this fingerprint, please wait while it is being prepared for you.
+        </div>
+        <div class="progress">
+            <div id="progressBar" class="progress-bar progress-bar-info progress-bar-striped active" role="progressbar"
+                aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+            </div>
+        </div>
+            {% elif unzip_in_progress == 'completed' %}
+		<script>
+			$(document).ready(function(){
+				var achillespath =  ENDPOINTS.achilles;
+				var containerName = '#awcontainer';
+                console.log(window.datasourcepath);
+
+				var a;
+
+                var isVisible = function(){
+                    var visible = $('#awcontainer').is(":visible");
+                    if(visible){
+                        a = new Achilles( window.datasourcepath, containerName, achillespath, achillesWeb);
+                    }
+                    else {
+                        setTimeout(isVisible, 1500);
+                    }
+                };
+                setTimeout(isVisible, 1500);
+
+			});
+		</script>
+        <nav class="navbar navbar-default navbar-afixed-top" role="navigation">
+            <div class="container-fluid">
+				<div class="navbar-header">
+
+				</div>
+                <div class="collapse navbar-collapse" id="data-show-navmenu">
+                    <ul class="nav navbar-nav">
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Change Reports <span class="caret"></span></a>
+                            <ul class="dropdown-menu" id="awmenu" >
+                                {% include 'achilles_menu.html' %}
+                            </ul>
+                        </li>
+                    </ul>
+                    {% if owner_fingerprint %}
+                    <ul class="nav navbar-nav navbar-right">
+                        <li data-toggle="tooltip"
+                                    data-placement="left" title="Upload more recent data to show in Achilles Web" >
+                            <button type="button" id="updatebutton" class="pull-right btn btn-primary navbar-btn" data-target="#changeDatasourceModal" data-toggle="modal">{{ updadd }}</button>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+        <div id="awcontainer"></div>
+        <!-- Modal -->
+        <div id="changeDatasourceModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form class="storeDSForm" action="achilles/ds/{{ fid }}/" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><span aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="myModalLabel">{{ updadd }} Datasource</h3>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                <!-- Nav tabs -->
+                                <ul class="nav nav-tabs" role="tablist">
+                                    <li role="presentation" class="active"><a href="#formZIPModal" aria-controls="formZIPModal" role="tab" data-toggle="tab">ZIP</a></li>
+                                    <li role="presentation"><a href="#formUrlModal" aria-controls="formUrlModal" role="tab" data-toggle="tab">URL</a></li>
+                                </ul>
+
+                                <!-- Tab panes -->
+                                <div class="tab-content">
+                                    <div role="tabpanel" class="tab-pane " id="formUrlModal">
+                                        <div class="form-group">
+                                            <label for="ds_url">URL to Datasource:</label>
+                                            <input id="ds_url" name="ds_url" type="text" value="{{ url }}" style="width: 100%" />
+                                            <p class="help-block">
+                                            Please insert a valid datasource link following the specifications detailed by <a target="_blank" href="https://github.com/OHDSI/AchillesWeb">OHDSI Achilles Web Datasource</a>
+												[<a role="button" data-toggle="collapse" href="#collapseURL" aria-expanded="false" aria-controls="collapseURL">?</a>]
+                                        </p>
+                                        </div>
+										<div id="collapseURL" class="collapse col-sm-12">
+											<div class="col-sm-4">
+												<ul class="list-unstyled">
+													<li>
+														URL must provide a valid JSON object with the default structure. (As specified in <a target="_blank" href="https://github.com/OHDSI/AchillesWeb">Achilles Web Documentation</a>)
+													</li>
+													<li>
+														Report REST API must be implemented, mantained and served by Data Owners.
+													</li>
+													<li>
+														Data Owners must allow Cross Site Requests made by <pre>{{ BASE_URL}}</pre>
+													</li>
+													<li>
+														No report URL are ever made available to clients. Hiding data provider API.
+													</li>
+												</ul>
+											</div>
+											<div class="col-sm-8 pull-right">
+												<img src="{% static 'achilles/images/achilles_datasource_structure.png' %}" class="img-responsive img-thumbnail">
+											</div>
+										</div>
+                                    </div>
+                                    <div role="tabpanel" class="tab-pane active" id="formZIPModal">
+                                        <div class="form-group">
+                                            <label for="ds_zip">Zip File Input</label>
+                                            <input id="ds_zip" name="ds_zip" type="file"/>
+                                            <p class="help-block">Please upload a Achilles' compliant Zip File [<a role="button" data-toggle="collapse" href="#collapseZIP" aria-expanded="false" aria-controls="collapseZIP">?</a>]</p>
+											<p class="well"><b>IMPORTANT:</b> Zip File MUST contain a folder named 'reports' with all report data following the structure shown in the image, otherwise it won't work</p>
+                                        </div>
+										<div id="collapseZIP" class="collapse col-sm-12">
+											<h4>Simple Procedure:</h4>
+											<div class="col-sm-8">
+												<ul class="list-unstyled">
+													<li>
+														Run <a target="_blank" href="https://github.com/OHDSI/Achilles">OHDSI's Achilles R-program</a> on your data
+													</li>
+													<li>
+														<p>Run:</p>
+														<p><pre>exportToJson(connectionDetails,"CDM_SCHEMA", "RESULTS_SCHEMA", "&lt;some_folder&gt;/reports")</pre></p>
+													</li>
+													<li>
+														Zip the resulting folder (be sure to maintain the folder structure inside the zip archive - see image for more details)
+													</li>
+													<li>
+														Upload it to our server
+													</li>
+												</ul>
+
+											</div>
+											<div class="col-sm-4 pull-right">
+												<img src="{% static 'achilles/images/achilles_zip_structure.png' %}" class="img-responsive img-thumbnail">
+											</div>
+										</div>
+                                    </div>
+                                </div>
+
+                            </div>
+                                <div style="display: none" class="zipProgress">
+                                    <center><h4>Uploading, please wait...</h4></center>
+                                    <div class="progress">
+                                      <div class="zipBar progress-bar progress-bar-info progress-bar-striped" role="progressbar"
+                                      aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                                        <span class="zipIndicator sr-only"></span>
+                                      </div>
+                                    </div>
+                                </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <!-- The following line won't work in IE because IE is dumb and doesn't allow forms -->
+                            <button id="submitButton" type="button" class="btn btn-primary submitButton">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+            {% elif unzip_in_progress == 'error' %}
+		<div class="alert alert-danger" role="alert">
+			There was an unexpected error. Please try again later.
+		</div>
+			{% else %}
+		<div class="alert alert-danger" role="alert">
+			This situation is unexpected. Please try again later
+		</div>
+			{% endif %}
+        {% elif owner_fingerprint or request.user.is_superuser %}
+
+        <div>
+			<div class="page-header">
+				<h3 id="myModalLabel">AchillesWeb Plugin - {{ updadd }} Data</h3>
+			</div>
+			<div class="panel panel-info">
+				<div class="panel-body">
+					<a target="_blank" href="https://github.com/OHDSI/AchillesWeb">Achilles Web</a> is a visualization tool developed by <a target="_blank" href="http://www.ohdsi.org/">OHDSI</a>
+					for descriptive statistics generated by <a target="_blank" href="https://github.com/OHDSI/Achilles">Achilles R-package</a>
+					for databases supporting <a href="http://omop.org/cdm">OMOP Common Data Model v4</a>.
+					<a class="text-info" href="#" data-toggle="modal" data-target=".bs-example-modal-lg">More about Achilles Web</a>
+
+					<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  						<div class="modal-dialog modal-lg" role="document">
+    						<div class="modal-content">
+								<div class="modal-body">
+									<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+									<div class="container-fluid">
+										<div class="row">
+											<div class="col-sm-12">
+												<a target="_blank" href="https://github.com/OHDSI/AchillesWeb">Achilles Web</a> is a visualization tool developed by <a target="_blank" href="http://www.ohdsi.org/">OHDSI</a>
+													for descriptive statistics generated by <a target="_blank" href="https://github.com/OHDSI/Achilles">Achilles R-package</a>
+													for databases supporting <a href="http://omop.org/cdm">OMOP Common Data Model v4</a>.
+
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-4">
+												<p>Achilles and Achilles Web show various statistic reports about the data presented, such as:</p>
+												<ul class="list-unstyled">
+													<li>General Information (Dashboard) <small class="text-info">(shown in the image)</small></li>
+													<li>Observation</li>
+													<li>Person</li>
+													<li>Visits</li>
+													<li>Procedure</li>
+													<li>Death</li>
+													<li>Conditions</li>
+													<li>Drug Exposure</li>
+												</ul>
+												A fully functional Achilles Web Interface (with example data) may be seen
+												<a target="_blank" href="http://www.ohdsi.org/web/achilles/index.html">here</a>
+											</div>
+											<img src="{% static 'achilles/images/achilles_example.png' %}" class="img-responsive img-thumbnail col-sm-8" />
+										</div>
+									</div>
+								</div>
+    						</div>
+  						</div>
+					</div>
+				</div>
+			</div>
+
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a id="a-tab-zip" href="#formZIP" aria-controls="formZIP" role="tab" data-toggle="tab">ZIP</a></li>
+				<li role="presentation"><a id="a-tab-url" href="#formUrl" aria-controls="formUrl" role="tab" data-toggle="tab">URL</a></li>
+			</ul>
+
+			<!-- Tab panes -->
+			<div>
+				<form class="storeDSForm" action="/achilles/ds/{{ fid }}/" method="post" enctype="multipart/form-data">
+					{% csrf_token %}
+
+					<div class="tab-content col-sm-12">
+						<div role="tabpanel" class="tab-pane" id="formUrl">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label for="ds_url">URL to Datasource:</label>
+									<input id="ds_url" name="ds_url" type="text" value="{{ url }}" style="width: 100%" />
+									<p class="help-block">
+										[<a role="button" data-toggle="collapse" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">+</a>]
+										Please insert a valid datasource URL following the specifications detailed by <a target="_blank" href="https://github.com/OHDSI/AchillesWeb">OHDSI Achilles Web Datasource</a>
+									</p>
+								</div>
+								<button id="submitURLButton" type="button" class="btn btn-primary submitButton" >Save changes</button>
+							</div>
+							<div id="collapseTwo" class="collapse col-sm-8">
+								<div class="panel panel-info">
+									<div class="panel-body">
+										<div class="col-sm-4">
+											<ul class="list-unstyled">
+												<li>
+													URL must provide a valid JSON object with the default structure. (As specified in <a target="_blank" href="https://github.com/OHDSI/AchillesWeb">Achilles Web Documentation</a>)
+												</li>
+												<li>
+													Report REST API must be implemented, mantained and served by Data Owners.
+												</li>
+												<li>
+													Data Owners must allow Cross Site Requests made by <pre>{{ BASE_URL}}</pre>
+												</li>
+												<li>
+													No report URL are ever made available to clients. Hiding data provider API.
+												</li>
+											</ul>
+										</div>
+										<div class="col-sm-8 pull-right">
+											<img src="{% static 'achilles/images/achilles_datasource_structure.png' %}" class="img-responsive img-thumbnail">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div role="tabpanel" class="tab-pane active" id="formZIP">
+							<div class="col-sm-4">
+								<div class="form-group">
+									<label for="ds_zip">Zip File Input</label>
+									<input id="ds_zip" name="ds_zip" type="file"/>
+									<p class="help-block">Please upload a <a target="_blank" href="https://github.com/OHDSI/Achilles">Achilles</a>' compliant Zip File [<a role="button" data-toggle="collapse" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">?</a>]</p>
+								</div>
+								<button id="submitZIPButton" type="button" class="btn btn-primary submitButton">Save changes</button>
+                                <div style="display: none" class="zipProgress">
+                                    <center><h4>Uploading, please wait...</h4></center>
+                                    <div class="progress">
+                                      <div class="zipBar progress-bar progress-bar-info progress-bar-striped" role="progressbar"
+                                      aria-valuemin="0" aria-valuemax="100" style="width:0%">
+                                        <span class="zipIndicator sr-only"></span>
+                                      </div>
+                                    </div>
+                                </div>
+							</div>
+							<div id="collapseOne" class="collapse col-sm-8">
+								<div class="panel panel-info">
+									<div class="panel-body">
+										<h4>Simple Procedure:</h4>
+										<div class="col-sm-8">
+											<ul class="list-unstyled">
+												<li>
+													Run <a target="_blank" href="https://github.com/OHDSI/Achilles">OHDSI's Achilles R-program</a> on your data
+												</li>
+												<li>
+													<p>Run:</p>
+													<p><pre>exportToJson(connectionDetails,"CDM_SCHEMA", "RESULTS_SCHEMA", "&lt;some_folder&gt;/reports")</pre></p>
+												</li>
+												<li>
+													Zip the resulting folder (be sure to maintain the folder structure inside the zip archive - see image for more details)
+												</li>
+												<li>
+													Upload it to our server
+												</li>
+											</ul>
+											<p class="well"><b>IMPORTANT:</b> Zip File MUST contain a folder named 'reports' with all report data following the structure shown in the image, otherwise it won't work</p>
+										</div>
+										<div class="col-sm-4 pull-right">
+											<img src="{% static 'achilles/images/achilles_zip_structure.png' %}" class="img-responsive img-thumbnail">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- The following line won't work in IE because IE is dumb and doesn't allow forms -->
+
+				</form>
+			</div>
+
+        </div>
+		{% else %}
+		<! -- nothing to show -->
+		<div class="alert alert-danger" role="alert">
+			No Achilles data provided for this fingerprint. Please come back later.
+		</div>
+        {% endif %}
+
+    </div>
+</body>
+</html>

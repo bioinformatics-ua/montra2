@@ -1,0 +1,44 @@
+
+{% extends "newsletter/common.html" %}
+{% load i18n %}
+
+{% comment %} # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# {% endcomment %}
+
+{% block title %}{% trans "Newsletter archive" %}{% endblock title %}
+
+{% block body %}
+<center><h3>Archive of {{ newsletter.title }}</h3>
+<table class="table table-bordered table-striped table-hover">
+    <thead>
+        <tr>
+            <th>Newsletter</th>
+            <th>Date</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for submission in latest %}
+    <tr style="cursor: pointer;" onclick="javascript:location.href='{{ submission.get_absolute_url }}'">
+        <td>{{ submission.message.title }}</td>
+        <td>{{ submission.publish_date }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<a href="newsletter/{{newsletter.slug}}/">Back to list</a>
+</center>
+{% endblock body %}

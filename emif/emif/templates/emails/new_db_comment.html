@@ -1,0 +1,30 @@
+{% load extra_tags %}
+{% comment %} # -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+# {% endcomment %}
+
+Dear {{owner}}, <br /><br />
+
+You've just received the following new comment on your database <a href="{{base_url}}/fingerprint/{{fingerprint_id}}/1/">{{fingerprint_name}}</a>, in the {{config.brand}}.
+<blockquote>
+  <p style="text-align:justify;
+text-justify:inter-word;">{{comment}}</p>
+  <small>By {{user_commented}}</small>
+</blockquote>
+To check the discussion section on your database, please click <a href="{{base_url}}/fingerprint/{{fingerprint_id}}/1/discussion">here</a>
+
+
+

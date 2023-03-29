@@ -1,0 +1,101 @@
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+
+<link rel="stylesheet" href="{% static 'css/vendor/bootstrap-select.min.css' %}">
+<script src="{% static 'js/vendor/bootstrap-select.min.js' %}"></script>
+
+<script type="text/javascript" src="{% static 'bower_components/webcomponentsjs/webcomponents-lite.min.js' %}"></script>
+
+<link rel="import" href="{% static './custom-elements/geo-dropdown.html' %}">
+<div class="clearfix">
+    <div class="row">
+    <div class="input col-md-9 ">
+        {% if advanced_search %}
+                <input type="text" class="form-control" size="60" id="question_{{ question.number }}" name="question_{{ question.number }}" value="{{ qdict.value|striptags }}" />
+        {% else %}
+            {% if readonly %}
+            <div class="form-control fake_input fake_input_disabled" id="question_{{ question.number }}" name="question_{{ question.number }}"></div>
+
+            {% else %}
+                <div class="location">
+
+                    <geo-dropdown webservice="geowebservice" url='https://emif-catalogue.eu/geodropdown/geodatabase/' id="question_{{ question.number }}" country="question_{{ question.number }}_country" adm1="question_{{ question.number }}_adm1" adm2="question_{{ question.number }}_adm2" reach="{{question.checks}}"  answer="{% if '{' in qdict.value %}{{qdict.value}}{% endif %}"  clean="cleanloc_{{question.number}}" ></geo-dropdown>
+
+                </div>
+                <input type="hidden" id="question_{{ question.number }}" name="question_{{ question.number }}" value='{{qdict.value}}' />
+
+
+            {% endif %}
+            {% if question.extra %}
+                <span class="help-block">{{ question.extra }}</span>
+            {% endif %}
+            {% if qdict.value %}
+                <script type="text/javascript">
+                    markAnswered('{{ question.number|removedots}}');
+                  </script>
+            {% endif %}
+        {% endif %}
+
+
+
+    </div>
+</div>
+</div>
+        <script type="text/javascript">
+            {% if readonly%}
+                $(function(){
+                    var representation;
+
+                    {% if '{' in qdict.value %}
+                        representation = {{qdict.value|safe}};
+                    {% else %}
+                        representation = {};
+                    {% endif %}
+
+                    var order = ['adm5', 'adm4', 'adm3', 'adm2', 'adm1', 'country', 'continent']
+                    var textual_rep = '';
+
+                    for(var i = 0;i<order.length;i++){
+                        var level = order[i];
+                        if(level in representation && representation[order[i]].length > 0){
+                            result = representation[order[i]].split('gcode')[0];
+                            if(textual_rep.length != 0)
+                                textual_rep += ', ';
+                            textual_rep +=  result;
+                        }
+                    }
+
+                    $('[id="question_{{ question.number }}"]').html(textual_rep);
+                });
+            {% else %}
+            try {
+                document.querySelector('geo-dropdown').addEventListener('changeVal', function(e) {
+                    var val = JSON.stringify(e.detail);
+                    //var val = "{\"country\":\"" + e.detail.country +"\",\"adm1\":\"" + e.detail.adm1 +"\",\"adm2\":\"" + e.detail.adm2 + "\"}";
+                    $('input[id="'+this.id+'"]').val(val);
+                    $('input[id="'+this.id+'"]').change();
+                    $('input[id="'+this.id+'"]').trigger("change");
+                });
+            } catch(err){
+                console.warn('Cannot load geodropdown');
+            }
+            {% endif %}
+        </script>

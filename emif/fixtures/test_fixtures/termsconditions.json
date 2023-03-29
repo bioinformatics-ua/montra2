@@ -1,0 +1,11 @@
+[
+    {
+        "model": "accounts.termsconditions",
+        "fields": {
+            "name": "default",
+            "description": "Default terms and conditions.",
+            "enabled": true,
+            "created_date": "2020-10-20T16:45:13.059Z"
+        }
+    }
+]

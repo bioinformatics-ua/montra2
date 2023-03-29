@@ -1,0 +1,453 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% load django_bootstrap_breadcrumbs %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+
+    {% if comm %}
+      {% breadcrumb database_name|ellipsis:40 "c/"|add:comm.slug|add:"/fingerprint/"|add:fingerprint_id|add:"/1" %}
+    {% else %}
+      {% breadcrumb database_name|ellipsis:40 "fingerprint/"|add:fingerprint_id|add:"/1" %}
+    {% endif %}
+    {% breadcrumb "More Like This" "" %}
+{% endblock %}
+
+
+{% block styleinclude %}
+<link rel="stylesheet" href="{% static 'css/theme.blue.css' %}">
+<link rel="stylesheet" href="{% static 'css/vendor/jquery.boolrelwidget.css' %}"></script>
+
+{% endblock %}
+
+
+{% block scriptextraincludes %}
+
+<script src="{% static 'js/vendor/jquery.boolrelwidget.js' %}"></script>
+<script src="{% static 'js/vendor/jquery.ba-throttle-debounce.min.js' %}"></script>
+<script src="{% static 'js/vendor/json2.js' %}"></script>
+<script src="{% static 'js/paginator-sorter.js' %}"></script>
+<script src="{% static 'js/emif.results.js' %}"></script>
+
+<script src="{% static 'js/emif.comparison_populations.js' %}"></script>
+
+{% endblock %}
+
+
+{% block styleextra %}
+
+.hoverDiv {background: #fff;}
+.hoverDiv:hover {background: #E8E8E8;}
+
+{% endblock %}
+
+{% block toolbar %}
+  {% if page_obj != None %}
+    {% include "reusable_blocks/menu_toolbar.html" with collapse=collapseall %}
+  {% endif %}
+{% endblock %}
+
+{% load bootstrap_pagination %}
+
+{% block content %}
+{% if isAdvanced %}
+<div id="bool_container"></div>
+{% endif %}
+  <div id="row_loading" class="row">
+
+
+    <div class="col-md-12 clearboth" style="text-align:center">
+        <div class="navbar navbar-default" id="loading">
+        <div class="navbar-inner">
+          <div class="navbar-form">
+
+          <h4>
+              <span id="results_size"></span>
+            {% if page_obj != None %}
+              {{num_results}} databases like {{database_name}}
+          {% else %}
+            No databases like {{database_name}} were found
+          {% endif %}
+           {% if comm %} in {{comm.name}}{% endif %}
+
+
+          </h4>
+         </div>
+
+        </div>
+      </div>
+    </div>
+    </div>
+    {% if page_obj != None %}
+    <form id="compare_form" action="resultscomp" method="POST">
+      {% csrf_token %}
+      <div id="comparedbs"></div>
+      <input id="submitdbsimulate" type="submit" value="Submit">
+    </form>
+    <form id="result_form" action="resultscomp" method="POST">
+  {% csrf_token %}
+<div class="panel panel-default">
+<table class="table table-bordered table-hover fingerprint_table table-striped" id="table_databases" data-provides="rowlink">
+    <thead>
+        <tr>
+           <th class="sorter-score sorter {%if "icon-minus" not in sort_params.score.icon %}selected-sorter{% endif %}"  onclick="a.onClick('score', '{{sort_params.score.next}}');">
+                 <div class="pull-right"><i class="{{sort_params.score.icon}}"></i></div>
+            Rel.
+            </th>
+            <th class="sorter-database_name sorter {%if "icon-minus" not in sort_params.database_name.icon %}selected-sorter{% endif %}"  onclick="a.onClick('database_name', '{{sort_params.database_name.next}}');">
+                 <div class="pull-right"><i class="{{sort_params.database_name.icon}}"></i></div>
+            Database Name
+            </th>
+              {% for field in comm.list_fields.all %}
+              {% find_sort_param sort_params field.slug as fslug %}
+
+                <th data-toggle="tooltip" data-placement="top" title="{{field.text|removehs}}"
+                class="tooltippable sorter-{{field.slug}} sorter {%if "icon-minus" not in fslug.icon %}selected-sorter{% endif %}"  onclick="a.onClick('{{field.slug}}', '{{fslug.next}}');">
+                <div class="pull-right"><i class="{{fslug.icon}}"></i></div>
+                {{field.text|removehs}}
+                </th>
+              {% endfor %}
+            <th class="sorter-lastupdate sorter {%if "icon-minus" not in sort_params.last_update.icon %}selected-sorter{% endif %}" onclick="a.onClick('last_update', '{{sort_params.last_update.next}}');">
+            <div class="pull-left">Last update</div>
+                <div class="pull-right"><i class="{{sort_params.last_update.icon}}"></i></div>
+            </th>
+            <th class="sorter-false filter-false select_line">Select</th>
+
+        </tr>
+        <tr>
+          <td class="table_filter">
+            <div style="text-align: center;">
+                <i data-toggle="tooltip" data-placement="bottom" title="This ranking represents the relevance of the database in comparison with the reffered database, the higher the value, the more relevant it is." class="help_selectresults fa fa-2x fa-question-circle"></i>
+              </div>
+          </td>
+          <td class="table_filter">
+                <input class="form-control filter_input" id="database_name_filter" type="text" value="{{sort_params.database_name.filter}}" placeholder="Filter">
+          </td>
+          {% for field in comm.list_fields.all %}
+            {% find_sort_param sort_params field.slug as fslug %}
+            <td class="table_filter">
+                  <input class="form-control filter_input" id="{{field.slug}}_filter" type="text" value="{{ fslug.filter }}" placeholder="Filter">
+            </td>
+          {% endfor %}
+          <td class="table_filter">
+                 <input class="form-control filter_input" id="last_update_filter" type="text" value="{{sort_params.last_update.filter}}" placeholder="Filter">
+          </td>
+          <td class="table_filter select_line">
+            <div style="text-align: center;">
+              <i data-toggle="tooltip" data-placement="bottom" title="This allows to compare databases.<br /> It is only possible to compare databases of the same type.  For instance, you cannot compare databases from AD Cohort with a databases from Observational Data.<br /> When a database is selected, the type is defined automatically, and databases of other types cannot be chosen. <br /> To be able to select other type, you must unselect all the databases." class="help_selectresults fa fa-2x fa-question-circle"></i>
+            </div>
+          </td>
+        </tr>
+    </thead>
+    <tbody id="table_content">
+
+  {% for t in page_obj %}
+   <tr>
+        <td style="text-align: center;">{{t.score}}</td>
+          <td>
+            {% if comm %}
+              <a data-acronym="{{ t.name }}" href="c/{{comm.slug}}/fingerprint/{{ t.id }}/{% if not config.useQuestionSetRBAC %}1{% endif %}">{{ t.name }}</a>
+            {% else %}
+              <a data-acronym="{{ t.name }}" href="fingerprint/{{ t.id }}/{% if not config.useQuestionSetRBAC %}1{% endif %}">{{ t.name }}</a>
+            {% endif %}
+        </td>
+          {% for field in comm.list_fields.all %}
+            <td>
+            {% find_field_value t field %}
+            </td>
+          {% endfor %}
+            <td style="text-align: center;" class="date">
+                  {% if t.last_activity %}
+                      {{t.last_activity|datehhmm}}
+                  {% else %}
+                      {{ t.date }}
+                  {% endif %}
+            </td>
+          <td class="select_line"> <input class="chkbox dbtype_{{t.type_name|removespaces}}" type="checkbox"
+          typedb="{{ t.type_name }}" name="chk_{{ t.id }}"></td>
+
+        </tr>
+
+
+  {% comment %}
+    <div class="span12" >
+      <div class="navbar" id="loading">
+
+        <div class="navbar-inner hoverDiv">
+          <div class="row-fluid hoverDiv">
+            <div class="pull-left span6" style="text-align:left">
+              <a href="fingerprint/{{ result.id }}/1">
+                <span class="label label-success" style="font-size:15px">{{ result.name }}</span>
+              </a>
+              <div >Institution Name: {{result.institution}}</div>
+
+              <div >Location: {{result.location}}</div>
+              <div >Number of patients: {{result.number_patients}}</div>
+
+              <div >Last change: {{result.date}}</div>
+            </div >
+            <div class="span5" style="margin-top:60px">
+              <div class="row " >
+
+                <div class="span1 pull-right" style="text-align:right; padding-top:5px; max-width:15px;">
+
+                  <input class="checkbox" type="checkbox" name="chk_{{ result.id }}"></div>
+
+                <div class="span3 pull-right " style="max-width:165px">
+                  <a class="btn btn-small btn-success" href="contact/{{result.email_contact}}">Contact</a>
+
+                  <a class="btn btn-small btn-success" href="fingerprint/{{result.id}}/1/">Fingerprint</a>
+
+                  <a class="btn btn-small btn-success" href="advancedSearch/1">More like this</a>
+
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    {% endcomment %}
+    {% endfor %}
+
+    </tbody>
+</table>
+</div>
+
+  </form>
+    {% else %}
+    <div style="margin-top: 60px;"></div>
+  {% endif %}
+
+  {% if page_obj != None %}
+    {% include "reusable_blocks/post_paginator.html" %}
+
+{% endif %}
+{% endblock %}
+
+{% comment %}
+  <script type="text/javascript" >
+{% endcomment %}
+
+{% block scriptextra %}
+
+{% if page_obj != None %}
+
+var counter = 0;
+var a;
+  var allFilters = [];
+
+  {% for field in comm.list_fields.all %}
+  allFilters.push('{{field.slug}}');
+  {% endfor %}
+$(document).ready(function(){
+
+    a = new PaginatorSorter("table_databases", '{{sort_params.base_filter}}', '{{sort_params.selected_name}}', '{{sort_params.selected_value}}', '{{sort_params.extraObjects|safe}}', allFilters);
+
+    //TO Be Applied in future releases.
+    a.atachPlugin(new SelectPaginatorPlugin());
+
+  if(a != undefined && a.plugin != undefined){
+
+    var dbcount = updateSelectCount();
+
+    counter = dbcount;
+
+    if(dbcount >= 2){
+        $("#comparabtn").removeAttr('disabled');
+        $("#comparabtn").bind('click',function(e)
+        {
+          postComparison();
+          return false;
+        });
+
+    }
+
+  }
+
+    $('a[href="#"]').attr('href', function(i, val){
+        return window.location + val;
+    });
+
+    $('.help_selectresults').tooltip({container: 'body', 'html': true});
+
+});
+{% endif %}
+
+$(document).ready(function(){
+  $("#refine_search_btn").click( function(){
+      {% if isAdvanced %}
+      window.location.replace(MontraAPI.getBaseCommunity() + "advancedSearch/{{request.session.query_type}}/1/{{request.session.query_id}}");
+      {% else %}
+        $("input[name=query]").focus();
+      {% endif %}
+    });
+    $('.tooltippable').tooltip({container: 'body', 'html': true});
+
+});
+
+ {% if isAdvanced %}
+ var bool_container;
+$(function(){
+    bool_container = $('#bool_container').boolrelwidget({view_only: true, view_serialized_string: '{{request.session.serialization_query}}', link_back: MontraAPI.getBaseCommunity() + "advancedSearch/{{request.session.query_type}}/1/{{request.session.query_id}}" });
+
+    window.setTimeout(function(){window.location.hash = "#back";}, 100);
+    window.setTimeout(function(){window.location.hash = "#search";}, 100);
+});
+  /* This is a trick, to be able to redirect on back button since browsers try to prevent us to do so
+   I must do this, because the back url is different from the url on history */
+window.onhashchange = function(){
+   if (location.hash == "#back") {
+        window.location.replace(MontraAPI.getBaseCommunity() +"advancedSearch/{{request.session.query_type}}/1/{{request.session.query_id}}");
+    }
+
+}
+  {% endif %}
+function updateSelectCount(){
+
+    try{
+    var dbs = a.plugin.getExtraObjects().selectedList;
+    var type = a.plugin.typedb;
+
+    if(type)
+      $('#selected_dbstype').text(type);
+    else
+      $('#selected_dbstype').text("---");
+
+    $('#selected_dbscount').text(dbs.length);
+
+    return dbs.length;
+
+    } catch(err){
+      $('#selected_dbscount').text(0);
+    }
+
+    return 0;
+    }
+function updateSelectCountJs(type, count){
+
+    if(type)
+      $('#selected_dbstype').text(type);
+
+    if(count)
+      $('#selected_dbscount').text(count);
+
+}
+function hidecheckbox()
+{
+  $('.checkbox').toggle();
+}
+
+$("#comparabtn").bind('click',function(e)
+        {
+
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        });
+
+//$("#comparabtn").unbind();
+function postComparison(){
+  //$('#result_form').submit();
+  //console.log('A: '+a);
+  //console.log('A-plugin: '+a.plugin);
+  if(a != undefined && a.plugin != undefined){
+    $('#comparedbs').html('');
+
+    var dbs = a.plugin.getExtraObjects().selectedList;
+    //console.error(dbs.length);
+    for(var i=0;i<dbs.length;i++){
+      $('#comparedbs').append('<input type="checkbox" name="chks_'+dbs[i]+'" checked>');
+    }
+
+    $('#submitdbsimulate').click();
+  }
+
+}
+$('.checkbox').click(function()
+{
+
+    if($(this).is(':checked')){
+        counter++;
+    } else
+    {
+        counter--;
+    }
+
+
+
+    if(counter == 0){
+      updateSelectCountJs("---", ""+counter);
+      $('input.checkbox').prop("disabled", false);
+
+      $("#comparabtn").attr("disabled", true);
+    }
+    else if(counter == 1){
+    console.log('cai here');
+
+      $("#comparabtn").attr('disabled', true);
+
+      var checkedtype;
+      if(a != undefined && a.plugin != undefined && a.plugin.typedb !=undefined){
+        checkedtype = a.plugin.typedb;
+      } else {
+        checkedtype = $('.checkbox:checked').first().attr('typedb');
+      }
+      updateSelectCountJs(checkedtype, counter);
+
+      $('input.checkbox').prop("disabled", false);
+
+      $('input.checkbox:not([typedb="' + checkedtype
+      + '"])').prop('disabled', true);
+
+
+    }
+    else if (counter >= 2){
+      updateSelectCountJs(null, counter);
+      $("#comparabtn").attr('disabled', false);
+         $("#comparabtn").bind('click',function(e)
+        {
+          postComparison();
+          return false;
+        });
+    }
+
+});
+$('[rel=tooltip]').tooltip({container: 'body', 'html': true});
+
+$('.popover').popover({
+    container: 'body'
+});
+$('.accordion-body.collapse').hover(
+function () {
+$(this).css('overflow','visible');
+},
+function () {
+$(this).css('overflow','hidden');
+}
+);
+{% endblock %}
+
+{% comment %}
+</script>
+  {% endcomment %}

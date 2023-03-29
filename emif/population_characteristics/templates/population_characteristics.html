@@ -1,0 +1,219 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+
+
+<!--<![endif]-->
+
+<!--[if lte IE 8]>
+<div class="well">Currently IE 7 and 8 don't support this functionality. To use this functionality please update your browser to a modern browser, like IE 9 or better, Google Chrome, Firefox, Opera or Safari.</div>
+<![endif]-->
+<!--[if gte IE 9]><!-->
+    <input style="width:1px; height:1px;" type="file" id="fileupload_hook" />
+
+    {% if not contains_population and owner_fingerprint or not contains_population and request.user.is_superuser %}
+         <script>
+            var fp = FingerprintProxy.getInstance('{{fingerprint_id}}');
+            var store = fp.getStore();
+            store.setEmpty('{{plugin}}',true);
+        </script>
+
+         <h4 class="pull-center">No population characteristics associated with this database yet.</h4>
+    <p class="pull-center">This database fingerprint does not have population characteristics. Submit the Population Characteristics file that can be extracted using <a onclick="return false;" href="">Jerboa</a>.</p>
+
+    <form id="jerboaupload" method="post" action="." enctype="multipart/form-data">
+        {% csrf_token %}
+        <!-- Redirect browsers with JavaScript disabled to the origin page -->
+        <!--<noscript><input type="hidden" name="redirect" value="http://blueimp.github.io/jQuery-File-Upload/"></noscript>-->
+        <!-- The fileupload-buttonbar contains buttons to add/delete files and start/cancel the upload -->
+        <div class="col-md-offset-2 col-md-8 fileupload-buttonbar">
+                <fieldset>
+
+                <input placeholder="Name" size="255" class="form-control" type="text" cols="100" name="pc_name" >
+                <textarea placeholder="Description about extracted population characteristics" class="form-control input-block-level" rows="4" name="pc_comments" ></textarea>
+
+                <!-- The fileinput-button span is used to style the file input field as button -->
+                <br />
+                <div style="margin-left: 0px !important;" class="col-md-12 btn btn-success fileinput-button">
+                    <i class="glyphicon glyphicon-plus"></i>
+                    <span>Add files...</span>
+                    <input type="file" name="file" multiple>
+                </div>
+
+
+                <!-- The loading indicator is shown during file processing -->
+                <span class="fileupload-loading"></span>
+                </fieldset>
+            <!-- The global progress information -->
+            <div class="span6 fileupload-progress fade">
+                <!-- The global progress bar -->
+                <div class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                    <div class="progress-bar progress-bar-success" style="width:0%;"></div>
+                </div>
+                <!-- The extended global progress information -->
+                <div class="progress-extended">&nbsp;</div>
+            </div>
+        </div>
+        <!-- The table listing the files available for upload/download -->
+
+    </form>
+
+
+    <br>
+    <br>
+
+    <table class="table table-striped">
+    <tbody class="files" id="jerboafiles">
+
+
+    </tbody>
+    </table>
+    {% else %}
+    <div class="row">
+        <div class="col-md-12">
+        {%if contains_population %}
+            <script>
+                var fp = FingerprintProxy.getInstance('{{fingerprint_id}}');
+                var store = fp.getStore();
+                store.setEmpty('{{plugin}}',false);
+            </script>
+
+            {% if latest_pop %}
+            <div class="pull-left">
+                Last update on: {{latest_pop.latest_date|date:"d/m/Y H:i:s"}}
+            </div>
+                {%if owner_fingerprint and not compare or request.user.is_superuser  and not compare %}
+                <div class="pull-right">
+                    <button id="upload_popchar" onclick="$('#modal-updatepopchar').modal('show');" class="btn btn-default"><i class="fas fa-fw fa-pencil-alt"></i>&nbsp;Update</button>
+                    {% include "population_characteristics_update.html" %}
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+    <div class="col-md-3">
+        <div class="well well-sm" id="pc_list">
+        </div>
+    </div>
+
+    <div class="col-md-7" id="chart2">
+
+        <div style="margin-left: auto; margin-right: auto;" class='row'>
+            <div id='pctitle'>
+            </div>
+            <div id='pchint'>
+            </div>
+            <ul class="nav nav-tabs">
+                <li class="pull-right"><a id="tabularlink" href="#tabularview" data-toggle="tab">Tabular</a></li>
+                <li class="pull-right active"><a href="#chartview" data-toggle="tab">Chart</a></li>
+            </ul>
+            <div class="tab-content">
+              <div class="tab-pane active" id="chartview">
+                    <div style="display: none; margin-top: 10px;" class="exportmychart fullwidth clearfix">
+                    <div style="margin-bottom: 5px;" class="pull-right btn-group">
+                        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="javascript: void(0)">
+                        <i class="fas fa-fw fa-upload"></i>
+                        &nbsp;Export
+                        <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a id="downloadpng" onclick="generatePng();">
+                                As PNG
+                                </a>
+                            </li>
+                            <li>
+                                <a id="downloadsvg" onclick="generateSvg();">
+                                As SVG
+                                </a>
+                            </li>
+                            <li>
+                                <a id="downloadpdf" onclick="generatePdf();">
+                                As PDF
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    </div>
+                <div id='pc_chart_place'>
+                    <center><h4>Loading...</h4></center>
+                </div>
+              </div>
+              <div class="tab-pane" id="tabularview">
+                <div style="padding-top: 10px;" id='pc_tabular_place'>
+                </div>
+              </div>
+            </div>
+
+			<canvas style="background-color: white; position:absolute; left:-9999px; top: -9999px;" class="preview-pane"></canvas>
+
+            {%if owner_fingerprint and not compare or request.user.is_superuser  and not compare %}
+                <div id="comment_place" style="margin-left:0px; display: none;" class="col-md-12">
+
+
+                <div id='pc_comments_placeholder' class="col-md-12 pc_comment">
+                </div>
+                <div style="margin-left:0px;" id="pc_comment_id" class="col-md-12 pc_comment">
+
+                <form id="chartcomments" method="post" action="comments" >
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input id="pc_chart_comment_id" name="pc_chart_comment_id" type="hidden" value="">
+                    </div>
+                    <div class="form-group">
+                    <input id="pc_chart_comment_fingerprint_id" name="pc_chart_comment_fingerprint_id" type="hidden" value="">
+                    </div>
+                    <div class="form-group">
+                    <input placeholder="Title" size="255" maxlength="40" class="form-control" type="text" name="pc_chart_comment_name" >
+                    </div>
+                    <div class="form-group">
+                    <textarea placeholder="Comments about extracted data" class="form-control input-block-level" rows="4" name="pc_chart_comment_description" ></textarea>
+                    </div>
+                    <input type="submit" class="col-md-12 btn btn-primary" id="pc_chart_comment_submit" name="pc_chart_comment_submit" disabled="">
+                </form>
+                </div>
+                </div>
+            {%endif%}
+
+
+        </div>
+    </div>
+
+
+    <div class="col-md-2" id="pcBarContentRoot">
+        <div class="pull-right" id="pcBarContent"></div>
+
+        <!--div id="pcBarContent" class="well">
+
+        </div-->
+
+    </div>
+
+
+
+    </div>
+
+    {% else %}
+     <h4 class="pull-center">No population characteristics associated with this database yet.</h4>
+    <p class="pull-center">This database fingerprint does not have population characteristics yet. Please contact the database owner to get more information.</p>
+    {% endif %}
+
+
+{% endif %}
+
+<!--<![endif]-->

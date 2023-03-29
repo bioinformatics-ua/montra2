@@ -1,0 +1,20 @@
+[
+  {
+    "model": "auth.group",
+    "fields": {
+      "name": "exporters"
+    }
+  },
+  {
+    "model": "auth.group",
+    "fields": {
+      "name": "importers"
+    }
+  },
+  {
+    "model": "auth.group",
+    "fields": {
+      "name": "developers"
+    }
+  }
+]

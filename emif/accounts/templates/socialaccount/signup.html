@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% load compress %}
+
+{% block title %}{% trans "Sign up" %}{% endblock %}
+
+{% block headerlogin %}
+{% endblock %}
+
+{% block uncompressed_js %}
+  {% if config.recaptcha_verification %}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+  {% endif %}
+{% endblock %}
+
+
+{% block headextra %}
+  <script src="{% static 'js/accounts.signup.js' %}"></script>
+
+  {% if not config.recaptcha_verification %}
+    <script>
+      feedbackRecaptchaCallback();
+    </script>
+  {% endif %}
+{% endblock %}
+
+
+
+{% block styleinclude %}
+<link rel="stylesheet"  href="{% static 'css/account.signup.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="row">
+  <div class="col-md-6 col-sm-6 col-md-offset-3 col-sm-offset-3">
+    <form method="post" id="signup_form">
+        {% csrf_token %}
+        <fieldset>
+          <legend><h4>Create Account <small>(all fields are mandatory)</small></h4></legend>
+          <span class="help-block">
+          </span>
+          {{ form|crispy }}
+        </fieldset>
+        {%if form.availableTerms %}
+          {{form.terms.description|safe }}
+          <input type="checkbox" id="Iaccept" onclick="checkAccept()"> I agree to the  <a href="accounts/signup/#terms">terms and conditions.</a>
+        {% else %}
+          <input type="hidden" id="termsAvailable" value="false"/>
+        {% endif %}
+
+        <br />
+        <br />
+        <!-- capcha -->
+        {% if config.recaptcha_verification %}
+          <div class="g-recaptcha capchaModule" data-callback="feedbackRecaptchaCallback" data-sitekey="{{form.RECAPTCH_PUBLIC_KEY}}"></div>
+        {% endif %}
+        <center>
+          <button class="btn btn-default" type="reset">{% trans "Clear"%}</button>
+          <button id="createaccount" class="btn btn-gray" type="submit" disabled>Create Account</button>
+        <div>or <a href="index">sign in</a></div>
+        </center>
+
+    </form>
+  </div>
+</div>
+
+<script>
+$( document ).ready(function() {
+    if( $( '#id_email' ).val() ){
+        $( '#id_email' ).prop('readonly', true);
+    }
+});
+</script>
+
+{% endblock %}

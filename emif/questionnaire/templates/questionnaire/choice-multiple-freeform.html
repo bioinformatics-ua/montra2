@@ -1,0 +1,76 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load i18n %}
+{% load extra_tags %}
+<div class="clearfix">
+
+    <div class="input">
+        {% if advanced_search %}
+            <button type="button" onClick="selectAll(this, 'answer_{{ question.number }}')" style="margin-right: 5px;" class="pull-right btn btn-xs btn-default">Select All</button>
+        {% endif %}
+        <ul class="inputs-list list-unstyled">
+        {% for choice, key, checked in qdict.choices %}
+            <li>
+                <div class="checkbox">
+                    <span class="custom-checkbox">
+                      <input {% if readonly %} onClick="return false" {% else %} onClick="valchanged('question_{{ question.number }}_{{ choice.value|trim|esc }}', this.checked, this);"{% endif %} type="checkbox" id="{{ key }}" name="{{ key }}" value="{{ choice.value|trim }}" {% if checked %}checked{% endif %}/>
+                      <span class="box"><span class="tick"></span></span>
+                    </span>
+
+                    <span class="checkbox-label">
+                        {%if readonly and checked %}
+                            {{ checked|safe }}
+                        {% else %}
+                            {{ choice.text|trim }}
+                        {% endif %}
+                    </span>
+                </div>
+            </li>
+            {% if checked %}
+            <script type="text/javascript">
+                markAnswered('{{ question.number|removedots }}');
+            </script>
+            {% endif %}
+        {% endfor %}
+
+        {% if qdict.extras %}
+            {% for key, value in qdict.extras %}
+            <li>
+                <div class="row">
+                    <div class="col-md-9">
+                        {% if not forloop.last or not forloop.first %}
+                            <b>{{ forloop.counter }}.</b>
+                        {% endif %}
+                        {% if readonly %}
+                            <div class="span6 fake_input fake_input_disabled" name="{{ key }}" size="50">{{ value|safe }}</div>
+                        {% else %}
+                            <input type="text" class="form-control" name="{{ key }}" size="50" value="{{ value }}" />
+                        {% endif %}
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        {% endif %}
+
+        {% if question.extra %}
+            <li>
+                <span class="help-block">{{ question.extra }}</span>
+            </li>
+        {% endif %}
+    </div>
+</div>

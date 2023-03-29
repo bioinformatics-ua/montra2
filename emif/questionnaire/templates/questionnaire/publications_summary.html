@@ -1,0 +1,164 @@
+{% comment %}
+# -*- coding: utf-8 -*-
+# Copyright (C) 2014 Universidade de Aveiro, DETI/IEETA, Bioinformatics Group - http://bioinformatics.ua.pt/
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+{% endcomment %}
+{% load extra_tags %}
+{% if pubs and pubs.0.title %}
+<div style="white-space: normal;">
+    <div style="margin-bottom: -20px; min-width: 300px;"><small><center>
+        <span id="showing_publications_info_{{uid}}" class="showing_publications_info"></span></center>
+        </small></div>
+    <hr />
+    <ul class="publications_container" id="publistanswer_{{uid}}">
+    </ul>
+    <center><div id="div_pub_paginator_{{uid}}" class="summary_paginator pagination"></div>
+    </center>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var publications = [];
+
+        var publications_drawn = [];
+
+        var max = {{pubs|length}};
+        var per_page = 5;
+
+        var handlePagination{{uid}} = function(pageNumber, event){
+            //console.log("Show page "+pageNumber);
+
+            drawPublications{{uid}}(pageNumber);
+
+            disableLinks();
+        }
+        // The plugin uses hrefs, and since we are using base url, hashtags work differently (not as anchors) so i have to stop the redirect
+        function disableLinks(){
+            $(".summary_paginator .page-link").click(function(event){
+                 event.preventDefault();
+                 return false;
+            });
+        }
+        function redrawIndicator{{uid}}(start, end){
+            $("#showing_publications_info_{{uid}}").html("Showing "+(start+1)+" - "+end+" of "+max+" Publications");
+        }
+        function drawPublications{{uid}}(pageNumber){
+
+            var container = $("#publistanswer_{{uid}}");
+
+            container.html("");
+
+            var start = (pageNumber-1)*per_page;
+
+            var end = ((pageNumber-1)*per_page)+per_page;
+
+            // If last page and end is bigger than results
+            if (end > max){
+                end = max;
+            }
+            for(var i=start;i<end;i++){
+                // If not on memory yet
+                if(publications_drawn[i] == null){
+                    publications_drawn[i] = drawPublication{{uid}}(publications[i]);
+                }
+
+                container.append(publications_drawn[i]);
+            }
+
+            redrawIndicator{{uid}}(start, end);
+
+            $(".publication_details").popover(
+                {
+                    trigger: "hover",
+                    html: "true",
+                    template: '<div class="popover popover-small"><div class="arrow"></div><div class="popover-inner"><h3 class="popover-title"></h3><div class="popover-content"><p></p></div></div></div>'
+                }
+            );
+        }
+        function drawPublication{{uid}}(publication){
+            var line = '<li class="publication_details" data-container="body" data-toggle="popover" data-placement="left" data-content=\'';
+
+            var dcontainer = '<div style="text-align:justify;"><div class="well well-small"><small><strong>'+publication.titlec+'</strong></small></div>';
+
+                if( publication.authors != ""){
+
+                    authors = publication.authors.split(",");
+
+                    dcontainer += '<table><tr><td style="vertical-align: top;"><small><strong>Authors: </strong></small></td><td><small>';
+
+                        for( var i = 0; i< authors.length;i=i+3){
+                            dcontainer += authors[i];
+                            if(i+1<authors.length)
+                                dcontainer += ", "+authors[i+1];
+                            if(i+2<authors.length)
+                                dcontainer += ", "+authors[i+2];
+                            dcontainer += "<br />";
+                        }
+
+                    dcontainer += "</small></td></tr></table>";
+                }
+                if( publication.journal != ""){
+                    dcontainer += "<small><strong>Journal: </strong>"+publication.journal+"</small><br />";
+                }
+                if( publication.volume != ""){
+                    dcontainer += "<small><strong>Volume: </strong>"+publication.volume+"</small>&nbsp;";
+                }
+                if( publication.pages != ""){
+                    dcontainer += "<small><strong>Pages: </strong>"+publication.pages+"</small><br />";
+                }
+                if( publication.year != ""){
+                    dcontainer += "<small><strong>Year: </strong>"+publication.year+"</small><br />";
+                }
+                if( publication.link != ""){
+                    dcontainer += '<small><strong>Url: </strong><a href="'+publication.linkc+'">'+publication.link+'</a></small><br />';
+                }
+                dcontainer += '</div>';
+
+                return line+dcontainer.replace(/'/g, "\\'")+'\'>'+publication.title+"</li>";
+        }
+
+        $(function (){
+            {% for pub in pubs%}
+                    publications.push({
+                        titlec: "{{pub.title}}",
+                        title: "{{pub.title}}",
+                        authors: "{{pub.authors}}" ,
+                        journal: "{{pub.journal}}",
+                        volume: "{{pub.volume}}",
+                        pages: "{{pub.pages}}",
+                        year: "{{pub.year}}",
+                        linkc: "{{pub.link|striptags}}",
+                        link: "{{pub.link}}"
+                    });
+                    publications_drawn.push(null);
+            {% endfor %}
+
+            $("#div_pub_paginator_{{uid}}").pagination({
+                items: max,
+                itemsOnPage: per_page,
+                onPageClick: handlePagination{{uid}},
+                listStyle: 'pagination'
+            });
+
+            drawPublications{{uid}}(1);
+
+            disableLinks();
+
+        });
+
+    });
+        </script>
+</div>
+{% else %}
+    There's no publications associated.
+{% endif %}
